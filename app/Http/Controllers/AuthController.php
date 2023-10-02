@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ClubUser;
 use App\Models\ContextUser;
+use App\Models\Evaluator;
 use App\Models\Governer;
 use App\Models\RegionChairperson;
 use App\Models\ZonalChairPerson;
@@ -16,6 +18,8 @@ class AuthController extends Controller
     private $RegionChairPerson;
     private $ZonalChairPerson;
     private $ContextUser;
+    private $ClubUser;
+    private $Evaluator;
     private $AppHelper;
 
     public function __construct()
@@ -24,6 +28,8 @@ class AuthController extends Controller
         $this->RegionChairPerson = new RegionChairperson();
         $this->ZonalChairPerson = new ZonalChairPerson();
         $this->ContextUser = new ContextUser();
+        $this->ClubUser = new ClubUser();
+        $this->Evaluator = new Evaluator();
         $this->AppHelper = new AppHelper();
     }
 
@@ -96,11 +102,11 @@ class AuthController extends Controller
                 } else if ($flag == "CNTU") {
                     $authenticateUser = $this->authenticateContextUser($authInfo);
                 } else if ($flag == "CU") {
-                    
+                    $authenticateUser = $this->authenticateClubUser($authInfo);
                 } else if ($flag == "E") {
-
+                    $authenticateUser = $this->authenticateEvaluator($authInfo);
                 } else {
-
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid User Role.");
                 }
 
                 return $authenticateUser;
@@ -231,10 +237,60 @@ class AuthController extends Controller
     }
 
     private function authenticateClubUser($authInfo) {
+        $loginInfo = array();
+        $verify_user = $this->ClubUser->verify_email($authInfo['userName']);
 
+        if (!empty($verify_user)) {
+            if (Hash::check($authInfo['password'], $verify_user['password'])) {
+                $loginInfo['id'] = $verify_user['id'];
+                $loginInfo['code'] = $verify_user['code'];
+                $loginInfo['fullName'] = $verify_user['name'];
+                $loginInfo['email'] = $verify_user['email'];
+
+                $token = $this->AppHelper->generateAuthToken($verify_user);
+
+                $loginInfo['userRole'] = $verify_user['flag'];
+
+                $tokenInfo = array();
+                $tokenInfo['token'] = $token;
+                $tokenInfo['loginTime'] = $this->AppHelper->day_time();
+                $this->ClubUser->update_login_token($verify_user['id'], $tokenInfo);
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Successfully.", $loginInfo, $token);
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+            }
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+        }
     }
 
     private function authenticateEvaluator($authInfo) {
+        $loginInfo = array();
+        $verify_user = $this->Evaluator->verify_email($authInfo['userName']);
 
+        if (!empty($verify_user)) {
+            if (Hash::check($authInfo['password'], $verify_user['password'])) {
+                $loginInfo['id'] = $verify_user['id'];
+                $loginInfo['code'] = $verify_user['code'];
+                $loginInfo['fullName'] = $verify_user['name'];
+                $loginInfo['email'] = $verify_user['email'];
+
+                $token = $this->AppHelper->generateAuthToken($verify_user);
+
+                $loginInfo['userRole'] = $verify_user['flag'];
+
+                $tokenInfo = array();
+                $tokenInfo['token'] = $token;
+                $tokenInfo['loginTime'] = $this->AppHelper->day_time();
+                $this->Evaluator->update_login_token($verify_user['id'], $tokenInfo);
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Successfully.", $loginInfo, $token);
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+            }
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+        }
     }
 }
