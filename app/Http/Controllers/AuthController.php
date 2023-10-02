@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ContextUser;
 use App\Models\Governer;
 use App\Models\RegionChairperson;
+use App\Models\ZonalChairPerson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,12 +14,16 @@ class AuthController extends Controller
 {
     private $Governer;
     private $RegionChairPerson;
+    private $ZonalChairPerson;
+    private $ContextUser;
     private $AppHelper;
 
     public function __construct()
     {
         $this->Governer = new Governer();
         $this->RegionChairPerson = new RegionChairperson();
+        $this->ZonalChairPerson = new ZonalChairPerson();
+        $this->ContextUser = new ContextUser();
         $this->AppHelper = new AppHelper();
     }
 
@@ -86,11 +92,11 @@ class AuthController extends Controller
                 } else if ($flag == "RC") {
                     $authenticateUser = $this->authenticateRegionChairperson($authInfo);
                 } else if ($flag == "ZC") {
-
+                    $authenticateUser = $this->authenticateZoneChairPerson($authInfo);
                 } else if ($flag == "CNTU") {
-
+                    $authenticateUser = $this->authenticateContextUser($authInfo);
                 } else if ($flag == "CU") {
-
+                    
                 } else if ($flag == "E") {
 
                 } else {
@@ -166,13 +172,69 @@ class AuthController extends Controller
 
     private function authenticateZoneChairPerson($authInfo) {
 
+        $loginInfo = array();
+        $verify_user = $this->ZonalChairPerson->verify_email($authInfo['userName']);
+
+        if (!empty($verify_user)) {
+            if (Hash::check($authInfo['password'], $verify_user['password'])) {
+                $loginInfo['id'] = $verify_user['id'];
+                $loginInfo['code'] = $verify_user['code'];
+                $loginInfo['fullName'] = $verify_user['name'];
+                $loginInfo['email'] = $verify_user['email'];
+
+                $token = $this->AppHelper->generateAuthToken($verify_user);
+
+                $loginInfo['userRole'] = $verify_user['flag'];
+
+                $tokenInfo = array();
+                $tokenInfo['token'] = $token;
+                $tokenInfo['loginTime'] = $this->AppHelper->day_time();
+                $this->ZonalChairPerson->update_login_token($verify_user['id'], $tokenInfo);
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Successfully.", $loginInfo, $token);
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+            }
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+        }
     }
 
     private function authenticateContextUser($authInfo) {
 
+        $loginInfo = array();
+        $verify_user = $this->ContextUser->verify_email($authInfo['userName']);
+
+        if (!empty($verify_user)) {
+            if (Hash::check($authInfo['password'], $verify_user['password'])) {
+                $loginInfo['id'] = $verify_user['id'];
+                $loginInfo['code'] = $verify_user['code'];
+                $loginInfo['fullName'] = $verify_user['name'];
+                $loginInfo['email'] = $verify_user['email'];
+
+                $token = $this->AppHelper->generateAuthToken($verify_user);
+
+                $loginInfo['userRole'] = $verify_user['flag'];
+
+                $tokenInfo = array();
+                $tokenInfo['token'] = $token;
+                $tokenInfo['loginTime'] = $this->AppHelper->day_time();
+                $this->ContextUser->update_login_token($verify_user['id'], $tokenInfo);
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Successfully.", $loginInfo, $token);
+            } else {
+                return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+            }
+        } else {
+            return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+        }
     }
 
     private function authenticateClubUser($authInfo) {
+
+    }
+
+    private function authenticateEvaluator($authInfo) {
 
     }
 }
