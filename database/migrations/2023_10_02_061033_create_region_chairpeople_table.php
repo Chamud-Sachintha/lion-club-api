@@ -22,6 +22,7 @@ class CreateRegionChairpeopleTable extends Migration
             $table->string('token');
             $table->integer('login_time');
             $table->integer('create_time');
+            $table->string('flag');
             
             $table->timestamps();
         });
