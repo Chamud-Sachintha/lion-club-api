@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClubUserController;
+use App\Http\Controllers\ContextUserController;
+use App\Http\Controllers\EvaluatorController;
 use App\Http\Controllers\RegionChairpersonController;
 use App\Http\Controllers\ZonalChairPersonController;
 use Illuminate\Http\Request;
@@ -25,3 +28,6 @@ Route::post('authenticateUser', [AuthController::class, 'authenticateUser']);
 Route::middleware('authToken')->post('menu-perm', [AuthController::class, 'checkMenuPermission']);
 Route::middleware('authToken')->post('addRegionChairperson', [RegionChairpersonController::class, 'addNewRegionChairperson']);
 Route::middleware('authToken')->post('addZonalChairperson', [ZonalChairPersonController::class, 'addNewZonalChairperson']);
+Route::middleware('authToken')->post('addContextUser', [ContextUserController::class, 'addNewContextUser']);
+Route::middleware('authToken')->post('addEvaluvator', [EvaluatorController::class, 'addNewEvaluvator']);
+Route::middleware('authToken')->post('addClubUser', [ClubUserController::class, 'addNewClubUser']);

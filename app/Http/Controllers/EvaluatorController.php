@@ -20,7 +20,7 @@ class EvaluatorController extends Controller
         $this->AppHelper = new AppHelper();
     }
 
-    public function addNewZonalChairperson(Request $request) {
+    public function addNewEvaluvator(Request $request) {
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;

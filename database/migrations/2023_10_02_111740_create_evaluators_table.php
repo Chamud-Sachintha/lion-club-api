@@ -15,6 +15,15 @@ class CreateEvaluatorsTable extends Migration
     {
         Schema::create('evaluators', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
+            $table->string('name');
+            $table->string('email');
+            $table->string('password');
+            $table->string('token')->nullable();
+            $table->integer('login_time')->nullable();
+            $table->integer('create_time');
+            $table->string('flag');
+            
             $table->timestamps();
         });
     }
