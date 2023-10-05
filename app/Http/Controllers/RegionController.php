@@ -5,18 +5,21 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Models\Governer;
 use App\Models\Region;
+use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
     private $Region;
     private $Governer;
+    private $RegionChairPerson;
     private $AppHelper;
 
     public function __construct()
     {
         $this->Region = new Region();
         $this->Governer = new Governer();
+        $this->RegionChairPerson = new RegionChairperson();
         $this->AppHelper = new AppHelper();
     }
 
@@ -38,7 +41,30 @@ class RegionController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
         } else {
             try {
-                
+                $regionInfo = array();
+                $userPerm = $this->checkPermission($request_token, $flag);
+
+                $chairPerson = $this->RegionChairPerson->find_by_code($chairPersonCode);
+
+                if (empty($chairPerson)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
+                }
+
+                if ($userPerm == true) {
+                    $regionInfo['reCode'] = $regionCode;
+                    $regionInfo['regionChairPersonCode'] = $chairPersonCode;
+                    $regionInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                    $region = $this->Region->add_log($regionInfo);
+
+                    if (!empty($region)) {
+                        return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $region);
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(0, "Operation Not Complete");
+                    }
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

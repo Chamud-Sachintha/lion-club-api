@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
 use App\Http\Controllers\EvaluatorController;
 use App\Http\Controllers\RegionChairpersonController;
+use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ZonalChairPersonController;
+use App\Http\Controllers\ZoneController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,3 +34,7 @@ Route::middleware('authToken')->post('addZonalChairperson', [ZonalChairPersonCon
 Route::middleware('authToken')->post('addContextUser', [ContextUserController::class, 'addNewContextUser']);
 Route::middleware('authToken')->post('addEvaluvator', [EvaluatorController::class, 'addNewEvaluvator']);
 Route::middleware('authToken')->post('addClubUser', [ClubUserController::class, 'addNewClubUser']);
+
+Route::middleware('authToken')->post('addRegion', [RegionController::class, 'addNewRegionDetail']);
+Route::middleware('authToken')->post('addZone', [ZoneController::class, 'addNewZone']);
+Route::middleware('authToken')->post('addClub', [ClubController::class, 'addNewClub']);

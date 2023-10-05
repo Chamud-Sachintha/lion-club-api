@@ -3,81 +3,78 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\Club;
 use App\Models\Governer;
-use App\Models\ZonalChairPerson;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 
-class ZoneController extends Controller
+class ClubController extends Controller
 {
     private $Governer;
+    private $Club;
     private $Zone;
-    private $ZonalChairPerson;
     private $AppHelper;
 
     public function __construct()
     {
         $this->Governer = new Governer();
+        $this->Club = new Club();
         $this->Zone = new Zone();
-        $this->ZonalChairPerson = new ZonalChairPerson();
         $this->AppHelper = new AppHelper();
     }
 
-    public function addNewZone(Request $request) {
+    public function addNewClub(Request $request) {
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
         $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
-        $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
-        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->rehionCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
-        } else  if ($zoneCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Zone Code is requirted.");
-        } else if ($chairPersonCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
-        } else if ($regionCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else if ($zoneCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Zone code is required.");
         } else {
             try {
-                $zonalInfo = array();
+                $clubInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
+                $club = $this->Club->find_by_club_code($clubCode);
                 $zone = $this->Zone->find_by_zone_code($zoneCode);
-                $chairPerson = $this->ZonalChairPerson->find_by_code($chairPersonCode);
 
-                if (!empty($zone)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Zone Already Exists.");
+                if (!empty($club)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Club Already Exists.");
                 }
 
-                if (empty($chairPerson)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
+                if (empty($zone)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Zone Code.");
                 }
 
                 if ($userPerm == true) {
-                    $zonalInfo['zoneCode'] = $zoneCode;
-                    $zonalInfo['chairPersonCode'] = $chairPersonCode;
-                    $zonalInfo['regionCode'] = $regionCode;
-                    $zonalInfo['createTime'] = $this->AppHelper->get_date_and_time();
+                    $clubInfo['clubCode'] = $clubCode;
+                    $clubInfo['zoneCode'] = $zoneCode;
+                    $clubInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
-                    $newZone = $this->Zone->add_log($$zonalInfo);
+                    $newClub = $this->Club->add_log($clubInfo);
 
-                    if ($newZone) {
-                        return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $newZone);
+                    if ($newClub) {
+                        return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubInfo);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                     }
                 } else {
-                    return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions");
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions.");
                 }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+
     }
 
     private function checkPermission($token, $flag) {

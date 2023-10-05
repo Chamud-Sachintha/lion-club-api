@@ -44,4 +44,10 @@ class ZonalChairPerson extends Model
 
         return $this->where(array('id' => $uid))->update($map);
     }
+
+    public function find_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->first();
+    }
 }

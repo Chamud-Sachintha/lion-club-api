@@ -15,7 +15,11 @@ class Region extends Model
         'create_time'
     ];
 
-    public function add_log() {
-        
+    public function add_log($info) {
+        $map['region_code'] = $info['reCode'];
+        $map['re_chair_person_code'] = $info['regionChairPersonCode'];
+        $map['create_time'] = $info['createTime'];
+
+        return $this->create($map);
     }
 }
