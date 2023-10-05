@@ -67,6 +67,33 @@ class ZonalChairPersonController extends Controller
         }
     }
 
+    public function getZonalChairPersonList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is requred.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $allChairPersonList = $this->ZonalChairPerson->query_all();
+
+                $chairPersonList = array();
+                foreach ($allChairPersonList as $key => $value) {
+                    $chairPersonList[$key]['zonalChairpersonCode'] = $value['code'];
+                    $chairPersonList[$key]['fullName'] = $value['name'];
+                    $chairPersonList[$key]['email'] = $value['email'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $chairPersonList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

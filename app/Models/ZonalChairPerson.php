@@ -50,4 +50,8 @@ class ZonalChairPerson extends Model
 
         return $this->where($map)->first();
     }
+
+    public function query_all() {
+        return $this->all();
+    }
 }

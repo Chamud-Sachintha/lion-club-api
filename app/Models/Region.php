@@ -22,4 +22,14 @@ class Region extends Model
 
         return $this->create($map);
     }
+
+    public function find_by_code($code) {
+        $map['region_code'] = $code;
+
+        return $this->where($map)->first();
+    }
+
+    public function query_all() {
+        return $this->all();
+    }
 }

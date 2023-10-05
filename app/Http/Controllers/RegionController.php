@@ -45,6 +45,11 @@ class RegionController extends Controller
                 $userPerm = $this->checkPermission($request_token, $flag);
 
                 $chairPerson = $this->RegionChairPerson->find_by_code($chairPersonCode);
+                $checkRegion = $this->Region->find_by_code($regionCode);
+
+                if (!empty($checkRegion)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Region Already Exist.");
+                }
 
                 if (empty($chairPerson)) {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
@@ -65,6 +70,31 @@ class RegionController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getRegionList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $regionList = $this->Region->query_all();
+
+                $allregionList = array();
+                foreach ($regionList as $key => $value) {
+                    $allregionList[$key]['regionCode'] = $value['region_code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $allregionList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

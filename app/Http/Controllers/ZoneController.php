@@ -30,7 +30,7 @@ class ZoneController extends Controller
 
         $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
         $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
-        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->rehionCode;
+        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -49,7 +49,7 @@ class ZoneController extends Controller
 
                 $zone = $this->Zone->find_by_zone_code($zoneCode);
                 $chairPerson = $this->ZonalChairPerson->find_by_code($chairPersonCode);
-
+                
                 if (!empty($zone)) {
                     return $this->AppHelper->responseMessageHandle(0, "Zone Already Exists.");
                 }
@@ -63,8 +63,8 @@ class ZoneController extends Controller
                     $zonalInfo['chairPersonCode'] = $chairPersonCode;
                     $zonalInfo['regionCode'] = $regionCode;
                     $zonalInfo['createTime'] = $this->AppHelper->get_date_and_time();
-
-                    $newZone = $this->Zone->add_log($$zonalInfo);
+                    
+                    $newZone = $this->Zone->add_log($zonalInfo);
 
                     if ($newZone) {
                         return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $newZone);
@@ -74,6 +74,31 @@ class ZoneController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getZoneList(Request $request) {
+        
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $allZones = $this->Zone->query_all();
+
+                $zoneList = array();
+                foreach ($allZones as $key => $value) {
+                    $zoneList[$key]['zoneCode'] = $value['zone_code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $zoneList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
