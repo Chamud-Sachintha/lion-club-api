@@ -11,16 +11,27 @@ class ActivityFirstSubCategory extends Model
 
     protected $fillable = [
         'code',
-        'main_category_code',
-        'activity_name',
+        'main_cat_code',
+        'category_name',
         'create_time'
     ];
 
-    public function add_log() {
+    public function add_log($info) {
+        $map['code'] = $info['firstSubCategoryCode'];
+        $map['main_cat_code'] = $info['maincategoryCode'];
+        $map['category_name'] = $info['categoryName'];
+        $map['create_time'] = $info['createTime'];
 
+        return $this->create($map);
+    }
+
+    public function find_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->first();
     }
 
     public function query_all() {
-        
+        return $this->all();
     }
 }

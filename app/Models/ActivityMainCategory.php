@@ -17,10 +17,16 @@ class ActivityMainCategory extends Model
 
     public function add_log($info) {
         $map['code'] = $info['mainCategoryCode'];
-        $map['name'] = $info['mainCategoryName'];
+        $map['name'] = $info['categoryName'];
         $map['create_time'] = $info['createTime'];
 
         return $this->create($map);
+    }
+
+    public function find_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->first();
     }
 
     public function query_all() {

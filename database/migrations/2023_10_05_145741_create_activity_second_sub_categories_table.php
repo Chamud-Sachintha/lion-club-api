@@ -15,6 +15,10 @@ class CreateActivitySecondSubCategoriesTable extends Migration
     {
         Schema::create('activity_second_sub_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
+            $table->string('first_cat_code');
+            $table->string('category_name');
+            $table->integer('create_time');
             $table->timestamps();
         });
     }

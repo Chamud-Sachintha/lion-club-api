@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ActivityFirstSubCategoryController;
+use App\Http\Controllers\ActivityMainCategoryController;
+use App\Http\Controllers\ActivitySecondSubCategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
@@ -43,3 +46,9 @@ Route::middleware('authToken')->post('get_zone-list', [ZoneController::class, 'g
 Route::middleware('authToken')->post('addRegion', [RegionController::class, 'addNewRegionDetail']);
 Route::middleware('authToken')->post('addZone', [ZoneController::class, 'addNewZone']);
 Route::middleware('authToken')->post('addClub', [ClubController::class, 'addNewClub']);
+
+Route::middleware('authToken')->post('add-main-category', [ActivityMainCategoryController::class, 'addNewMainActivityCategory']);
+Route::middleware('authToken')->post('main-category-list', [ActivityMainCategoryController::class, 'getAllMainCategoryList']);
+Route::middleware('authToken')->post('add-first-sub-category', [ActivityFirstSubCategoryController::class, 'addFirstSubCategory']);
+Route::middleware('authToken')->post('get-first-sub-category-list', [ActivityFirstSubCategoryController::class, 'getAllFirstSubCategoryList']);
+Route::middleware('authToken')->post('add-second-sub-category', [ActivitySecondSubCategoryController::class, 'addSecondSubCategory']);
