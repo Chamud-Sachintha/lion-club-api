@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityFirstSubCategoryController;
 use App\Http\Controllers\ActivityMainCategoryController;
 use App\Http\Controllers\ActivitySecondSubCategoryController;
@@ -60,3 +61,4 @@ Route::middleware('authToken')->post('get-proof-doc-list', [ProofDocumentControl
 
 Route::middleware('authToken')->post('add-point-template', [PointTemplateController::class, 'addNewPointTemplate']);
 Route::middleware('authToken')->post('get-template-list', [PointTemplateController::class, 'getAllPointTemplateList']);
+Route::middleware('authToken')->post('add-activity', [ActivityController::class, 'addNewActivity']);

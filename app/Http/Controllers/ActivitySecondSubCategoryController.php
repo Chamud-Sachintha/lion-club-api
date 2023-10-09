@@ -86,7 +86,7 @@ class ActivitySecondSubCategoryController extends Controller
             return $this->Apphelper->responseMessageHandle(0, "Flag is required.");
         } else {
             try {
-                $allFirstCategoryList = $this->FirstSubcategory->query_all();
+                $allFirstCategoryList = $this->SecondSubCategory->query_all();
 
                 $firstCategoryList = array();
                 foreach ($allFirstCategoryList as $key => $value) {
