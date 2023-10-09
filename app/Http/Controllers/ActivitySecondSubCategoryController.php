@@ -75,6 +75,31 @@ class ActivitySecondSubCategoryController extends Controller
         }
     }
 
+    public function getSecondSubCategoryList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $allFirstCategoryList = $this->FirstSubcategory->query_all();
+
+                $firstCategoryList = array();
+                foreach ($allFirstCategoryList as $key => $value) {
+                    $firstCategoryList[$key]['secondSubCategoryCode'] = $value['code'];
+                }
+
+                return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $firstCategoryList);
+            } catch (\Exception $e) {
+                return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

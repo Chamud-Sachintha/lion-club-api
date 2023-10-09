@@ -8,6 +8,8 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
 use App\Http\Controllers\EvaluatorController;
+use App\Http\Controllers\PointTemplateController;
+use App\Http\Controllers\ProofDocumentController;
 use App\Http\Controllers\RegionChairpersonController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ZonalChairPersonController;
@@ -52,3 +54,9 @@ Route::middleware('authToken')->post('main-category-list', [ActivityMainCategory
 Route::middleware('authToken')->post('add-first-sub-category', [ActivityFirstSubCategoryController::class, 'addFirstSubCategory']);
 Route::middleware('authToken')->post('get-first-sub-category-list', [ActivityFirstSubCategoryController::class, 'getAllFirstSubCategoryList']);
 Route::middleware('authToken')->post('add-second-sub-category', [ActivitySecondSubCategoryController::class, 'addSecondSubCategory']);
+Route::middleware('authToken')->post('get-second-category-list', [ActivitySecondSubCategoryController::class, 'getSecondSubCategoryList']);
+Route::middleware('authToken')->post('add-proof-doc', [ProofDocumentController::class, 'addNewProofDocument']);
+Route::middleware('authToken')->post('get-proof-doc-list', [ProofDocumentController::class, 'getProofDocList']);
+
+Route::middleware('authToken')->post('add-point-template', [PointTemplateController::class, 'addNewPointTemplate']);
+Route::middleware('authToken')->post('get-template-list', [PointTemplateController::class, 'getAllPointTemplateList']);
