@@ -20,12 +20,16 @@ class Club extends Model
         $map['zone_code'] = $info['zoneCode'];
         $map['create_time'] = $info['createTime'];
 
-        return $this->create($info);
+        return $this->create($map);
     }
 
     public function find_by_club_code($code) {
         $map['club_code'] = $code;
 
         return $this->where($map)->first();
+    }
+
+    public function query_all() {
+        return $this->all();
     }
 }

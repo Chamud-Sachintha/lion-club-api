@@ -16,6 +16,7 @@ class CreateClubUsersTable extends Migration
         Schema::create('club_users', function (Blueprint $table) {
             $table->id();
             $table->string('code');
+            $table->string('club_code');
             $table->string('name');
             $table->string('email');
             $table->string('password');

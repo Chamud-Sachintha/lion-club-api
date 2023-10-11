@@ -18,7 +18,8 @@ class RegionChairperson extends Model
         'token',
         'login_time',
         'create_time',
-        'flag'
+        'flag',
+        'region_code'
     ];
 
     public function add_log($userInfo) {
@@ -28,6 +29,7 @@ class RegionChairperson extends Model
         $map['password'] = Hash::make($userInfo['password']);
         $map['create_time'] = $userInfo['createTime'];
         $map['flag'] = 'RC';
+        $map['region_code'] = $userInfo['regionCode'];
 
         return $this->create($map);
     }

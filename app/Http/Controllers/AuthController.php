@@ -49,13 +49,13 @@ class AuthController extends Controller
                 if ($flag == "G") {
                     $user = $this->Governer->check_permission($request_token, $flag);
                 } else if ($flag == "RC") {
-
+                    
                 } else if ($flag == "ZC") {
 
                 } else if ($flag == "CNTU") {
 
                 } else if ($flag == "CU") {
-
+                    $user = $this->ClubUser->check_permission($request_token, $flag);
                 } else if ($flag == "E") {
 
                 } else {

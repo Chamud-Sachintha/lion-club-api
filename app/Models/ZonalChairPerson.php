@@ -18,7 +18,8 @@ class ZonalChairPerson extends Model
         'token',
         'login_time',
         'create_time',
-        'flag'
+        'flag',
+        'zone_code'
     ];
 
     public function add_log($userInfo) {
@@ -28,6 +29,7 @@ class ZonalChairPerson extends Model
         $map['password'] = Hash::make($userInfo['password']);
         $map['create_time'] = $userInfo['createTime'];
         $map['flag'] = 'ZC';
+        $map['zone_code'] = $userInfo['zoneCode'];
 
         return $this->create($map);
     }

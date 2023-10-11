@@ -11,13 +11,11 @@ class Region extends Model
 
     protected $fillable = [
         'region_code',
-        're_chair_person_code',
         'create_time'
     ];
 
     public function add_log($info) {
         $map['region_code'] = $info['reCode'];
-        $map['re_chair_person_code'] = $info['regionChairPersonCode'];
         $map['create_time'] = $info['createTime'];
 
         return $this->create($map);

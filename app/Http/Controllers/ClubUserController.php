@@ -28,11 +28,14 @@ class ClubUserController extends Controller
         $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
         $fullName = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $emailAddress = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
         } else if ($clubUserCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Chairperson Code is required.");
         } else if ($fullName == "") {
@@ -46,6 +49,7 @@ class ClubUserController extends Controller
 
                 if ($userPerm == true) {
                     $clubUserInfo['code'] = $clubUserCode;
+                    $clubUserInfo['clubCode'] = $clubCode;
                     $clubUserInfo['name'] = $fullName;
                     $clubUserInfo['email'] = $emailAddress;
                     $clubUserInfo['password'] = 123;

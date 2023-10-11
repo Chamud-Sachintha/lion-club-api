@@ -23,6 +23,7 @@ class CreateZonalChairPeopleTable extends Migration
             $table->integer('login_time')->nullable();
             $table->integer('create_time');
             $table->string('flag');
+            $table->string('zone_code');
             $table->timestamps();
         });
     }

@@ -29,6 +29,7 @@ class RegionChairpersonController extends Controller
         $regonChairpersonCode = (is_null($request->reChairPersonCode) || empty($request->reChairPersonCode)) ? "" : $request->reChairPersonCode;
         $fullName = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $emailAddress = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -40,6 +41,8 @@ class RegionChairpersonController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
         } else if ($emailAddress == "") {
             return $this->AppHelper->responseMessageHandle(0, "Email is required.");
+        } else if ($regionCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
         } else {
             try {
                 $chairPersonInfo = array();
@@ -50,6 +53,7 @@ class RegionChairpersonController extends Controller
                     $chairPersonInfo['name'] = $fullName;
                     $chairPersonInfo['email'] = $emailAddress;
                     $chairPersonInfo['password'] = 123;
+                    $chairPersonInfo['regionCode'] = $regionCode;
                     $chairPersonInfo['createTime'] = $this->AppHelper->day_time();
 
                     $chairPerson = $this->RegionChairperson->add_log($chairPersonInfo);

@@ -12,6 +12,7 @@ class ClubUser extends Model
 
     protected $fillable = [
         'code',
+        'club_code',
         'name',
         'email',
         'password',
@@ -23,17 +24,31 @@ class ClubUser extends Model
 
     public function add_log($userInfo) {
         $map['code'] = $userInfo['code'];
+        $map['club_code'] = $userInfo['clubCode'];
         $map['name'] = $userInfo['name'];
         $map['email'] = $userInfo['email'];
         $map['password'] = Hash::make($userInfo['password']);
         $map['create_time'] = $userInfo['createTime'];
-        $map['flag'] = 'ZC';
+        $map['flag'] = 'CU';
 
         return $this->create($map);
     }
 
     public function verify_email($email) {
         $map['email'] = $email;
+
+        return $this->where($map)->first();
+    }
+
+    public function check_permission($token, $flag) {
+        $map['flag'] = $flag;
+        $map['token'] = $token;
+
+        return $this->where($map)->first();
+    }
+
+    public function query_find_by_token($token) {
+        $map['token'] = $token;
 
         return $this->where($map)->first();
     }

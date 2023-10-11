@@ -29,7 +29,7 @@ class RegionController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
         $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
-        $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
+        // $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -37,27 +37,27 @@ class RegionController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is reuired.");
         } else if ($regionCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
-        } else if ($chairPersonCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
+        // } else if ($chairPersonCode == "") {
+        //     return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
         } else {
             try {
                 $regionInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
-                $chairPerson = $this->RegionChairPerson->find_by_code($chairPersonCode);
+                // $chairPerson = $this->RegionChairPerson->find_by_code($chairPersonCode);
                 $checkRegion = $this->Region->find_by_code($regionCode);
 
                 if (!empty($checkRegion)) {
                     return $this->AppHelper->responseMessageHandle(0, "Region Already Exist.");
                 }
 
-                if (empty($chairPerson)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
-                }
+                // if (empty($chairPerson)) {
+                //     return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
+                // }
 
                 if ($userPerm == true) {
                     $regionInfo['reCode'] = $regionCode;
-                    $regionInfo['regionChairPersonCode'] = $chairPersonCode;
+                    // $regionInfo['regionChairPersonCode'] = $chairPersonCode;
                     $regionInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                     $region = $this->Region->add_log($regionInfo);

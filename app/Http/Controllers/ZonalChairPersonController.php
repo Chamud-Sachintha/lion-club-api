@@ -28,6 +28,7 @@ class ZonalChairPersonController extends Controller
         $zonalChairpersonCode = (is_null($request->zonalChairpersonCode) || empty($request->zonalChairpersonCode)) ? "" : $request->zonalChairpersonCode;
         $fullName = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $emailAddress = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -39,6 +40,8 @@ class ZonalChairPersonController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Full Name is required.");
         } else if ($emailAddress == "") {
             return $this->AppHelper->responseMessageHandle(0, "Email is required.");
+        } else if ($zoneCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Zone Code is required.");
         } else {
             try {
                 $chairPersonInfo = array();
@@ -49,6 +52,7 @@ class ZonalChairPersonController extends Controller
                     $chairPersonInfo['name'] = $fullName;
                     $chairPersonInfo['email'] = $emailAddress;
                     $chairPersonInfo['password'] = 123;
+                    $chairPersonInfo['zoneCode'] = $zoneCode;
                     $chairPersonInfo['createTime'] = $this->AppHelper->day_time();
 
                     $chairPerson = $this->ZonalChairPerson->add_log($chairPersonInfo);

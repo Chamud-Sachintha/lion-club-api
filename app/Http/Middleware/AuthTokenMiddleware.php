@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\AppHelper;
+use App\Models\ClubUser;
 use App\Models\Governer;
 use Closure;
 use Illuminate\Http\Request;
@@ -11,11 +12,13 @@ class AuthTokenMiddleware
 {
 
     private $Governer;
+    private $ClubUser;
     private $AppHelper;
 
     public function __construct()
     {
         $this->Governer = new Governer();
+        $this->ClubUser = new ClubUser();
         $this->AppHelper = new AppHelper();
     }
     /**
@@ -36,8 +39,8 @@ class AuthTokenMiddleware
 
                 if ($request->flag == "G") {
                     $user = $this->Governer->query_find_by_token($request->token);
-                } else if ($request->flag == "") {
-
+                } else if ($request->flag == "CU") {
+                    $user = $this->ClubUser->query_find_by_token($request->token);
                 } else if ($request->flag == "") {
 
                 } else if ($request->flag == "") {

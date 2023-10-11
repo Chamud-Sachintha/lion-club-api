@@ -16,7 +16,6 @@ class CreateZonesTable extends Migration
         Schema::create('zones', function (Blueprint $table) {
             $table->id();
             $table->string('zone_code');
-            $table->string('zn_chair_person_code');
             $table->string('re_code');
             $table->integer('create_time');
             

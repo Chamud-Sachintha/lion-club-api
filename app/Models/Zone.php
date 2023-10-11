@@ -11,14 +11,13 @@ class Zone extends Model
 
     protected $fillable = [
         'zone_code',
-        'zn_chair_person_code',
         're_code',
         'create_time'
     ];
 
     public function add_log($info) {
         $map['zone_code'] = $info['zoneCode'];
-        $map['zn_chair_person_code'] = $info['chairPersonCode'];
+        // $map['zn_chair_person_code'] = $info['chairPersonCode'];
         $map['re_code'] = $info['regionCode'];
         $map['create_time'] = $info['createTime'];
 

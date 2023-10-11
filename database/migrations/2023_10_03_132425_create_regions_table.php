@@ -16,7 +16,6 @@ class CreateRegionsTable extends Migration
         Schema::create('regions', function (Blueprint $table) {
             $table->id();
             $table->string('region_code');
-            $table->string('re_chair_person_code');
             $table->integer('create_time');
             
             $table->timestamps();

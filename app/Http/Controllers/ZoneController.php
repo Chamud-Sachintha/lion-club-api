@@ -29,7 +29,7 @@ class ZoneController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
         $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
-        $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
+        // $chairPersonCode = (is_null($request->chairPersonCode) || empty($request->chairPersonCode)) ? "" : $request->chairPersonCode;
         $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") {
@@ -38,8 +38,8 @@ class ZoneController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else  if ($zoneCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Zone Code is requirted.");
-        } else if ($chairPersonCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
+        // } else if ($chairPersonCode == "") {
+        //     return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
         } else if ($regionCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
         } else {
@@ -48,19 +48,19 @@ class ZoneController extends Controller
                 $userPerm = $this->checkPermission($request_token, $flag);
 
                 $zone = $this->Zone->find_by_zone_code($zoneCode);
-                $chairPerson = $this->ZonalChairPerson->find_by_code($chairPersonCode);
+                // $chairPerson = $this->ZonalChairPerson->find_by_code($chairPersonCode);
                 
                 if (!empty($zone)) {
                     return $this->AppHelper->responseMessageHandle(0, "Zone Already Exists.");
                 }
 
-                if (empty($chairPerson)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
-                }
+                // if (empty($chairPerson)) {
+                //     return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
+                // }
 
                 if ($userPerm == true) {
                     $zonalInfo['zoneCode'] = $zoneCode;
-                    $zonalInfo['chairPersonCode'] = $chairPersonCode;
+                    // $zonalInfo['chairPersonCode'] = $chairPersonCode;
                     $zonalInfo['regionCode'] = $regionCode;
                     $zonalInfo['createTime'] = $this->AppHelper->get_date_and_time();
                     
