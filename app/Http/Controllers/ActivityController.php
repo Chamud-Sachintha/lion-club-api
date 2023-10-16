@@ -116,6 +116,62 @@ class ActivityController extends Controller
         }
     }
 
+    public function getActivityInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $activityInfo = array();
+                $activity = $this->Activity->query_find($activityCode);
+
+                if ($activity) {
+                    $activityInfo['activityCode'] = $activity['code'];
+                    $activityInfo['mainCatCode'] = $activity['main_cat_code'];
+                    $activityInfo['activityName'] = $activity['activity_name'];
+                    $activityInfo['documents'] = json_decode($activity['doc_code']);
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getActivityList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+            try {
+                $allActivityList = $this->Activity->query_all();
+
+                $activityList = array();
+                foreach ($allActivityList as $key => $value) {
+                    $activityList[$key]['activityCode'] = $value['code'];
+                    $activityList[$key]['activityName'] = $value['activity_name'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Opreation Complete", $activityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

@@ -37,7 +37,7 @@ class Activity extends Model
     }
 
     public function query_all() {
-
+        return $this->all();
     }
 
     public function query_find($code) {

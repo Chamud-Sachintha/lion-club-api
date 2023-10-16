@@ -5,6 +5,7 @@ use App\Http\Controllers\ActivityFirstSubCategoryController;
 use App\Http\Controllers\ActivityMainCategoryController;
 use App\Http\Controllers\ActivitySecondSubCategoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClubActivityController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
@@ -63,3 +64,9 @@ Route::middleware('authToken')->post('get-proof-doc-list', [ProofDocumentControl
 Route::middleware('authToken')->post('add-point-template', [PointTemplateController::class, 'addNewPointTemplate']);
 Route::middleware('authToken')->post('get-template-list', [PointTemplateController::class, 'getAllPointTemplateList']);
 Route::middleware('authToken')->post('add-activity', [ActivityController::class, 'addNewActivity']);
+Route::middleware('authToken')->post('get-activity-list', [ActivityController::class, 'getActivityList']);
+Route::middleware('authToken')->post('get-activity-info', [ActivityController::class, 'getActivityInfoByCode']);
+Route::middleware('authToken')->post('get-club-user-info', [ClubUserController::class, 'getClubUserInfoByUserCode']);
+Route::middleware('authToken')->post('get-club-user-list', [ClubUserController::class, 'getClubUserList']);
+
+Route::middleware('authToken')->post('submit-club-activity', [ClubActivityController::class, 'addnewClubActivityRecord']);

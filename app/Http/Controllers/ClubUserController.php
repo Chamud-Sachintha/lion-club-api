@@ -49,7 +49,6 @@ class ClubUserController extends Controller
 
                 if ($userPerm == true) {
                     $clubUserInfo['code'] = $clubUserCode;
-                    $clubUserInfo['clubCode'] = $clubCode;
                     $clubUserInfo['name'] = $fullName;
                     $clubUserInfo['email'] = $emailAddress;
                     $clubUserInfo['password'] = 123;
@@ -65,6 +64,60 @@ class ClubUserController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Permissions.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubUserInfoByUserCode(request $request) {
+        
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $clubUser = $this->ClubUser->query_find_by_token($request_token);
+
+                if ($clubUser) {
+                    $ClubUser["password"] = "hidden";
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Successfully", $clubUser);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubUserList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $allClubUserList = $this->ClubUser->query_all();
+
+                $clubUserList = array();
+                foreach ($allClubUserList as $key => $value) {
+                    $clubUserList[$key]['clubUserCode'] = $value['code'];
+                    $clubUserList[$key]['fullName'] = $value['name'];
+                    $clubUserList[$key]['email'] = $value['email'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubUserList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

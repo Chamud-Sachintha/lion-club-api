@@ -34,6 +34,10 @@ class ClubUser extends Model
         return $this->create($map);
     }
 
+    public function query_all() {
+        return $this->all();
+    }
+
     public function verify_email($email) {
         $map['email'] = $email;
 
