@@ -67,6 +67,34 @@ class ContextUserController extends Controller
         }
     }
 
+    public function getContextUserList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $allContextUserList = $this->ContextUser->query_all();
+
+                $contextUserList = array();
+                foreach ($allContextUserList as $key => $value) {
+                    $contextUserList[$key]['contextUserCode'] = $value['code'];
+                    $contextUserList[$key]['fullName'] = $value['name'];
+                    $contextUserList[$key]['email'] = $value['email'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $contextUserList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

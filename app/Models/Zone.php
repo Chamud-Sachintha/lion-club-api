@@ -30,6 +30,12 @@ class Zone extends Model
         return $this->where($map)->first();
     }
 
+    public function find_by_re_code($reCode) {
+        $map['re_code'] = $reCode;
+
+        return $this->where($map)->get();
+    }
+
     public function query_all() {
         return $this->all();
     }

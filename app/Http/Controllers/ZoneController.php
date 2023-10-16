@@ -105,6 +105,35 @@ class ZoneController extends Controller
         }
     }
 
+    public function getZoneListByRegionCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($regionCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
+        } else {
+
+            try {
+                $allZoneList = $this->Zone->find_by_re_code($regionCode);
+
+                $zoneList = array();
+                foreach ($allZoneList as $key => $value) {
+                    $zoneList[$key]['zoneCode'] = $value['zone_code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $zoneList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

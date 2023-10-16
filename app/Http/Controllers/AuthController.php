@@ -53,7 +53,7 @@ class AuthController extends Controller
                 } else if ($flag == "ZC") {
 
                 } else if ($flag == "CNTU") {
-
+                    $user = $this->ContextUser->check_permission($request_token, $flag);
                 } else if ($flag == "CU") {
                     $user = $this->ClubUser->check_permission($request_token, $flag);
                 } else if ($flag == "E") {

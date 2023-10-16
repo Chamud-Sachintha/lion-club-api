@@ -11,11 +11,13 @@ class Region extends Model
 
     protected $fillable = [
         'region_code',
+        'context_user_code',
         'create_time'
     ];
 
     public function add_log($info) {
         $map['region_code'] = $info['reCode'];
+        $map['context_user_code'] = $info['contextUserCode'];
         $map['create_time'] = $info['createTime'];
 
         return $this->create($map);
@@ -29,5 +31,11 @@ class Region extends Model
 
     public function query_all() {
         return $this->all();
+    }
+
+    public function get_region_list($info) {
+        $map['context_user_code'] = $info['contextUserCode'];
+
+        return $this->where($map)->get();
     }
 }

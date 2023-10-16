@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
 use App\Models\ClubUser;
+use App\Models\ContextUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +16,7 @@ class ClubActivityController extends Controller
     private $AppHelper;
     private $ClubActivity;
     private $ClubActivityDocument;
+    private $ContextUser;
 
     public function __construct()
     {   
@@ -22,6 +24,7 @@ class ClubActivityController extends Controller
         $this->AppHelper = new AppHelper();
         $this->ClubActivity = new ClubActivity();
         $this->ClubActivityDocument = new ClubActivityDocument();
+        $this->ContextUser = new ContextUser();
     }
 
     public function addnewClubActivityRecord(request $request) {
@@ -84,7 +87,38 @@ class ClubActivityController extends Controller
         }
     }
 
-    private function addDocumentRecordForUser($documentInfo) {
+    public function getClubActivityList(Request $request) {
 
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $contextUser = $this->ContextUser->query_find_by_token($request_token);
+
+                if (empty($contextUser)) {
+                    return $this->AppHelper->responseMessageHandle(0, 'Invalid Context User Code');
+                }
+
+                $allActivityList = DB::table('club_activities')->select('club_activities.*')
+                                                                ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                                ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                                ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                                ->where('regions.context_user_code', '=', $contextUser->code)
+                                                                ->get();
+
+                dd($allActivityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
     }
 }

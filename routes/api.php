@@ -47,6 +47,10 @@ Route::middleware('authToken')->post('get-region-list', [RegionController::class
 Route::middleware('authToken')->post('get_zonal-chair-person-list', [ZonalChairPersonController::class, 'getZonalChairPersonList']);
 Route::middleware('authToken')->post('get_zone-list', [ZoneController::class, 'getZoneList']);
 Route::middleware('authToken')->post('get-club-list', [ClubController::class, 'getClubList']);
+Route::middleware('authToken')->post('get-context-user-list', [ContextUserController::class, 'getContextUserList']);
+Route::middleware('authToken')->post('get-region-list-by-usercode', [RegionController::class, 'getRegionListByContextUserCode']);
+Route::middleware('authToken')->post('get-zone-list-by-re-code', [ZoneController::class, 'getZoneListByRegionCode']);
+Route::middleware('authToken')->post('get-club-activity-list', [ClubActivityController::class, 'getClubActivityList']);
 
 Route::middleware('authToken')->post('addRegion', [RegionController::class, 'addNewRegionDetail']);
 Route::middleware('authToken')->post('addZone', [ZoneController::class, 'addNewZone']);
