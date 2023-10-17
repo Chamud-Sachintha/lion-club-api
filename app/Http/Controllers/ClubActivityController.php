@@ -37,7 +37,7 @@ class ClubActivityController extends Controller
         $benificiaries = (is_null($request->beneficiaries) || empty($request->beneficiaries)) ? "" : $request->beneficiaries;
         $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
         $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
-
+ 
         $documentList = $request->files;
 
         if ($request_token == "") {
@@ -115,7 +115,13 @@ class ClubActivityController extends Controller
                                                                 ->where('regions.context_user_code', '=', $contextUser->code)
                                                                 ->get();
 
-                dd($allActivityList);
+                $activityList = array();
+                foreach ($allActivityList as $key => $value) {
+                    $activityList[$key]['activityCode'] = $value['activity_code'];
+                    $activityList[$key]['clubCode'] = $value['club_code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
