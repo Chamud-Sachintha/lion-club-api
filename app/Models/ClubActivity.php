@@ -12,9 +12,8 @@ class ClubActivity extends Model
     protected $fillable = [
         'activity_code',
         'club_code',
-        'cost',
-        'benificiaries',
-        'member_count',
+        'type',
+        'value',
         'status',
         'create_time'
     ];
@@ -22,9 +21,8 @@ class ClubActivity extends Model
     public function add_log($activityInfo) {
         $map['activity_code'] = $activityInfo['activityCode'];
         $map['club_code'] = $activityInfo['clubCode'];
-        $map['cost'] = $activityInfo['cost'];
-        $map['benificiaries'] = $activityInfo['benificiaries'];
-        $map['member_count'] = $activityInfo['memberCount'];
+        $map['type'] = $activityInfo['type'];
+        $map['value'] = $activityInfo['value'];
         $map['create_time'] = $activityInfo['createTime'];
         $map['status'] = 0;
 

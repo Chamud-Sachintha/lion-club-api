@@ -49,6 +49,7 @@ class ClubUserController extends Controller
 
                 if ($userPerm == true) {
                     $clubUserInfo['code'] = $clubUserCode;
+                    $clubUserInfo['clubCode'] = $clubCode;
                     $clubUserInfo['name'] = $fullName;
                     $clubUserInfo['email'] = $emailAddress;
                     $clubUserInfo['password'] = 123;

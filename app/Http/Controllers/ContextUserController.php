@@ -95,6 +95,97 @@ class ContextUserController extends Controller
         }
     }
 
+    public function getAvailableClubList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $contextuserCode = $this->Contextuser->query_find_by_token($request_token);
+
+                if (empty($contextUser)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Context UserCode.");
+                }
+
+                $clubList = DB::table('clubs', 'clubs.*')
+                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                    ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                    ->where('regions.context_user_code', '=', $contextUserCode->code)
+                                    ->get();
+
+                $availableClubList = array();
+                foreach ($clubList as $key => $value) {
+                    $availableClubList[$key]['clubCode'] = $value['code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $availableClubList);
+            } catch(\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function feedClubActivity(Request $request) {
+
+        $request_token= (is_null($request->token)|| empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+        $conditionValue =  (is_null($request->value) || empty($request->value)) ? "" : $request->value;
+        $conditiontype = (is_null($request->type) || empty($request->type)) ? "" : $request->type;
+        $documentList = $request->files;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {   
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        }else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $clubActivityInfo = array();
+                $clubActivityInfo['activityCode'] = $activityCode;
+                $clubActivityInfo['clubCode'] = $clubCode;
+                $clubActivityInfo['type'] = $conditiontype;
+                $clubActivityInfo['value'] = $conditionValue;
+                // $clubActivityInfo['benificiaries'] = $benificiaries;
+                // $clubActivityInfo['memberCount'] = $memberCount;
+                $clubActivityInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                $insertClubActivity = $this->ClubActivity->add_log($clubActivityInfo);
+ 
+                if ($insertClubActivity) {
+
+                    $docInfo = array();
+                    foreach ($documentList as $key => $value) {
+                         
+                        $docInfo['activityCode'] = $activityCode;
+                        $docInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $uniqueId = uniqid();
+                        $ext = $value->getClientOriginalExtension();
+                        $value->move(public_path('\modo\images'), $uniqueId . '.' . $ext);
+
+                        $docInfo['document'] = $uniqueId . '.' . $ext;
+
+                        $this->ClubActivityDocument->add_log($docInfo);
+                    }
+
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

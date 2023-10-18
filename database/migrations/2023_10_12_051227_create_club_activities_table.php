@@ -17,9 +17,8 @@ class CreateClubActivitiesTable extends Migration
             $table->id();
             $table->string('activity_code');
             $table->string('club_code');
-            $table->string('cost');
-            $table->string('benificiaries');
-            $table->string('member_count');
+            $table->integer('type');
+            $table->string('value');
             $table->integer('create_time');
             $table->integer('status');
             $table->timestamps();

@@ -28,14 +28,15 @@ class ClubActivityController extends Controller
     }
 
     public function addnewClubActivityRecord(request $request) {
-        // dd(count($request->files));
+
         $request_token  = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
         $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
-        $activityCost =  (is_null($request->activityCost) || empty($request->activityCost)) ? "" : $request->activityCost;
-        $benificiaries = (is_null($request->beneficiaries) || empty($request->beneficiaries)) ? "" : $request->beneficiaries;
-        $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
+        $conditionValue =  (is_null($request->value) || empty($request->value)) ? "" : $request->value;
+        $conditiontype = (is_null($request->type) || empty($request->type)) ? "" : $request->type;
+        // $benificiaries = (is_null($request->beneficiaries) || empty($request->beneficiaries)) ? "" : $request->beneficiaries;
+        // $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
         $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
  
         $documentList = $request->files;
@@ -46,18 +47,15 @@ class ClubActivityController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else if ($activityCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
-        } else if ($activityCost == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Cost is required.");
-        } else if ($benificiaries == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Benificiaries is required.");
         } else {
             try {
                 $clubActivityInfo = array();
                 $clubActivityInfo['activityCode'] = $activityCode;
                 $clubActivityInfo['clubCode'] = $clubCode;
-                $clubActivityInfo['cost'] = $activityCost;
-                $clubActivityInfo['benificiaries'] = $benificiaries;
-                $clubActivityInfo['memberCount'] = $memberCount;
+                $clubActivityInfo['type'] = $conditiontype;
+                $clubActivityInfo['value'] = $conditionValue;
+                // $clubActivityInfo['benificiaries'] = $benificiaries;
+                // $clubActivityInfo['memberCount'] = $memberCount;
                 $clubActivityInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                 $insertClubActivity = $this->ClubActivity->add_log($clubActivityInfo);
