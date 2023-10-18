@@ -116,7 +116,14 @@ class ActivityFirstSubCategoryController extends Controller
         } else {
 
             try {
-                
+                $resp = $this->FirstCategory->get_info_by_main_cat_code($mainCategoryCode);
+
+                $firstCategoryList = array();
+                foreach ($resp as $key => $value) {
+                    $firstCategoryList[$key]['firstSubCategoryCode'] = $value['code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $firstCategoryList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

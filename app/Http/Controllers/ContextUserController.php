@@ -3,20 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ClubActivity;
+use App\Models\ClubActivityDocument;
 use App\Models\ContextUser;
 use App\Models\Governer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ContextUserController extends Controller
 {
     private $ContextUser;
     private $Governer;
+    private $ClubActivity;
+    private $ClubActivityDocument;
     private $AppHelper;
 
     public function __construct()
     {
         $this->ContextUser = new ContextUser();
         $this->Governer = new Governer();
+        $this->ClubActivity = new ClubActivity();
+        $this->ClubActivityDocument = new ClubActivityDocument();
         $this->AppHelper = new AppHelper();
     }
 
@@ -107,16 +114,18 @@ class ContextUserController extends Controller
         } else {
 
             try {
-                $contextuserCode = $this->Contextuser->query_find_by_token($request_token);
-
-                if (empty($contextUser)) {
+                $contextuserCode = $this->ContextUser->query_find_by_token($request_token);
+                
+                if (empty($contextuserCode)) {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Context UserCode.");
                 }
+
+                // dd($contextuserCode);
 
                 $clubList = DB::table('clubs', 'clubs.*')
                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
-                                    ->where('regions.context_user_code', '=', $contextUserCode->code)
+                                    ->where('regions.context_user_code', '=', $contextuserCode->code)
                                     ->get();
 
                 $availableClubList = array();

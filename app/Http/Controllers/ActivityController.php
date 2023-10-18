@@ -172,6 +172,47 @@ class ActivityController extends Controller
         }
     }
 
+    public function findActivityByCodes(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $mainCategoryCode = (is_null($request->mainCategoryCode) || empty($request->mainCategoryCode)) ? "" : $request->mainCategoryCode;
+        $firstCategoryCode = (is_null($request->firstCategoryCode) || empty($request->firstCategoryCode)) ? "" : $request->firstCategoryCode;
+        $secondCategoryCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
+    
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($mainCategoryCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Main Category Code is required.");
+        } else if ($firstCategoryCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "First Category Code is required.");
+        } else if ($secondCategoryCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Second Category Code is required.");
+        } else {
+
+            try {
+                $catInfo = array();
+                $catInfo['firstCategoryCode'] = $firstCategoryCode;
+                $catInfo['secondCategoryCode'] = $secondCategoryCode;
+                $catInfo['mainCategoryCode'] = $mainCategoryCode;
+
+                $resp = $this->Activity->find_by_codes($catInfo);
+
+                $activityList = array();
+                foreach ($resp as $key => $value) {
+                    $activityList[$key]['activityCode'] = $value['code'];
+                    $activityList[$key]['activityName'] = $value['activity_name'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

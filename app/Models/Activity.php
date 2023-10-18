@@ -36,6 +36,14 @@ class Activity extends Model
         return $this->create($map);
     }
 
+    public function find_by_codes($info) {
+        $map['first_cat_code'] = $info['firstCategoryCode'];
+        $map['main_cat_code'] = $info['mainCategoryCode'];
+        $map['second_cat_code'] = $info['secondCategoryCode'];
+
+        return $this->where($map)->get();
+    }
+
     public function query_all() {
         return $this->all();
     }

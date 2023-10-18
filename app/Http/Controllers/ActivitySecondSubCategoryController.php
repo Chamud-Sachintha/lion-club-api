@@ -100,24 +100,31 @@ class ActivitySecondSubCategoryController extends Controller
         }
     }
 
-    public function getFirstCategoryBymainCategory(Request $request) {
+    public function getSecondCategoryByFirstCategory(Request $request) {
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag= (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $firstCategoryCode = (is_null($request->firstCategoryCode) || empty($request->firstCategoryCode)) ? "" : $request->firstCategoryCode;
 
         if($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
         } else if ($firstCategoryCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
         } else {
 
             try {
-                
+                $resp = $this->SecondSubCategory->find_by_first_cat_code($firstCategoryCode);
+
+                $secondCategoryList = array();
+                foreach ($resp as $key => $value) {
+                    $secondCategoryList[$key]['secondSubCategoryCode'] = $value['code'];
+                }
+
+                return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $secondCategoryList);
             } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+                return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
             }
         }
     }

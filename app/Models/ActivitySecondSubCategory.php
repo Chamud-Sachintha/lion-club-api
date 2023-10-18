@@ -25,6 +25,12 @@ class ActivitySecondSubCategory extends Model
         return $this->create($map);
     }
 
+    public function find_by_first_cat_code($firstCategoryCode) {
+        $map['first_cat_code'] = $firstCategoryCode;
+
+        return $this->where($map)->get();
+    }
+
     public function find_by_code($code) {
         $map['code'] = $code;
 

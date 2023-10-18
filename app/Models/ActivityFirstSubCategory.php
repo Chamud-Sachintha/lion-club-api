@@ -31,6 +31,12 @@ class ActivityFirstSubCategory extends Model
         return $this->where($map)->first();
     }
 
+    public function get_info_by_main_cat_code($mainCategoryCode) {
+        $map['main_cat_code'] = $mainCategoryCode;
+
+        return $this->where($map)->get();
+    }
+
     public function query_all() {
         return $this->all();
     }

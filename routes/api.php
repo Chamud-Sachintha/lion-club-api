@@ -64,6 +64,10 @@ Route::middleware('authToken')->post('add-second-sub-category', [ActivitySecondS
 Route::middleware('authToken')->post('get-second-category-list', [ActivitySecondSubCategoryController::class, 'getSecondSubCategoryList']);
 Route::middleware('authToken')->post('add-proof-doc', [ProofDocumentController::class, 'addNewProofDocument']);
 Route::middleware('authToken')->post('get-proof-doc-list', [ProofDocumentController::class, 'getProofDocList']);
+Route::middleware('authToken')->post('get-firstCatList-by-mainCatCode', [ActivityFirstSubCategoryController::class, 'getFirstCategoryBymainCategory']);
+Route::middleware('authToken')->post('get-secondCatList-by-firstCatCode', [ActivitySecondSubCategoryController::class, 'getSecondCategoryByFirstCategory']);
+Route::middleware('authToken')->post('get-activities-by-codes', [ActivityController::class, 'findActivityByCodes']);
+Route::middleware('authToken')->post('club-list-by-context-user', [ContextUserController::class, 'getAvailableClubList']);
 
 Route::middleware('authToken')->post('add-point-template', [PointTemplateController::class, 'addNewPointTemplate']);
 Route::middleware('authToken')->post('get-template-list', [PointTemplateController::class, 'getAllPointTemplateList']);
