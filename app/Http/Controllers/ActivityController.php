@@ -136,6 +136,7 @@ class ActivityController extends Controller
                     $activityInfo['activityCode'] = $activity['code'];
                     $activityInfo['mainCatCode'] = $activity['main_cat_code'];
                     $activityInfo['activityName'] = $activity['activity_name'];
+                    $activityInfo['pointTemplateCode'] = $activity['point_template_code'];
                     $activityInfo['documents'] = json_decode($activity['doc_code']);
                 }
 

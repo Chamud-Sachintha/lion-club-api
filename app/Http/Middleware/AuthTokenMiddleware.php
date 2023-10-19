@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Helpers\AppHelper;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
+use App\Models\Evaluator;
 use App\Models\Governer;
 use Closure;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ class AuthTokenMiddleware
     private $Governer;
     private $ClubUser;
     private $ContextUser;
+    private $Evaluvator;
     private $AppHelper;
 
     public function __construct()
@@ -22,6 +24,7 @@ class AuthTokenMiddleware
         $this->Governer = new Governer();
         $this->ClubUser = new ClubUser();
         $this->ContextUser = new ContextUser();
+        $this->Evaluvator = new Evaluator();
         $this->AppHelper = new AppHelper();
     }
     /**
@@ -46,8 +49,8 @@ class AuthTokenMiddleware
                     $user = $this->ClubUser->query_find_by_token($request->token);
                 } else if ($request->flag == "CNTU") {
                     $user = $this->ContextUser->query_find_by_token($request->token);
-                } else if ($request->flag == "") {
-
+                } else if ($request->flag == "E") {
+                    $user = $this->Evaluvator->query_find_by_token($request->token);
                 } else if ($request->flag == "") {
 
                 } else if ($request->flag == "") {

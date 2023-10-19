@@ -87,4 +87,29 @@ class PointTemplateController extends Controller
             }
         }
     }
+
+    public function getPointTemplateObjectByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $pointTemplateCode = (is_null($request->pointTemplateCode) || empty($request->pointTemplateCode)) ? "" : $request->pointTemplateCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($pointTemplateCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Template Code is required.");
+        } else {
+
+            try {
+                $resp = $this->PointTemplate->find_by_code($pointTemplateCode);
+
+                $rangeList = json_decode($resp->value);
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $rangeList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

@@ -78,3 +78,5 @@ Route::middleware('authToken')->post('get-club-user-info', [ClubUserController::
 Route::middleware('authToken')->post('get-club-user-list', [ClubUserController::class, 'getClubUserList']);
 
 Route::middleware('authToken')->post('submit-club-activity', [ClubActivityController::class, 'addnewClubActivityRecord']);
+Route::middleware('authToken')->post('get-template-obj-by-code', [PointTemplateController::class, 'getPointTemplateObjectByCode']);
+Route::middleware('authToken')->post('club-activity-list', [ClubActivityController::class, 'getAllClubActivityList']);

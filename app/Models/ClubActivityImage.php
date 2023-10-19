@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClubActivityDocument extends Model
+class ClubActivityImage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'activity_code',
-        'document_name',
+        'image',
         'create_time'
     ];
 
-    public function add_log($info) {
-        $map['activity_code'] = $info['activityCode'];
-        $map['document_name'] = $info['document'];
-        $map['create_time'] = $info['createTime'];
+    public function add_log($imageInfo) {
+        $map['activity_code'] = $imageInfo['activityCode'];
+        $map['image'] = $imageInfo['image'];
+        $map['create_time'] = $imageInfo['createTime'];
 
         return $this->create($map);
     }

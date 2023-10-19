@@ -13,7 +13,6 @@ class ClubActivity extends Model
         'activity_code',
         'club_code',
         'type',
-        'value',
         'status',
         'create_time'
     ];
@@ -22,7 +21,7 @@ class ClubActivity extends Model
         $map['activity_code'] = $activityInfo['activityCode'];
         $map['club_code'] = $activityInfo['clubCode'];
         $map['type'] = $activityInfo['type'];
-        $map['value'] = $activityInfo['value'];
+        // $map['value'] = $activityInfo['value'];
         $map['create_time'] = $activityInfo['createTime'];
         $map['status'] = 0;
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
+use App\Models\ClubActivityImage;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class ClubActivityController extends Controller
     private $AppHelper;
     private $ClubActivity;
     private $ClubActivityDocument;
+    private $ClubActivityImage;
     private $ContextUser;
 
     public function __construct()
@@ -24,6 +26,7 @@ class ClubActivityController extends Controller
         $this->AppHelper = new AppHelper();
         $this->ClubActivity = new ClubActivity();
         $this->ClubActivityDocument = new ClubActivityDocument();
+        $this->ClubActivityImage = new ClubActivityImage();
         $this->ContextUser = new ContextUser();
     }
 
@@ -33,13 +36,14 @@ class ClubActivityController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
         $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
-        $conditionValue =  (is_null($request->value) || empty($request->value)) ? "" : $request->value;
+        //$conditionValue =  (is_null($request->value) || empty($request->value)) ? "" : $request->value;
         $conditiontype = (is_null($request->type) || empty($request->type)) ? "" : $request->type;
         // $benificiaries = (is_null($request->beneficiaries) || empty($request->beneficiaries)) ? "" : $request->beneficiaries;
         // $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
         $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
  
         $documentList = $request->files;
+        $imageList = $request->files;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -53,7 +57,7 @@ class ClubActivityController extends Controller
                 $clubActivityInfo['activityCode'] = $activityCode;
                 $clubActivityInfo['clubCode'] = $clubCode;
                 $clubActivityInfo['type'] = $conditiontype;
-                $clubActivityInfo['value'] = $conditionValue;
+                // $clubActivityInfo['value'] = $conditionValue;
                 // $clubActivityInfo['benificiaries'] = $benificiaries;
                 // $clubActivityInfo['memberCount'] = $memberCount;
                 $clubActivityInfo['createTime'] = $this->AppHelper->get_date_and_time();
@@ -70,11 +74,18 @@ class ClubActivityController extends Controller
 
                         $uniqueId = uniqid();
                         $ext = $value->getClientOriginalExtension();
-                        $value->move(public_path('\modo\images'), $uniqueId . '.' . $ext);
 
-                        $docInfo['document'] = $uniqueId . '.' . $ext;
+                        if ($ext == "pdf") {
+                            $value->move(public_path('\modo\docs'), $uniqueId . '.' . $ext);
+                            $docInfo['document'] = $uniqueId . '.' . $ext;
 
-                        $this->ClubActivityDocument->add_log($docInfo);
+                            $this->ClubActivityDocument->add_log($docInfo);
+                        } else {
+                            $value->move(public_path('\modo\images'), $uniqueId . '.' . $ext);
+                            $docInfo['image'] = $uniqueId . '.' . $ext;
+
+                            $this->ClubActivityImage->add_log($docInfo);
+                        }
                     }
 
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
@@ -120,6 +131,34 @@ class ClubActivityController extends Controller
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getAllClubActivityList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubActivity->query_all();
+
+                $clubActivityList = array();
+                foreach ($resp as $key => $value) {
+                    $clubActivityList[$key]['activityCode'] = $value['activity_code'];
+                    $clubActivityList[$key]['clubCode'] = $value['club_code'];
+                    $clubActivityList[$key]['createTime'] = $value['create_time'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
