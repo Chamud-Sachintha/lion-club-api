@@ -164,4 +164,91 @@ class ClubActivityController extends Controller
             }
         }
     }
+
+    public function getClubActivityDocumentsByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubActivityDocument->query_find_docs($activityCode);
+                $resp2 = $this->ClubActivityImage->find_images_by_activity_code($activityCode);
+
+                $activityDocList = array();
+                foreach ($resp as $key => $value) {
+                    $activityDocList[$key]['documentName'] = $value['document_name'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operatyion Complete", $activityDocList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubActivityImageListByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+
+                $resp = $this->ClubActivityImage->find_images_by_activity_code($activityCode);
+
+                $activityImageList = array();
+                foreach ($resp as $key => $value) {
+                    $activityImageList[$key]['imageName'] = $value['image'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operatyion Complete", $activityImageList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubActivityInfoByActivityCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = DB::table('activities')->select('activities.*', 'club_activities.club_code', 'club_activities.create_time')
+                                                ->join('club_activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                ->where('activities.code', $activityCode)
+                                                ->get();
+
+                                                // print_r($resp);
+                $activityInfo = array();
+                $activityInfo['activityCode'] = $resp[0]->code;
+                $activityInfo['clubCode'] = $resp[0]->club_code;
+                $activityInfo['activityName'] = $resp[0]->activity_name;
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

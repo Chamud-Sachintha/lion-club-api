@@ -22,4 +22,10 @@ class ClubActivityDocument extends Model
 
         return $this->create($map);
     }
+
+    public function query_find_docs($activityCode) {
+        $map['activity_code'] = $activityCode;
+
+        return $this->where($map)->get();
+    }
 }

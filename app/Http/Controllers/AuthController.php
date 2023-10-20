@@ -49,9 +49,9 @@ class AuthController extends Controller
                 if ($flag == "G") {
                     $user = $this->Governer->check_permission($request_token, $flag);
                 } else if ($flag == "RC") {
-                    
+                    $user = $this->RegionChairPerson->check_permission($request_token, $flag);
                 } else if ($flag == "ZC") {
-
+                    $user = $this->ZonalChairPerson->check_permission($request_token, $flag);
                 } else if ($flag == "CNTU") {
                     $user = $this->ContextUser->check_permission($request_token, $flag);
                 } else if ($flag == "CU") {
@@ -59,7 +59,7 @@ class AuthController extends Controller
                 } else if ($flag == "E") {
                     $user = $this->Evaluator->check_permission($request_token, $flag);
                 } else {
-
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid User Code.");
                 }
 
                 if (!empty($user)) {

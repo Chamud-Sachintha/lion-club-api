@@ -28,6 +28,12 @@ class ClubActivity extends Model
         return $this->create($map);
     }
 
+    public function query_find_by_code($activityCode) {
+        $map['activity_code'] = $activityCode;
+
+        return $this->where($map)->first();
+    }
+
     public function query_all() {
         return $this->all();
     }

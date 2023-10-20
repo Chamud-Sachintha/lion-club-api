@@ -53,6 +53,19 @@ class ZonalChairPerson extends Model
         return $this->where($map)->first();
     }
 
+    public function query_find_by_token($token) {
+        $map['token'] = $token;
+
+        return $this->where($map)->first();
+    }
+
+    public function check_permission($token, $flag) {
+        $map['flag'] = $flag;
+        $map['token'] = $token;
+
+        return $this->where($map)->first();
+    }
+
     public function query_all() {
         return $this->all();
     }

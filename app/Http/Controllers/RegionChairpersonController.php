@@ -99,6 +99,31 @@ class RegionChairpersonController extends Controller
         }
     }
 
+    public function loadUserData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = $this->RegionChairperson->query_find_by_token($request_token);
+
+                $userInfo = array();
+                $userInfo['name'] = $resp['name'];
+                $userInfo['reCode'] = $resp['region_code'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $userInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

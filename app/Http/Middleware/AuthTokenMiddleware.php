@@ -7,6 +7,8 @@ use App\Models\ClubUser;
 use App\Models\ContextUser;
 use App\Models\Evaluator;
 use App\Models\Governer;
+use App\Models\RegionChairperson;
+use App\Models\ZonalChairPerson;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -17,6 +19,8 @@ class AuthTokenMiddleware
     private $ClubUser;
     private $ContextUser;
     private $Evaluvator;
+    private $RegionChairPerson;
+    private $ZonalChairPerson;
     private $AppHelper;
 
     public function __construct()
@@ -25,6 +29,8 @@ class AuthTokenMiddleware
         $this->ClubUser = new ClubUser();
         $this->ContextUser = new ContextUser();
         $this->Evaluvator = new Evaluator();
+        $this->RegionChairPerson = new RegionChairperson();
+        $this->ZonalChairPerson = new ZonalChairPerson();
         $this->AppHelper = new AppHelper();
     }
     /**
@@ -51,10 +57,10 @@ class AuthTokenMiddleware
                     $user = $this->ContextUser->query_find_by_token($request->token);
                 } else if ($request->flag == "E") {
                     $user = $this->Evaluvator->query_find_by_token($request->token);
-                } else if ($request->flag == "") {
-
-                } else if ($request->flag == "") {
-
+                } else if ($request->flag == "RC") {
+                    $user = $this->RegionChairPerson->query_find_by_token($request->token);
+                } else if ($request->flag == "ZC") {
+                    $user = $this->ZonalChairPerson->query_find_by_token($request->token);
                 } else {
                     return response()->json(['error' => 'Unauthorized'], 401);
                 }

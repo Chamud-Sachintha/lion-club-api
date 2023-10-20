@@ -80,3 +80,9 @@ Route::middleware('authToken')->post('get-club-user-list', [ClubUserController::
 Route::middleware('authToken')->post('submit-club-activity', [ClubActivityController::class, 'addnewClubActivityRecord']);
 Route::middleware('authToken')->post('get-template-obj-by-code', [PointTemplateController::class, 'getPointTemplateObjectByCode']);
 Route::middleware('authToken')->post('club-activity-list', [ClubActivityController::class, 'getAllClubActivityList']);
+
+Route::middleware('authToken')->post('get-activity-doc-list-by-code', [ClubActivityController::class, 'getClubActivityDocumentsByCode']);
+Route::middleware('authToken')->post('get-activity-image-list-by-code', [ClubActivityController::class, 'getClubActivityImageListByCode']);
+Route::middleware('authToken')->post('get-activity-info-by-code', [ClubActivityController::class, 'getClubActivityInfoByActivityCode']);
+
+Route::middleware('authToken')->post('load-re-chairperson-data', [RegionChairpersonController::class, 'loadUserData']);
