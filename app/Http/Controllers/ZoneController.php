@@ -96,6 +96,7 @@ class ZoneController extends Controller
                 $zoneList = array();
                 foreach ($allZones as $key => $value) {
                     $zoneList[$key]['zoneCode'] = $value['zone_code'];
+                    $zoneList[$key]['regionCode'] = $value['re_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $zoneList);
