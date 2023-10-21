@@ -164,6 +164,10 @@ class ActivityController extends Controller
                 foreach ($allActivityList as $key => $value) {
                     $activityList[$key]['activityCode'] = $value['code'];
                     $activityList[$key]['activityName'] = $value['activity_name'];
+                    $activityList[$key]['mainCatCode'] = $value['main_cat_code'];
+                    $activityList[$key]['firstCatCode'] = $value['first_cat_code'];
+                    $activityList[$key]['secondCatCode'] = $value['second_cat_code'];
+                    $activityList[$key]['templateCode'] = $value['point_template_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Opreation Complete", $activityList);
