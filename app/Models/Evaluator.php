@@ -57,4 +57,8 @@ class Evaluator extends Model
 
         return $this->where(array('id' => $uid))->update($map);
     }
+
+    public function query_all() {
+        return $this->all();
+    }
 }

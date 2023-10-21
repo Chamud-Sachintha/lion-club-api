@@ -86,14 +86,16 @@ class ActivitySecondSubCategoryController extends Controller
             return $this->Apphelper->responseMessageHandle(0, "Flag is required.");
         } else {
             try {
-                $allFirstCategoryList = $this->SecondSubCategory->query_all();
+                $allSecondCategoryList = $this->SecondSubCategory->query_all();
 
-                $firstCategoryList = array();
-                foreach ($allFirstCategoryList as $key => $value) {
-                    $firstCategoryList[$key]['secondSubCategoryCode'] = $value['code'];
+                $secondCategoryList = array();
+                foreach ($allSecondCategoryList as $key => $value) {
+                    $secondCategoryList[$key]['secondSubCategoryCode'] = $value['code'];
+                    $secondCategoryList[$key]['categoryName'] = $value['category_name'];
+                    $secondCategoryList[$key]['firstSubCategoryCode'] = $value['first_cat_code'];
                 }
 
-                return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $firstCategoryList);
+                return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $secondCategoryList);
             } catch (\Exception $e) {
                 return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
             }

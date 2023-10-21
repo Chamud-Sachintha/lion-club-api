@@ -89,6 +89,7 @@ class ZonalChairPersonController extends Controller
                     $chairPersonList[$key]['zonalChairpersonCode'] = $value['code'];
                     $chairPersonList[$key]['fullName'] = $value['name'];
                     $chairPersonList[$key]['email'] = $value['email'];
+                    $chairPersonList[$key]['zoneCode'] = $value['zone_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $chairPersonList);

@@ -90,6 +90,7 @@ class RegionChairpersonController extends Controller
                     $regionChairPersonList[$key]['reChairPersonCode'] = $value['code'];
                     $regionChairPersonList[$key]['fullName'] = $value['name'];
                     $regionChairPersonList[$key]['email'] = $value['email'];
+                    $regionChairPersonList[$key]['regionCode'] = $value['region_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $regionChairPersonList);
