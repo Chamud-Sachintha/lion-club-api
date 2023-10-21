@@ -93,6 +93,7 @@ class ClubController extends Controller
                 $clubList = array();
                 foreach ($allClubList as $key => $value) {
                     $clubList[$key]['clubCode'] = $value['club_code'];
+                    $clubList[$key]['zoneCode'] = $value['zone_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubList);
