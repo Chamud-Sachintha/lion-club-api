@@ -163,31 +163,31 @@ class ActivitySecondSubCategoryController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $secondCatCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
+        $secondCatCode = (is_null($request->secondSubCategoryCode) || empty($request->secondSubCategoryCode)) ? "" : $request->secondSubCategoryCode;
         $firstCatCode = (is_null($request->firstSubCategoryCode) || empty($request->firstSubCategoryCode)) ? "" : $request->firstSubCategoryCode;
         $secondCatName = (is_null($request->categoryName) || empty($request->categoryName)) ? "" : $request->categoryName;
 
         if ($request_token == "") {
             return $this->Apphelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
-            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Flag is required.");
         } else if ($secondCatCode == "") {
-            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Second Cateory Code is required.");
         } else if ($firstCatCode == "") {
-            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "First Category Code is required.");
         } else if ($secondCatName == "") {
-            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+            return $this->Apphelper->responseMessageHandle(0, "Category Name is required.");
         } else {
 
             try {
                 $newCategoryInfo = array();
                 $newCategoryInfo['secondCategoryCode'] = $secondCatCode;
-                $newCategoryInfo['categroyName'] = $secondCatName;
+                $newCategoryInfo['categoryName'] = $secondCatName;
                 $newCategoryInfo['firstCatCode'] = $firstCatCode;
 
                 $firstCategory = $this->FirstSubcategory->find_by_code($firstCatCode);
 
-                if (empty($firstCatCode)) {
+                if (empty($firstCategory)) {
                     return $this->Apphelper->responseMessageHandle(0, "Invalid Category Code.");
                 }
 

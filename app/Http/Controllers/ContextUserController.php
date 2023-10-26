@@ -195,6 +195,74 @@ class ContextUserController extends Controller
         }
     }
 
+    public function getContextUserInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $contextUserCode = (is_null($request->contextUserCode) || empty($request->contextUserCode)) ? "" : $request->contextUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($contextUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Context User Code is required.");
+        } else {
+
+            try {
+                $userInfo = array();
+                $contextUser = $this->ContextUser->find_by_code($contextUserCode);
+
+                $userInfo['code'] = $contextUser['code'];
+                $userInfo['name'] = $contextUser['name'];
+                $userInfo['email'] = $contextUser['email'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $userInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateContextUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =- (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $contextUserCode = (is_null($request->contextUserCode) || empty($request->contextUserCode)) ? "" : $request->contextUserCode;
+        $name = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
+        $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is requiored.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is requiored.");
+        } else if ($contextUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Context User Code is requiored.");
+        } else if ($name == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Name is requiored.");
+        } else if ($email == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Email is requiored.");
+        } else {
+
+            try {
+                $newContextUserInfo = array();
+                $newContextUserInfo['code'] = $contextUserCode;
+                $newContextUserInfo['name'] = $name;
+                $newContextUserInfo['email'] = $email;
+
+                $updateUser = $this->ContextUser->update_user_by_code($newContextUserInfo);
+
+                if ($newContextUserInfo) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");;
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

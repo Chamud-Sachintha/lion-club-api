@@ -59,6 +59,14 @@ class RegionChairperson extends Model
         return $this->where($map)->first();
     }
 
+    public function update_user_by_code($userInfo) {
+        $map['id'] = $userInfo['userId'];
+        $map1['name'] = $userInfo['name'];
+        $map1['email'] = $userInfo['email'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function check_permission($token, $flag) {
         $map['flag'] = $flag;
         $map['token'] = $token;

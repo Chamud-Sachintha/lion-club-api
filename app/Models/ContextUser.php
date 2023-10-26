@@ -52,6 +52,20 @@ class ContextUser extends Model
         return $this->where($map)->first();
     }
 
+    public function find_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->first();
+    }
+
+    public function mupdate_user_by_code($userInfo) {
+        $map['code'] = $userInfo['contextUserCode'];
+        $map1['name'] = $userInfo['name'];
+        $map1['email'] = $userInfo['email'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function query_find_by_token($token) {
         $map['token'] = $token;
 

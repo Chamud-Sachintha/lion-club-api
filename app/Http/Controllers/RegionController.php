@@ -141,6 +141,69 @@ class RegionController extends Controller
         }
     }
 
+    public function getRegionInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is requited.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is requited.");
+        } else if ($regionCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is requited.");
+        } else {
+
+            try {
+                $regionInfo = array();
+                $region = $this->Region->find_by_code($regionCode);
+
+                $regionInfo['code'] = $region['region_code'];
+                $regionInfo['contextUserCode'] = $region['context_user_code'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $regionInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateRegionByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag =(is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $reCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+        $contextUserCode = (is_null($request->contextUserCode) || empty($request->contextUserCode)) ? "" : $request->contextUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($reCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
+        } else if ($contextUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Context User Code is required.");
+        } else {
+
+            try {
+                $newRegionInfo = array();
+                $newRegionInfo['reCode'] = $reCode;
+                $newRegionInfo['contextUserCode'] = $contextUserCode;
+
+                $updateRegion = $this->Region->update_region_by_code($newRegionInfo);
+
+                if ($updateRegion) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Erro Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

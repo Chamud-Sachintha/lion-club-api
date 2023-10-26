@@ -125,6 +125,78 @@ class ClubUserController extends Controller
         }
     }
 
+    public function getClubUserInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $clubUserInfo = array();
+                $clubUser = $this->ClubUser->find_by_code($clubUserCode);
+
+                $clubUserInfo['code'] = $clubUser['code'];
+                $clubUserInfo['name'] = $clubUser['name'];
+                $clubUserInfo['email'] = $clubUser['email'];
+                $clubUserInfo['clubCode'] = $clubUser['club_code'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubUserInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateClubUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
+        $fullName = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
+        $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else if ($clubUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else if ($fullName == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else if ($email == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokemn is required.");
+        } else {
+
+            try {
+                $newClubUserInfo = array();
+                $newClubUserInfo['name'] = $fullName;
+                $newClubUserInfo['email'] = $email;
+                $newClubUserInfo['clubCode'] = $clubCode;
+
+                $updateClubUser = $this->ClubUser->update_club_user_by_code($newClubUserInfo);
+
+                if ($updateClubUser) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operayion Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

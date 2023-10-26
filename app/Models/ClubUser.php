@@ -63,4 +63,20 @@ class ClubUser extends Model
 
         return $this->where(array('id' => $uid))->update($map);
     }
+
+    public function update_club_user_by_code($userInfo) {
+        $map['code'] = $userInfo['code'];
+        $map1['name'] = $userInfo['name'];
+        $map1['email'] = $userInfo['email'];
+        $map1['club_code'] = $userInfo['clubCode'];
+
+        return $this->where($map)->updae($map1);
+    }
+
+    public function find_by_code($userCode) {
+        $map['code'] = $userCode;
+
+        return $this->where($map)->first();
+    }
+
 }

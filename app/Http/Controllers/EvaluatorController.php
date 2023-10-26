@@ -118,6 +118,73 @@ class EvaluatorController extends Controller
         
     }
 
+    public function getEvaluvatorInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $userCode = (is_null($request->evaluvatorCode) || empty($request->evaluvatorCode)) ? "" : $request->evaluvatorCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($userCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $userInfo = array();
+                $evaluvatorUser = $this->Evaluator->finc_by_code($userCode);
+
+                $userInfo['code'] = $evaluvatorUser['code'];
+                $userInfo['name'] = $evaluvatorUser['name'];
+                $userInfo['email'] = $evaluvatorUser['email'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Opretaion complete", $userInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateEvaluvatorUserByCode(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $userCode = (is_null($request->evaluvatorCode) || empty($request->evaluvatorCode)) ? "" : $request->evaluvatorCode;
+        $name = (is_null($request->name) || empty($request->name)) ? "" : $request->name;
+        $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+        } else if ($userCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+        } else if ($name == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+        } else if ($email == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+        } else {
+
+            try {
+                $newEvaluvatorInfo  = array();
+                $newEvaluvatorInfo['code'] = $userCode;
+                $newEvaluvatorInfo['name'] = $name;
+                $newEvaluvatorInfo['email'] = $email;
+
+                $updateUser = $this->Evaluator->update_evaluvator_by_code($newEvaluvatorInfo);
+
+                if ($updateUser) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle("0", "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

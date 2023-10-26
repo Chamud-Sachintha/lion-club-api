@@ -103,6 +103,10 @@ class ClubController extends Controller
         }
     }
 
+    public function getClubInfoByClubCode(Request $request) {
+        
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

@@ -135,6 +135,9 @@ class ActivityController extends Controller
                 if ($activity) {
                     $activityInfo['activityCode'] = $activity['code'];
                     $activityInfo['mainCatCode'] = $activity['main_cat_code'];
+                    $activityInfo['firstCatCode'] = $activity['first_cat_code'];
+                    $activityInfo['secondCatCode'] = $activity['second_cat_code'];
+                    $activityInfo['authorizedUser'] = $activity['authorized_user'];
                     $activityInfo['activityName'] = $activity['activity_name'];
                     $activityInfo['pointTemplateCode'] = $activity['point_template_code'];
                     $activityInfo['documents'] = json_decode($activity['doc_code']);
@@ -212,6 +215,60 @@ class ActivityController extends Controller
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateActivityByActivityCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+        $activityName = (is_null($request->activityName) || empty($request->activityName)) ? "" : $request->activityName;
+        $mainCatCode = (is_null($request->mainCatCode) || empty($request->mainCatCode)) ? "" : $request->mainCatCode;
+        $firstCatCode = (is_null($request->firstCatCode) || empty($request->firstCatCode)) ? "" : $request->firstCatCode;
+        $secondCatCode = (is_null($request->secondCatCode) || empty($request->secondCatCode)) ? "" : $request->secondCatCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {   
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($activityCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
+        } else if ($activityName == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Activity Name is required.");
+        } else if ($mainCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Main Catgory Code is required.");
+        } else if ($firstCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "First Cateory Code is required.");
+        } else if ($firstCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "First Category Coide is required.");
+        } else if ($secondCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Second Cateory Coide is required.");
+        } else {
+
+            try {
+                $newActivityInfo = array();
+
+                $mainCategory = $this->MainActivity->find_by_code($mainCatCode);
+                $firstCategory = $this->FirstSubCategory->find_by_code($firstCatCode);
+                $secondCategory = $this->SecondSubCategory->find_by_code($secondCatCode);
+
+                if (empty($firstCategory)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid First Category Code.");
+                }
+
+                if (empty($mainCategory)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Main Category Code");
+                }
+
+                if (empty($secondCategory)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Second Cateory Code");
+                }
+
+                
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

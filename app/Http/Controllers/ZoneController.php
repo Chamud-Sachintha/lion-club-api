@@ -135,6 +135,58 @@ class ZoneController extends Controller
         }
     }
 
+    public function getZoneInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($zoneCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Zone Code is required.");
+        } else {    
+
+            try {
+                $zoneInfo = array();
+                $zone = $this->Zone->find_by_zone_code($zoneCode);
+
+                $zoneInfo['code'] = $zone['zone_code'];
+                $zoneInfo['reCode'] = $zone['re_code'];
+                return $this->AppHelper->responseEntityHandle(1, "operation complete", $zoneInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateZoneByZoneCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
+        $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
+
+        if ($request_token == "") {
+
+        } else if ($flag == "") {
+
+        } else if ($zoneCode == "") {
+
+        } else if ($reCode == "") {
+
+        } else {
+
+            try {
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

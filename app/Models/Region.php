@@ -38,4 +38,11 @@ class Region extends Model
 
         return $this->where($map)->get();
     }
+
+    public function update_region_by_code($regionInfo) {
+        $map['region_code'] = $regionInfo['reCode'];
+        $map1['context_user_code'] = $regionInfo['contextUserCode'];
+
+        return $this->where($map)->update($map1);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Governer;
+use App\Models\Region;
 use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class RegionChairpersonController extends Controller
 {
     
     private $RegionChairperson;
+    private $Region;
     private $Governer;
     private $AppHelper;
 
@@ -18,6 +20,7 @@ class RegionChairpersonController extends Controller
     {
         $this->RegionChairperson = new RegionChairperson();
         $this->Governer = new Governer();
+        $this->Region = new Region();
         $this->AppHelper = new AppHelper();
     }
 
@@ -104,21 +107,69 @@ class RegionChairpersonController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $chiarPersonCode = (is_null($request->reChairPersonCode) || empty($request->reChairPersonCode)) ? "" : $request->reChairPersonCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($chiarPersonCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Chair Person Code is required.");
         } else {
 
             try {
-                $resp = $this->RegionChairperson->query_find_by_token($request_token);
+                $resp = $this->RegionChairperson->find_by_code($chiarPersonCode);
 
                 $userInfo = array();
+                $userInfo['code'] = $resp['code'];
                 $userInfo['name'] = $resp['name'];
+                $userInfo['email'] = $resp['email'];
                 $userInfo['reCode'] = $resp['region_code'];
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $userInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateRegionChairPersonByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
+        $name = (is_null($request->name) || empty($request->name)) ? "" : $request->name;
+        $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+
+        if ($request_token == "") { 
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($reCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
+        } else if ($name == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Name is required.");
+        } else {
+
+            try {
+                $newChairpersonInfo = array();
+                $region = $this->Region->find_by_code($reCode);
+
+                if (empty($region)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Region Code");
+                }
+
+                $newChairpersonInfo['reCode'] = $reCode;
+                $newChairpersonInfo['name'] = $name;
+                $newChairpersonInfo['email'] = $email;
+
+                $updateUser = $this->RegionChairperson->update_user_by_code($newChairpersonInfo);
+
+                if ($updateUser) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Copmplete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

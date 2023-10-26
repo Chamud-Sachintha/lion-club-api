@@ -97,3 +97,16 @@ Route::middleware('authToken')->post('get-first-cat-info-by-code', [ActivityFirs
 Route::middleware('authToken')->post('update-first-category-by-code', [ActivityFirstSubCategoryController::class, 'updateFirstCategoryInfoByCode']);
 Route::middleware('authToken')->post('get-second-cat-info-by-code', [ActivitySecondSubCategoryController::class, 'getSecondCategoryInfoByCode']);
 Route::middleware('authToken')->post('update-second-category-by-code', [ActivitySecondSubCategoryController::class, 'updateSecondCategoryByCode']);
+Route::middleware('authToken')->post('update-reion-chair-user-by-code', [RegionChairpersonController::class, 'updateRegionChairPersonByCode']);
+Route::middleware('authToken')->post('get-zonal-user-info-by-code', [ZonalChairPersonController::class, 'getZonalChairPersonInfoByCode']);
+Route::middleware('authToken')->post('update-zonal-user-by-code', [ZonalChairPersonController::class, 'updateZonalChairpersonByCode']);
+Route::middleware('authToken')->post('get-context-user-info-by-code', [ContextUserController::class, 'getContextUserInfoByCode']);
+Route::middleware('authToken')->post('update-context-user-by-code', [ContextUserController::class, 'updateContextUserByCode']);
+Route::middleware('authToken')->post('get-evaluvator-info-by-code', [EvaluatorController::class, 'getEvaluvatorInfoByCode']);
+Route::middleware('authToken')->post('update-evaluvator-by-code', [EvaluatorController::class, 'updateEvaluvatorUserByCode']);
+
+Route::middleware('authToken')->post('get-club-user-info-by-code', [ClubUserController::class, 'getClubUserInfoByCode']);
+Route::middleware('authToken')->post('update-club-user-by-code', [ClubUserController::class, 'updateClubUserByCode']);
+Route::middleware('authToken')->post('get-region-info-by-code', [RegionController::class, 'getRegionInfoByCode']);
+Route::middleware('authToken')->post('update-region-by-code', [RegionController::class, 'updateRegionByCode']);
+Route::middleware('authToken')->post('get-zone-info-by-code', [ZoneController::class, 'getZoneInfoByCode']);
