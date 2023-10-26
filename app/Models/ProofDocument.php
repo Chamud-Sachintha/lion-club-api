@@ -29,6 +29,13 @@ class ProofDocument extends Model
         return $this->where($map)->first();
     }
 
+    public function update_docuemnt_details_by_code($documentInfo) {
+        $map['code'] = $documentInfo['documentCode'];
+        $info['name'] = $documentInfo['documentName'];
+        
+        return $this->where($map)->update($info);
+    }
+
     public function query_all() {
         return $this->all();
     }

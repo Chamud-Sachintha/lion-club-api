@@ -130,6 +130,86 @@ class ActivityFirstSubCategoryController extends Controller
         }
     }
 
+    public function getFirstCategoryInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $firstCatCode = (is_null($request->firstCategoryCode) || empty($request->firstCategoryCode)) ? "" : $request->firstCategoryCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($firstCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $resp = $this->FirstCategory->find_by_code($firstCatCode);
+
+                $firstCatInfo = array();
+                $firstCatInfo['firstCategoryCode'] = $resp['code'];
+                $firstCatInfo['mainCategoryCode'] = $resp['main_cat_code'];
+                $firstCatInfo['categoryName'] = $resp['category_name'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $firstCatInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateFirstCategoryInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $firstCatCode = (is_null($request->firstSubCategoryCode) || empty($request->firstSubCategoryCode)) ? "" : $request->firstSubCategoryCode;
+        $mainCatCode = (is_null($request->mainCategoryCode) || empty($request->mainCategoryCode)) ? "" : $request->mainCategoryCode;
+        $firstCatName = (is_null($request->categoryName) || empty($request->categoryName)) ? "" : $request->categoryName;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($firstCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "First Category Code is required.");
+        } else if ($mainCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Main Category Code is required.");
+        } else if ($firstCatName == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Category Name is required.");
+        } else {
+
+            try {
+                $newFirstCategoryInfo = array();
+                $newFirstCategoryInfo['firstCategoryCode'] = $firstCatCode;
+                $newFirstCategoryInfo['mainCatCode'] = $mainCatCode;
+                $newFirstCategoryInfo['categoryNmae'] = $firstCatName;
+
+                $mainCategory = $this->MainCategory->find_by_code($mainCatCode);
+                $firstCategory = $this->FirstCategory->find_by_code($firstCatCode);
+
+                if (empty($mainCategory)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Main Category Code");
+                }
+
+                if (empty($firstCategory)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid First Category");
+                }
+
+                $resp = $this->FirstCategory->update_first_category_by_code($newFirstCategoryInfo);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

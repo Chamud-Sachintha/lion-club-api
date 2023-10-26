@@ -85,12 +85,78 @@ class ProofDocumentController extends Controller
                 $proofDocList = array();
                 foreach ($allProffDocList as $key => $value) {
                     $proofDocList[$key]['documentCode'] = $value['code'];
-                    // $proofDocList[$key]['documentName'] = $value['name'];
+                    $proofDocList[$key]['documentName'] = $value['name'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operayion Complete", $proofDocList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0 ,$e->getMessage());
+            }
+        }
+    }
+
+    public function updateProofDocumentByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $documentCode = (is_null($request->documentCode) || empty($request->documentCode)) ? "" : $request->documentCode;
+        $documentName = (is_null($request->documentName) || empty($request->documentName)) ? "" : $request->documentName;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($documentCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Document Code is required.");
+        } else {
+            
+            try {
+                $documentDetails = array();
+                $documentDetails['documentCode'] = $documentCode;
+                $documentDetails['documentName'] = $documentName;
+
+                $resp = $this->ProofDoc->find_by_code($documentCode);
+
+                if ($resp) {
+                    $updateDocument = $this->ProofDoc->update_docuemnt_details_by_code($documentDetails);
+
+                    if ($resp) {
+                        return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                    }
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Document Code.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getDocumentInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $documentCode = (is_null($request->documentCode) || empty($request->documentCode)) ? "" : $request->documentCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = $this->ProofDoc->find_by_code($documentCode);
+
+                $documentInfo = array();
+                $documentInfo['documentCode'] = $resp['code'];
+                $documentInfo['documentName'] = $resp['name'];
+
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $documentInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
     }

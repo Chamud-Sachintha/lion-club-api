@@ -29,6 +29,13 @@ class ActivityMainCategory extends Model
         return $this->where($map)->first();
     }
 
+    public function update_main_category_by_code($mainCatInfo) {
+        $map['code'] = $mainCatInfo['mainCatCode'];
+        $map1['name'] = $mainCatInfo['mainCatName'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function query_all() {
         return $this->all();
     }

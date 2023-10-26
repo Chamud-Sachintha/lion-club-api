@@ -131,6 +131,79 @@ class ActivitySecondSubCategoryController extends Controller
         }
     }
 
+    public function getSecondCategoryInfoByCode(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $secondCatCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
+
+        if ($request_token == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($secondCatCode == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $resp = $this->SecondSubCategory->find_by_code($secondCatCode);
+
+                $secondCatInfo = array();
+                $secondCatInfo['secondCategoryCode'] = $resp['code'];
+                $secondCatInfo['firstCategoryCode'] = $resp['first_cat_code'];
+                $secondCatInfo['categoryName'] = $resp['category_name'];
+
+                return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $secondCatInfo);
+            } catch (\Exception $e) {
+                return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateSecondCategoryByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $secondCatCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
+        $firstCatCode = (is_null($request->firstSubCategoryCode) || empty($request->firstSubCategoryCode)) ? "" : $request->firstSubCategoryCode;
+        $secondCatName = (is_null($request->categoryName) || empty($request->categoryName)) ? "" : $request->categoryName;
+
+        if ($request_token == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($secondCatCode == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($firstCatCode == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($secondCatName == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $newCategoryInfo = array();
+                $newCategoryInfo['secondCategoryCode'] = $secondCatCode;
+                $newCategoryInfo['categroyName'] = $secondCatName;
+                $newCategoryInfo['firstCatCode'] = $firstCatCode;
+
+                $firstCategory = $this->FirstSubcategory->find_by_code($firstCatCode);
+
+                if (empty($firstCatCode)) {
+                    return $this->Apphelper->responseMessageHandle(0, "Invalid Category Code.");
+                }
+
+                $resp = $this->SecondSubCategory->update_second_category_by_code($newCategoryInfo);
+
+                if ($resp) {
+                    return $this->Apphelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->Apphelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

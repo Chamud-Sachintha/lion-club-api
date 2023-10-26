@@ -88,6 +88,75 @@ class ActivityMainCategoryController extends Controller
         }
     }
 
+    public function getActivityInfoByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $mainCatCode = (is_null($request->mainCategoryCode) || empty($request->mainCategoryCode)) ? "" : $request->mainCategoryCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($mainCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ActivityMainCategory->find_by_code($mainCatCode);
+
+                $mainCatInfo = array();
+                $mainCatInfo['mainCategoryCode'] = $resp['code'];
+                $mainCatInfo['mainCategoryName'] = $resp['name'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $mainCatInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateMainCategoryByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $mainCatCode = (is_null($request->mainCategoryCode) || empty($request->mainCategoryCode)) ? "" : $request->mainCategoryCode;
+        $mainCatName = (is_null($request->categoryName) || empty($request->categoryName)) ? "" : $request->categoryName;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($mainCatCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($mainCatName == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $newMainCatInfo = array();
+                $newMainCatInfo['mainCatCode'] = $mainCatCode;
+                $newMainCatInfo['mainCatName'] = $mainCatName;
+
+                $resp = $this->ActivityMainCategory->find_by_code($mainCatCode);
+
+                if (empty($resp)) {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Main Category Code.");
+                }
+
+                $mainCategory = $this->ActivityMainCategory->update_main_category_by_code($newMainCatInfo);
+
+                if ($mainCategory) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

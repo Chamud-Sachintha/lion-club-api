@@ -87,3 +87,13 @@ Route::middleware('authToken')->post('get-activity-image-list-by-code', [ClubAct
 Route::middleware('authToken')->post('get-activity-info-by-code', [ClubActivityController::class, 'getClubActivityInfoByActivityCode']);
 
 Route::middleware('authToken')->post('load-re-chairperson-data', [RegionChairpersonController::class, 'loadUserData']);
+
+Route::middleware('authToken')->post('get-doc-by-code', [ProofDocumentController::class, 'getDocumentInfoByCode']);
+Route::middleware('authToken')->post('update-document', [ProofDocumentController::class, 'updateProofDocumentByCode']);
+Route::middleware('authToken')->post('get-main-category-by-code', [ActivityMainCategoryController::class, 'getActivityInfoByCode']);
+
+Route::middleware('authToken')->post('update-main-category-by-code', [ActivityMainCategoryController::class, 'updateMainCategoryByCode']);
+Route::middleware('authToken')->post('get-first-cat-info-by-code', [ActivityFirstSubCategoryController::class, 'getFirstCategoryInfoByCode']);
+Route::middleware('authToken')->post('update-first-category-by-code', [ActivityFirstSubCategoryController::class, 'updateFirstCategoryInfoByCode']);
+Route::middleware('authToken')->post('get-second-cat-info-by-code', [ActivitySecondSubCategoryController::class, 'getSecondCategoryInfoByCode']);
+Route::middleware('authToken')->post('update-second-category-by-code', [ActivitySecondSubCategoryController::class, 'updateSecondCategoryByCode']);

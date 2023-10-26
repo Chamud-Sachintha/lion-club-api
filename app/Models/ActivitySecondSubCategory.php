@@ -31,6 +31,14 @@ class ActivitySecondSubCategory extends Model
         return $this->where($map)->get();
     }
 
+    public function update_second_category_by_code($catInfo) {
+        $map['code'] = $catInfo['secondCategoryCode'];
+        $map1['first_cat_code'] = $catInfo['firstCatCode'];
+        $map1['category_name'] = $catInfo['categoryName'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function find_by_code($code) {
         $map['code'] = $code;
 
