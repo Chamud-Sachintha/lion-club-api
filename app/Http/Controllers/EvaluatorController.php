@@ -3,20 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\Activity;
+use App\Models\ClubActivity;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\Evaluator;
 use App\Models\Governer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EvaluatorController extends Controller
 {
     private $Evaluator;
     private $Governer;
+    private $ClubActivity;
+    private $Activity;
+    private $ClubActivityPointReserve;
     private $AppHelper;
 
     public function __construct()
     {
         $this->Evaluator = new Evaluator();
         $this->Governer = new Governer();
+        $this->ClubActivity = new ClubActivity();
+        $this->Activity = new Activity();
+        $this->ClubActivityPointReserve = new ClubActivtyPointReserve();
         $this->AppHelper = new AppHelper();
     }
 
@@ -116,6 +126,63 @@ class EvaluatorController extends Controller
 
     public function updateClubactivityConditionValue(Request $request) {
         
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+        $activityStatus = (is_null($request->status) || empty($request->status)) ? "" : $request->status;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($activityCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($activityStatus == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else {
+
+            try {
+                $info = array();
+                $info['clubActivityCode'] = $activityCode;
+                $info['status'] = $activityStatus;
+
+                $updateStatus = $this->ClubActivity->update_status_by_id($info);
+
+                if ($updateStatus) {
+
+                    $cbActivity = $this->ClubActivity->find_by_id($activityCode);
+                    $activity = $this->Activity->query_find($cbActivity->activity_code);
+
+                    $templateValueList = DB::table('club_activities')->select('point_templates.value as valueList')
+                                                                    ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                                    ->join('point_templates', 'activities.point_template_code', '=', 'point_templates.code')
+                                                                    ->where('point_templates.code', '=', $activity->point_template_code)
+                                                                    ->get();
+
+                    $decodeValueList = json_decode($templateValueList[0]->valueList);
+
+                    $pointInfo = array();
+                    foreach ($decodeValueList as $key => $value) {
+                         
+                        if ($value->name == $cbActivity->type) {
+                            $pointInfo['clubActivityCode'] = $activityCode;
+                            $pointInfo['clubCode'] = $cbActivity->club_code;
+                            $pointInfo['points'] = $value->value;
+                            $pointInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                            $this->ClubActivityPointReserve->add_log($pointInfo);
+                            break;
+                        }
+                    }
+
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occurecd.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
     }
 
     public function getEvaluvatorInfoByCode(Request $request) {

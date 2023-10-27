@@ -34,6 +34,19 @@ class ClubActivity extends Model
         return $this->where($map)->first();
     }
 
+    public function update_status_by_id($info) {
+        $map['id'] = $info['clubActivityCode'];
+        $map1['status'] = $info['status'];
+
+        return $this->where($map)->update($map1);
+    }
+
+    public function find_by_id($id) {
+        $map['id'] = $id;
+
+        return $this->where($map)->first();
+    }
+
     public function query_all() {
         return $this->all();
     }
