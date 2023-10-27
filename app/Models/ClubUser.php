@@ -64,6 +64,13 @@ class ClubUser extends Model
         return $this->where(array('id' => $uid))->update($map);
     }
 
+    public function update_pw_by_email($info) {
+        $map['email'] = $info['email'];
+        $map1['password'] = Hash::make($info['password']);
+
+        return $this->where($map)->update($map1);
+    }
+
     public function update_club_user_by_code($userInfo) {
         $map['code'] = $userInfo['code'];
         $map1['name'] = $userInfo['name'];

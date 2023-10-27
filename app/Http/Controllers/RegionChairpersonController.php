@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ChangePassword;
 use App\Models\Governer;
 use App\Models\Region;
 use App\Models\RegionChairperson;
@@ -14,6 +15,7 @@ class RegionChairpersonController extends Controller
     private $RegionChairperson;
     private $Region;
     private $Governer;
+    private $ChangePasswordLog;
     private $AppHelper;
 
     public function __construct()
@@ -21,6 +23,7 @@ class RegionChairpersonController extends Controller
         $this->RegionChairperson = new RegionChairperson();
         $this->Governer = new Governer();
         $this->Region = new Region();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->AppHelper = new AppHelper();
     }
 
@@ -62,6 +65,16 @@ class RegionChairpersonController extends Controller
                     $chairPerson = $this->RegionChairperson->add_log($chairPersonInfo);
 
                     if ($chairPerson) {
+                        
+                        $passwordLogInfo = array();
+                        $passwordLogInfo['userEmail'] = $emailAddress;
+                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['secret'] = sha1(time());
+                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->ChangePasswordLog->add_log($passwordLogInfo);
+
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $chairPerson);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Chair Person Not Created."); 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ChangePassword;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
 use App\Models\Evaluator;
@@ -17,6 +18,7 @@ class AuthController extends Controller
     private $Governer;
     private $RegionChairPerson;
     private $ZonalChairPerson;
+    private $ChangePasswordLog;
     private $ContextUser;
     private $ClubUser;
     private $Evaluator;
@@ -28,6 +30,7 @@ class AuthController extends Controller
         $this->RegionChairPerson = new RegionChairperson();
         $this->ZonalChairPerson = new ZonalChairPerson();
         $this->ContextUser = new ContextUser();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->ClubUser = new ClubUser();
         $this->Evaluator = new Evaluator();
         $this->AppHelper = new AppHelper();
@@ -147,9 +150,18 @@ class AuthController extends Controller
     }
 
     private function authenticateRegionChairperson($authInfo) {
-        
+
         $loginInfo = array();
         $verify_user = $this->RegionChairPerson->verify_email($authInfo['userName']);
+
+        $resetPwInfo = array();
+        $resetPwInfo['email'] = $authInfo['userName'];
+
+        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+        if ($checkIsReset) {
+            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+        }
 
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
@@ -291,6 +303,61 @@ class AuthController extends Controller
             }
         } else {
             return $this->AppHelper->responseMessageHandle(0, "Invalid Username or Password");
+        }
+    }
+
+    public function changePassword(Request $request) {
+
+        $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $password = (is_null($request->password) || empty($request->password)) ? "" : $request->password;
+        $secret = (is_null($request->secret) || empty($request->secret)) ? "" : $request->secret;
+
+        if ($email == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Email is required.");
+        } else if ($password == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Password is required.");
+        } else if ($secret == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Secret is required.");
+        } else {
+
+            try {
+                $resp = $this->ChangePasswordLog->find_by_secret($secret);
+
+                if ($resp) {
+                    $passwordInfo = array();
+                    $passwordInfo['email'] = $email;
+                    $passwordInfo['password'] = $password;
+
+                    $res = null;
+
+                    if ($resp['flag'] == "RC") {
+                        $res = $this->RegionChairPerson->update_pw_by_email($passwordInfo);
+                    } else if ($resp['flag'] == "ZC") {
+                        $res = $this->ZonalChairPerson->update_pw_by_email($passwordInfo);
+                    } else if ($resp['flag'] == "E") {
+                        $res = $this->Evaluator->update_pw_by_email($passwordInfo);
+                    } else if ($resp['flag'] == "CU") {
+                        $res = $this->ClubUser->update_pw_by_email($passwordInfo);
+                    } else if ($resp['flag'] == "CNTU") {
+                        $res = $this->ContextUser->update_pw_by_email($passwordInfo);
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(0, "Invalid Flag");
+                    }
+
+                    if ($res) {
+
+                        $this->ChangePasswordLog->delete_log_by_email($email);
+
+                        return $this->AppHelper->responseMessageHandle(1, "Operaion Complete");
+                    } else {
+                        return $this->AppHelper->responseMessageHandle(0, "Operaion Not Complete");
+                    }
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Secret");
+                }
+            } catch(\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
         }
     }
 }

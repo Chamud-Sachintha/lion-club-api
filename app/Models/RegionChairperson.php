@@ -67,6 +67,13 @@ class RegionChairperson extends Model
         return $this->where($map)->update($map1);
     }
 
+    public function update_pw_by_email($info) {
+        $map['email'] = $info['email'];
+        $map1['password'] = Hash::make($info['password']);
+
+        return $this->where($map)->update($map1);
+    }
+
     public function check_permission($token, $flag) {
         $map['flag'] = $flag;
         $map['token'] = $token;

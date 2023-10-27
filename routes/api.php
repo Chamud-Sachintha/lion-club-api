@@ -114,3 +114,5 @@ Route::middleware('authToken')->post('update-zone-by-code', [ZoneController::cla
 Route::middleware('authToken')->post('get-club-info-by-code', [ClubController::class, 'getClubInfoByClubCode']);
 Route::middleware('authToken')->post('update-club-by-code', [ClubController::class, 'updateClubByCode']);
 Route::middleware('authToken')->post('check-club-activity-by-code', [EvaluatorController::class, 'updateClubactivityConditionValue']);
+
+Route::post('update-pw', [AuthController::class, 'changePassword']);

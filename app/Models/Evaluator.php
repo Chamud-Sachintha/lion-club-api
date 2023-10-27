@@ -45,6 +45,13 @@ class Evaluator extends Model
         return $this->where($map)->first();
     }
 
+    public function update_pw_by_email($info) {
+        $map['email'] = $info['email'];
+        $map1['password'] = Hash::make($info['password']);
+
+        return $this->where($map)->update($map1);
+    }
+
     public function query_find_by_token($token) {
         $map['token'] = $token;
 

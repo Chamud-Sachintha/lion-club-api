@@ -58,6 +58,13 @@ class ContextUser extends Model
         return $this->where($map)->first();
     }
 
+    public function update_pw_by_email($info) {
+        $map['email'] = $info['email'];
+        $map1['password'] = Hash::make($info['password']);
+
+        return $this->where($map)->update($map1);
+    }
+
     public function mupdate_user_by_code($userInfo) {
         $map['code'] = $userInfo['contextUserCode'];
         $map1['name'] = $userInfo['name'];
