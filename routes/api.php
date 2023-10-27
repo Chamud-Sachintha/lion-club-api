@@ -110,3 +110,6 @@ Route::middleware('authToken')->post('update-club-user-by-code', [ClubUserContro
 Route::middleware('authToken')->post('get-region-info-by-code', [RegionController::class, 'getRegionInfoByCode']);
 Route::middleware('authToken')->post('update-region-by-code', [RegionController::class, 'updateRegionByCode']);
 Route::middleware('authToken')->post('get-zone-info-by-code', [ZoneController::class, 'getZoneInfoByCode']);
+Route::middleware('authToken')->post('update-zone-by-code', [ZoneController::class, 'updateZoneByZoneCode']);
+Route::middleware('authToken')->post('get-club-info-by-code', [ClubController::class, 'getClubInfoByClubCode']);
+Route::middleware('authToken')->post('update-club-by-code', [ClubController::class, 'updateClubByCode']);

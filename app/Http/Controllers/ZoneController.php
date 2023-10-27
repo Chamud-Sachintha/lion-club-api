@@ -170,17 +170,27 @@ class ZoneController extends Controller
         $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
 
         if ($request_token == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else if ($zoneCode == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Zone Code is required.");
         } else if ($reCode == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
         } else {
 
             try {
+                $newZoneInfo = array();
+                $newZoneInfo['zoneCode'] = $zoneCode;
+                $newZoneInfo['reCode'] = $reCode;
 
+                $updateZone = $this->Zone->update_zone_by_code($newZoneInfo);
+
+                if ($updateZone) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

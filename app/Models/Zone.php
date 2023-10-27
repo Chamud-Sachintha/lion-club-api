@@ -30,6 +30,13 @@ class Zone extends Model
         return $this->where($map)->first();
     }
 
+    public function update_zone_by_code($zoneInfo) {
+        $map['zone_code'] = $zoneInfo['zoneCode'];
+        $map1['re_code'] = $zoneInfo['reCode'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function find_by_re_code($reCode) {
         $map['re_code'] = $reCode;
 

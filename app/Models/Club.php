@@ -29,6 +29,13 @@ class Club extends Model
         return $this->where($map)->first();
     }
 
+    public function update_club_by_code($clubInfo) {
+        $map['club_code'] = $clubInfo['clubCode'];
+        $map1['zone_code'] = $clubInfo['zoneCode'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function query_all() {
         return $this->all();
     }

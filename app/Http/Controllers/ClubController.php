@@ -105,6 +105,65 @@ class ClubController extends Controller
 
     public function getClubInfoByClubCode(Request $request) {
         
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else {
+
+            try {
+                $clubInfo = array();
+                $club = $this->Club->find_by_club_code($clubCode);
+
+                $clubInfo['code'] = $club['club_code'];
+                $clubInfo['zoneCode'] = $club['zone_code'];
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updateClubByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else if ($zoneCode == "") {
+
+        } else {
+
+            try {
+                $newClubInfo = array();
+                $newClubInfo['clubCode'] = $clubCode;
+                $newClubInfo['zoneCode'] = $zoneCode;
+
+                $updateClub = $this->Club->update_club_by_code($newClubInfo);
+
+                if ($updateClub) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
     }
 
     private function checkPermission($token, $flag) {
