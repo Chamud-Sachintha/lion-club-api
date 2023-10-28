@@ -48,6 +48,12 @@ class Activity extends Model
         return $this->all();
     }
 
+    public function delete_activity_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function query_find($code) {
         $map['code'] = $code;
 

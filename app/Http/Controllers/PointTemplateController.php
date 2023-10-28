@@ -112,4 +112,67 @@ class PointTemplateController extends Controller
             }
         }
     }
+
+    public function getPointTemplateObjByTemplateName(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $pointTemplateCode = (is_null($request->pointTemplateCode) || empty($request->pointTemplateCode)) ? "" : $request->pointTemplateCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($pointTemplateCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Template Code is required.");
+        } else {
+
+            try {
+                $resp = $this->PointTemplate->find_by_code($pointTemplateCode);
+                $rangeList = json_decode($resp->value);
+
+                $info = array();
+                $info['templateName'] = $resp->code;
+                $info['valueList'] = $rangeList;
+                
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $info);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function updatePointTemplateObjByCode(Request $request) {
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        $templateCode = (is_null($request->templateName) || empty($request->templateName)) ? "" : $request->templateName;
+        $valueList = (is_null($request->valueList) || empty($request->valueList)) ? "" : $request->valueList;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {   
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($templateCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Template Code is reuiqred");
+        } else if ($valueList == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Value List is required.");
+        } else {
+            try {
+                $templateInfo = array();
+                $templateInfo['templateCode'] = $templateCode;
+                $templateInfo['templateValue'] = json_encode($valueList);
+                $templateInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                $newTemplate = $this->PointTemplate->update_point_template_by_code($templateInfo);
+
+                if ($newTemplate) {
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $newTemplate);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

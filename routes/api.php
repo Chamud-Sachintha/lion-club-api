@@ -116,3 +116,9 @@ Route::middleware('authToken')->post('update-club-by-code', [ClubController::cla
 Route::middleware('authToken')->post('check-club-activity-by-code', [EvaluatorController::class, 'updateClubactivityConditionValue']);
 
 Route::post('update-pw', [AuthController::class, 'changePassword']);
+
+Route::middleware('authToken')->post('get-club-activity-list-by-club-code', [ClubActivityController::class, 'getClubActivityListByClubCode']);
+Route::middleware('authToken')->post('get-point-template-info-by-template-code', [PointTemplateController::class, 'getPointTemplateObjByTemplateName']);
+Route::middleware('authToken')->post('update-point-template-by-code', [PointTemplateController::class, 'updatePointTemplateObjByCode']);
+
+Route::middleware('authToken')->post('delete-activity-by-code', [ActivityController::class, 'deleteActivityByCode']);

@@ -253,4 +253,35 @@ class ClubActivityController extends Controller
             }
         }
     }
+
+    public function getClubActivityListByClubCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubActivity->find_by_club_code($clubCode);
+
+                $clubActivityList = array();
+                foreach ($resp as $key => $value) {
+                    $clubActivityList[$key]['activityCode'] = $value['activity_code'];
+                    $clubActivityList[$key]['clubCode'] = $value['club_code'];
+                    $clubActivityList[$key]['createTime'] = $value['create_time'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }
