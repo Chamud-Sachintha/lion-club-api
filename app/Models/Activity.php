@@ -48,6 +48,10 @@ class Activity extends Model
         return $this->all();
     }
 
+    public function get_activity_count() {
+        return $this->count();
+    }
+
     public function delete_activity_by_code($code) {
         $map['code'] = $code;
 

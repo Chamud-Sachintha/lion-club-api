@@ -24,4 +24,10 @@ class ClubActivtyPointReserve extends Model
 
         return $this->create($map);
     }
+
+    public function get_points__by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+
+        return $this->where($map)->sum('points');
+    }
 }

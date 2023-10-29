@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\ClubActivity;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\Governer;
 use Illuminate\Http\Request;
@@ -11,12 +13,16 @@ class ClubUserController extends Controller
 {
     private $ClubUser;
     private $Governer;
+    private $ClubActivity;
+    private $ClubActivityPointsReserved;
     private $AppHelper;
 
     public function __construct()
     {
         $this->ClubUser = new ClubUser();
         $this->Governer = new Governer();
+        $this->ClubActivity = new ClubActivity();
+        $this->ClubActivityPointsReserved = new ClubActivtyPointReserve();
         $this->AppHelper = new AppHelper();
     }
 
@@ -191,6 +197,33 @@ class ClubUserController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubUserDashboardData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $activityCount = $this->ClubActivity->get_activity_count_by_club_code($clubCode);
+                $ponitsTotal = $this->ClubActivityPointsReserved->get_points__by_club_code($clubCode);
+
+                $dashboardInfo = array();
+                $dashboardInfo['activityCount'] = $activityCount;
+                $dashboardInfo['pointsTotal'] = $ponitsTotal;
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardInfo);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

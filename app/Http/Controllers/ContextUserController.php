@@ -263,6 +263,24 @@ class ContextUserController extends Controller
         }
     }
 
+    public function getDashboardData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+
+        } else if ($flag == "") {
+
+        } else {
+            try {
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

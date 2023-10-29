@@ -155,6 +155,7 @@ class ClubActivityController extends Controller
                 foreach ($resp as $key => $value) {
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];
+                    $clubActivityList[$key]['status'] = $value['status'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
                 }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
 use App\Http\Controllers\EvaluatorController;
+use App\Http\Controllers\GovernerController;
 use App\Http\Controllers\PointTemplateController;
 use App\Http\Controllers\ProofDocumentController;
 use App\Http\Controllers\RegionChairpersonController;
@@ -122,3 +123,6 @@ Route::middleware('authToken')->post('get-point-template-info-by-template-code',
 Route::middleware('authToken')->post('update-point-template-by-code', [PointTemplateController::class, 'updatePointTemplateObjByCode']);
 
 Route::middleware('authToken')->post('delete-activity-by-code', [ActivityController::class, 'deleteActivityByCode']);
+
+Route::middleware('authToken')->post('get-gov-dashboard-data', [GovernerController::class, 'getDashboardCounts']);
+Route::middleware('authToken')->post('get-club-user-dashboard-data', [ClubUserController::class, 'getClubUserDashboardData']);

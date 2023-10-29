@@ -36,6 +36,10 @@ class Club extends Model
         return $this->where($map)->update($map1);
     }
 
+    public function get_club_count() {
+        return $this->count();
+    }
+
     public function query_all() {
         return $this->all();
     }
