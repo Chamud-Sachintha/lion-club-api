@@ -43,4 +43,10 @@ class Club extends Model
     public function query_all() {
         return $this->all();
     }
+
+    public function delete_club_by_code($clubCode) {
+        $map['club_code'] = $clubCode;
+
+        return $this->where($map)->delete();
+    }
 }

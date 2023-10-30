@@ -39,6 +39,18 @@ class Region extends Model
         return $this->where($map)->get();
     }
 
+    public function et_regions_count_by_context_user_code($contextUserCode) {
+        $map['context_user_code'] = $contextUserCode;
+
+        return $this->where($map)->count();
+    }
+
+    public function delete_reion_by_code($code) {
+        $map['region_code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function update_region_by_code($regionInfo) {
         $map['region_code'] = $regionInfo['reCode'];
         $map1['context_user_code'] = $regionInfo['contextUserCode'];

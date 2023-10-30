@@ -20,6 +20,7 @@ class CreateClubActivitiesTable extends Migration
             $table->integer('type');
             $table->integer('create_time');
             $table->integer('status');
+            $table->string('creator');
             $table->timestamps();
         });
     }

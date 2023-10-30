@@ -7,6 +7,7 @@ use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
 use App\Models\ContextUser;
 use App\Models\Governer;
+use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,6 +17,7 @@ class ContextUserController extends Controller
     private $Governer;
     private $ClubActivity;
     private $ClubActivityDocument;
+    private $Region;
     private $AppHelper;
 
     public function __construct()
@@ -24,6 +26,7 @@ class ContextUserController extends Controller
         $this->Governer = new Governer();
         $this->ClubActivity = new ClubActivity();
         $this->ClubActivityDocument = new ClubActivityDocument();
+        $this->Region = new Region();
         $this->AppHelper = new AppHelper();
     }
 
@@ -122,15 +125,15 @@ class ContextUserController extends Controller
 
                 // dd($contextuserCode);
 
-                $clubList = DB::table('clubs', 'clubs.*')
-                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                $clubList = DB::table('clubs')->select('clubs.*')
+                                    ->join('zones', 'clubs.zone_code', '=', 'zones.zone_code')
                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                     ->where('regions.context_user_code', '=', $contextuserCode->code)
                                     ->get();
 
                 $availableClubList = array();
                 foreach ($clubList as $key => $value) {
-                    $availableClubList[$key]['clubCode'] = $value['code'];
+                    $availableClubList[$key]['clubCode'] = $value->club_code;
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $availableClubList);
@@ -269,12 +272,87 @@ class ContextUserController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
         if ($request_token == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
-
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else {
             try {
+                $contextUser = $this->ContextUser->query_find_by_token($request_token);
+                $regions = $this->Region->et_regions_count_by_context_user_code($contextUser->code);
 
+                $zones = DB::table('zones')->select('zones.*')
+                                            ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                            ->where('regions.context_user_code', '=', $contextUser->code)
+                                            ->count();
+
+                $dashboardData = array();
+                $dashboardData['regionCount'] = $regions;
+                $dashboardData['zoneCount'] = $zones;
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getContextUserFeedActivityList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $contextUser = $this->ContextUser->query_find_by_token($request_token);
+
+                if ($contextUser) {
+                    $clubActivityList = $this->ClubActivity->get_list_by_creator($contextUser->code);
+
+                    $activityList = array();
+                    foreach ($clubActivityList as $key => $value) {
+                        $activityList[$key]['activityCode'] = $value['activity_code'];
+                        $activityList[$key]['clubCode'] = $value['club_code'];
+                        $activityList[$key]['status'] = $value['status'];
+                        $activityList[$key]['createTime'] = $value['create_time'];
+                    }
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid User");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function deleteContextUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $userCode = (is_null($request->contextUserCode) || empty($request->contextUserCode)) ? "" : $request->contextUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($userCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ContextUser->delete_user_by_code($userCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

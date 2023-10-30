@@ -169,6 +169,7 @@ class AuthController extends Controller
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
                 $loginInfo['email'] = $verify_user['email'];
+                $loginInfo['userCode'] = $verify_user['code'];
 
                 $token = $this->AppHelper->generateAuthToken($verify_user);
 
@@ -199,6 +200,7 @@ class AuthController extends Controller
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
                 $loginInfo['email'] = $verify_user['email'];
+                $loginInfo['userCode'] = $verify_user['code'];
 
                 $token = $this->AppHelper->generateAuthToken($verify_user);
 
@@ -229,6 +231,7 @@ class AuthController extends Controller
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
                 $loginInfo['email'] = $verify_user['email'];
+                $loginInfo['userCode'] = $verify_user['code'];
 
                 $token = $this->AppHelper->generateAuthToken($verify_user);
 
@@ -258,6 +261,7 @@ class AuthController extends Controller
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
                 $loginInfo['email'] = $verify_user['email'];
+                $loginInfo['userCode'] = $verify_user['code'];
 
                 $token = $this->AppHelper->generateAuthToken($verify_user);
 
@@ -287,6 +291,7 @@ class AuthController extends Controller
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
                 $loginInfo['email'] = $verify_user['email'];
+                $loginInfo['userCode'] = $verify_user['code'];
 
                 $token = $this->AppHelper->generateAuthToken($verify_user);
 

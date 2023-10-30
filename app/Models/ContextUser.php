@@ -52,6 +52,12 @@ class ContextUser extends Model
         return $this->where($map)->first();
     }
 
+    public function delete_user_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function find_by_code($code) {
         $map['code'] = $code;
 

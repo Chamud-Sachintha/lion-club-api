@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use function PHPUnit\Framework\returnSelf;
+
 class Zone extends Model
 {
     use HasFactory;
@@ -41,6 +43,12 @@ class Zone extends Model
         $map['re_code'] = $reCode;
 
         return $this->where($map)->get();
+    }
+
+    public function delete_zone_by_code($zoneCode) {
+        $map['zone_code'] = $zoneCode;
+        
+        return $this->where($map)->delete();
     }
 
     public function query_all() {

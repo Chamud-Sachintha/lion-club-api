@@ -41,6 +41,7 @@ class ClubActivityController extends Controller
         // $benificiaries = (is_null($request->beneficiaries) || empty($request->beneficiaries)) ? "" : $request->beneficiaries;
         // $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
         $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+        $creator = (is_null($request->creator) || empty($request->creator)) ? "" : $request->creator;
  
         $documentList = $request->files;
         $imageList = $request->files;
@@ -51,6 +52,8 @@ class ClubActivityController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
         } else if ($activityCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
+        } else if ($creator == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Creator is required."); 
         } else {
             try {
                 $clubActivityInfo = array();
@@ -61,6 +64,7 @@ class ClubActivityController extends Controller
                 // $clubActivityInfo['benificiaries'] = $benificiaries;
                 // $clubActivityInfo['memberCount'] = $memberCount;
                 $clubActivityInfo['createTime'] = $this->AppHelper->get_date_and_time();
+                $clubActivityInfo['creator'] = $creator;
 
                 $insertClubActivity = $this->ClubActivity->add_log($clubActivityInfo);
 

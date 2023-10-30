@@ -14,6 +14,7 @@ class ClubActivity extends Model
         'club_code',
         'type',
         'status',
+        'creator', // 1- club user 2 - context user
         'create_time'
     ];
 
@@ -24,6 +25,7 @@ class ClubActivity extends Model
         // $map['value'] = $activityInfo['value'];
         $map['create_time'] = $activityInfo['createTime'];
         $map['status'] = 0;
+        $map['creator'] = $activityInfo['creator'];
 
         return $this->create($map);
     }
@@ -51,6 +53,12 @@ class ClubActivity extends Model
         $map['id'] = $id;
 
         return $this->where($map)->first();
+    }
+
+    public function get_list_by_creator($code) {
+        $map['creator'] = $code;
+
+        return $this->where($map)->get();
     }
 
     public function find_by_club_code($clubCode) {
