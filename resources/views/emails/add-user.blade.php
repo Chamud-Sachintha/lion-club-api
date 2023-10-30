@@ -7,6 +7,17 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <h1>{{ $details['title'] }}</h1>
+    <p>{{ $details['para1'] }}</p>
+    <p>{{ $details['para2'] }}</p>
+    <p>{{ $details['para3'] }}</p>
+    <p>{{ $details['para4'] }}</p>
+
+    <p>
+        Best Regards,
+    </p>
+    <p>
+        ion Club Administration
+    </p>
 </body>
 </html>
