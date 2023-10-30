@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddSectionMail;
+use App\Mail\AddUserMail;
 use App\Models\ContextUser;
 use App\Models\Governer;
 use App\Models\Region;
 use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegionController extends Controller
 {
@@ -66,6 +69,16 @@ class RegionController extends Controller
                     $region = $this->Region->add_log($regionInfo);
 
                     if (!empty($region)) {
+
+                        $govInfo = $this->Governer->check_permission($request_token, $flag);
+
+                        $details = [
+                            'title' => 'Mail from lion club',
+                            'body' => $regionCode . " Region Created Sucessfully."
+                        ];
+    
+                        Mail::to($govInfo->email)->send(new AddSectionMail($details));
+
                         return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $region);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Operation Not Complete");
@@ -208,7 +221,7 @@ class RegionController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
+        $reCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") { 
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");

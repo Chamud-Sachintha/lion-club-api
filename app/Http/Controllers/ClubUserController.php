@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddUserMail;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\Governer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ClubUserController extends Controller
 {
@@ -64,6 +66,17 @@ class ClubUserController extends Controller
                     $clubUser = $this->ClubUser->add_log($clubUserInfo);
 
                     if ($clubUser) {
+
+                        $govInfo = $this->Governer->check_permission($request_token, $flag);
+
+                        $details = [
+                            'title' => 'Mail from lion club',
+                            'body' => $clubUserCode . " " . $fullName . " Club User Created Sucessfully."
+                        ];
+    
+                        Mail::to($govInfo->email)->send(new AddUserMail($details));
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
+
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $clubUser);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Chair Person Not Created."); 
