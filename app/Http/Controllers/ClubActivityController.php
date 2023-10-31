@@ -157,6 +157,7 @@ class ClubActivityController extends Controller
 
                 $clubActivityList = array();
                 foreach ($resp as $key => $value) {
+                    $clubActivityList[$key]['id'] = $value['id'];
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];
                     $clubActivityList[$key]['status'] = $value['status'];
@@ -183,7 +184,8 @@ class ClubActivityController extends Controller
         } else {
 
             try {
-                $resp = $this->ClubActivityDocument->query_find_docs($activityCode);
+                $cbActivity = $this->ClubActivity->find_by_id($activityCode);
+                $resp = $this->ClubActivityDocument->query_find_docs($cbActivity->activity_code);
                 $resp2 = $this->ClubActivityImage->find_images_by_activity_code($activityCode);
 
                 $activityDocList = array();
@@ -241,7 +243,7 @@ class ClubActivityController extends Controller
             try {
                 $resp = DB::table('activities')->select('activities.*', 'club_activities.id as clubActivityId', 'club_activities.club_code', 'club_activities.create_time', 'club_activities.status')
                                                 ->join('club_activities', 'club_activities.activity_code', '=', 'activities.code')
-                                                ->where('activities.code', $activityCode)
+                                                ->where('club_activities.id', $activityCode)
                                                 ->get();
 
                                                 // print_r($resp);

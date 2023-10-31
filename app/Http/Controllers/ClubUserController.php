@@ -70,11 +70,11 @@ class ClubUserController extends Controller
                         $govInfo = $this->Governer->check_permission($request_token, $flag);
 
                         $details = [
-                            'title' => 'Dear Club User',
-                            'para1' => "Welcome to the Lion Club in Sri Lanka! We are thrilled to have you join our community.",
-                            "para2" => "As a new member, we have created an account for you to access our website. Your initial login credentials are as follows:",
-                            "para3" => "Default Password: [123]",
-                            "para4" => "Please use these credentials to log in to your account for the first time. For security purposes, we strongly recommend that you change your password after your initial login. Your new password should be something unique and known only to you to safeguard your account.",
+                            'title' => 'Dear Club User l',
+                            'para1' => 'Welcome to the Lion Club in Sri Lanka! We are thrilled to have you join our community.',
+                            'para2' => 'As a new member, we have created an account for you to access our website. Your initial login credentials are as follows:',
+                            'para3' => 'Default Password: [123]',
+                            'para4' => 'Please use these credentials to log in to your account for the first time. For security purposes, we strongly recommend that you change your password after your initial login. Your new password should be something unique and known only to you to safeguard your account.',
                         ];
 
                         $details2 = [
@@ -85,8 +85,8 @@ class ClubUserController extends Controller
                             "para4" => "",
                         ];
     
-                        Mail::to($govInfo->email)->send(new AddUserMail($details));
-                        Mail::to($emailAddress)->send(new AddUserMail($details2));
+                        Mail::to($govInfo->email)->send(new AddUserMail($details2));
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $clubUser);
                     } else {
@@ -248,6 +248,34 @@ class ClubUserController extends Controller
                 $dashboardInfo['pointsTotal'] = $ponitsTotal;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function deleteClubUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubUser->delete_by_code($clubUserCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Operation Failed.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

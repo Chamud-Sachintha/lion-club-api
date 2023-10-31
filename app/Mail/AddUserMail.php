@@ -31,6 +31,6 @@ class AddUserMail extends Mailable
     public function build()
     {
         return $this->subject('User Created Successfully.')
-                    ->view('emails.add-user');
+                    ->view('emails.add-user')->with($this->details);
     }
 }

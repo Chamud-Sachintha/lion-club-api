@@ -30,4 +30,8 @@ class ClubActivtyPointReserve extends Model
 
         return $this->where($map)->sum('points');
     }
+
+    public function get_ordered_list() {
+        return $this->orderBy("points", "desc")->get();
+    }
 }

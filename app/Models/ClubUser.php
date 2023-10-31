@@ -80,6 +80,12 @@ class ClubUser extends Model
         return $this->where($map)->updae($map1);
     }
 
+    public function delete_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function find_by_code($userCode) {
         $map['code'] = $userCode;
 

@@ -24,7 +24,7 @@ class ClubActivityImage extends Model
     }
 
     public function find_images_by_activity_code($activityCode) {
-        $map['activity_code'] = $activityCode;
+        $map['id'] = $activityCode;
 
         return $this->where($map)->get();
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Club;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\Governer;
 use App\Models\Zone;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ class ClubController extends Controller
     private $Governer;
     private $Club;
     private $Zone;
+    private $ClubPoint;
     private $AppHelper;
 
     public function __construct()
@@ -20,6 +22,7 @@ class ClubController extends Controller
         $this->Governer = new Governer();
         $this->Club = new Club();
         $this->Zone = new Zone();
+        $this->ClubPoint = new ClubActivtyPointReserve();
         $this->AppHelper = new AppHelper();
     }
 
@@ -188,6 +191,42 @@ class ClubController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubRankByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required");
+        } else {
+
+            try {
+                $resp = $this->ClubPoint->get_ordered_list();
+
+                $clubRank = 1;
+                foreach ($resp as $key => $value) {
+                    if ($value['club_code'] == $clubCode) {
+                        break;
+                    }
+
+                    $clubRank += 1;
+                }
+
+                $rankInfo = array();
+                $rankInfo['rank'] = $clubRank;
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $rankInfo);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

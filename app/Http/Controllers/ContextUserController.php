@@ -285,9 +285,12 @@ class ContextUserController extends Controller
                                             ->where('regions.context_user_code', '=', $contextUser->code)
                                             ->count();
 
+                $activityList = $this->ClubActivity->get_list_by_creator($contextUser->code);
+
                 $dashboardData = array();
                 $dashboardData['regionCount'] = $regions;
                 $dashboardData['zoneCount'] = $zones;
+                $dashboardData['activityCount'] = count($activityList);
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
             } catch (\Exception $e) {
@@ -353,6 +356,41 @@ class ContextUserController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getContextUserViewDataList(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+
+                $contextUser = $this->ContextUser->query_find_by_token(($request_token));
+
+                $viewDataList = DB::table('clubs')->select('clubs.*', 'club_activty_point_reserves.*')
+                                                    ->join('club_activty_point_reserves', 'clubs.club_code', '=', 'club_activty_point_reserves.club_code')
+                                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                    ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                    ->where('regions.context_user_code', '=', $contextUser->code)
+                                                    ->get();
+
+                $dataList = array();
+                foreach ($viewDataList as $key => $value) {
+                    $dataList[$key]['clubCode'] = $value->club_code;
+                    $dataList[$key]['points'] = $value->points;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
