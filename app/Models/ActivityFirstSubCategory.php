@@ -45,6 +45,12 @@ class ActivityFirstSubCategory extends Model
         return $this->where($map)->get();
     }
 
+    public function delete_category_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function query_all() {
         return $this->all();
     }

@@ -204,6 +204,34 @@ class ActivitySecondSubCategoryController extends Controller
         }
     }
 
+    public function deleteSecondSubCategoryByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $categoryCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
+
+        if ($request_token == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($categoryCode == "") {
+            return $this->Apphelper->responseMessageHandle(0, "Category Code is required.");
+        } else {
+
+            try {
+                $resp = $this->SecondSubCategory->delete_category_by_code($categoryCode);
+
+                if ($resp) {
+                    return $this->Apphelper->responseMessageHandle(1, "Op[eration complete");
+                } else {
+                    return $this->Apphelper->responseMessageHandle(0, "Errror Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->Apphelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkPermission($token, $flag) {
         
         $perm = null;

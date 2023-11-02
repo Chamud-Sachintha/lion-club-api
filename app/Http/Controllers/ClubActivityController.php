@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Models\Activity;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
 use App\Models\ClubActivityImage;
@@ -15,6 +16,7 @@ class ClubActivityController extends Controller
 {
     private $ClubUser;
     private $AppHelper;
+    private $Activity;
     private $ClubActivity;
     private $ClubActivityDocument;
     private $ClubActivityImage;
@@ -25,6 +27,7 @@ class ClubActivityController extends Controller
         $this->ClubUser = new ClubUser();
         $this->AppHelper = new AppHelper();
         $this->ClubActivity = new ClubActivity();
+        $this->Activity = new Activity();
         $this->ClubActivityDocument = new ClubActivityDocument();
         $this->ClubActivityImage = new ClubActivityImage();
         $this->ContextUser = new ContextUser();
@@ -277,11 +280,16 @@ class ClubActivityController extends Controller
 
             try {
                 $resp = $this->ClubActivity->find_by_club_code($clubCode);
-
+                
                 $clubActivityList = array();
                 foreach ($resp as $key => $value) {
+                    $activityInfo = $this->Activity->query_find($value["activity_code"]);
+
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];
+                    $clubActivityList[$key]['activityName'] = $activityInfo['activity_name'];
+                    $clubActivityList[$key]['status'] = $value['status'];
+                    $clubActivityList[$key]['type'] = $value['type'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
                 }
 

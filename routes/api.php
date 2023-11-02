@@ -128,12 +128,18 @@ Route::middleware('authToken')->post('delete-region-by-code', [RegionController:
 Route::middleware('authToken')->post('delete_zone_by-code', [ZoneController::class, 'deleteRegionByCode']);
 Route::middleware('authToken')->post('delete-club-by-code', [ClubController::class, 'deleteClubByCode']);
 Route::middleware('authToken')->post('delete-club-user-by-code', [ClubUserController::class, 'deleteClubUserByCode']);
+Route::middleware('authToken')->post('delete-first-cat-by-code', [ActivityFirstSubCategoryController::class, 'deleteFirstSubCategoryByCode']);
+Route::middleware('authToken')->post('delete-main-cet-by-code', [ActivityMainCategoryController::class, 'deleteFirstSubCategoryByCode']);
+Route::middleware('authToken')->post('delete-second-cat-by-code', [ActivitySecondSubCategoryController::class, 'deleteSecondSubCategoryByCode']);
 
 Route::middleware('authToken')->post('get-gov-dashboard-data', [GovernerController::class, 'getDashboardCounts']);
 Route::middleware('authToken')->post('get-club-user-dashboard-data', [ClubUserController::class, 'getClubUserDashboardData']);
 Route::middleware('authToken')->post('get-context-user-dashboard-data', [ContextUserController::class, 'getDashboardData']);
+Route::middleware('authToken')->post('get-evaluvator-dashboard-data', [EvaluatorController::class, 'getEvaluvatorDashboardData']);
 
 Route::middleware('authToken')->post('get-club-activity-list-by-context-user-code', [ContextUserController::class, 'getContextUserFeedActivityList']);
 Route::middleware('authToken')->post('get-view-data-list-context-user', [ContextUserController::class, 'getContextUserViewDataList']);
+
+Route::middleware('authToken')->post('get-user-info-dashboard', [AuthController::class, 'loadUserInfo']);
 
 Route::middleware('authToken')->post('find-rank', [ClubController::class, 'getClubRankByCode']);

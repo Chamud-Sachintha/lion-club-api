@@ -365,4 +365,42 @@ class AuthController extends Controller
             }
         }
     }
+
+    public function loadUserInfo(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+
+                $userInfo = null;
+
+                if ($flag == "G") {
+                    $userInfo = $this->Governer->check_permission($request_token, $flag);
+                } else if ($flag == "CU") {
+                    $userInfo = $this->ClubUser->check_permission($request_token, $flag);
+                } else if ($flag == "E") {
+                    $userInfo = $this->Evaluator->check_permission($request_token, $flag);
+                } else if ($flag == "CNTU") {
+                    $userInfo = $this->ContextUser->check_permission($request_token, $flag);
+                } else if ($flag == "RC") {
+                    $userInfo = $this->RegionChairPerson->check_permission($request_token, $flag);
+                } else if ($flag == "ZC") {
+                    $userInfo = $this->ZonalChairPerson->check_permission($request_token, $flag);
+                } else {
+                    $userInfo = null;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $userInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

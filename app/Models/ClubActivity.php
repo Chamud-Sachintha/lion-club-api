@@ -70,4 +70,20 @@ class ClubActivity extends Model
     public function query_all() {
         return $this->all();
     }
+
+    public function get_activity_count() {
+        return $this->all()->count();
+    }
+
+    public function get_approved_acivity_count() {
+        $map['status'] = 1;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_pending_acivity_count() {
+        $map['status'] = 0;
+
+        return $this->where($map)->count();
+    }
 }
