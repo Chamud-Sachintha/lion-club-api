@@ -77,25 +77,6 @@ class EvaluatorController extends Controller
         }
     }
 
-    public function getClubActivitylist(Request $request) {
-
-        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
-        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-
-        if ($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
-        }else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
-        } else {
-
-            try {
-
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
-        }
-    }
-
     public function getEvaluvatorUserList(Request $request) {
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
@@ -267,13 +248,66 @@ class EvaluatorController extends Controller
                 $totalActivites = $this->ClubActivity->get_activity_count();
                 $approvedCount = $this->ClubActivity->get_approved_acivity_count();
                 $pendingCount = $this->ClubActivity->get_pending_acivity_count();
+                $rejectedActivites = $this->ClubActivity->get_rejected_activity_count();
 
                 $dashboardData = array();
                 $dashboardData['totalActivities'] = $totalActivites;
                 $dashboardData['approvedCount'] = $approvedCount;
                 $dashboardData['pendingCount'] = $pendingCount;
+                $dashboardData['rejectedCount'] = $rejectedActivites;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function filterClubActivities(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $reCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+        $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = null;
+
+                if ($reCode != "" && $zoneCode == "") {
+                    $resp = DB::table('club_activities')->select('club_activities.*','regions.region_code')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                        ->where('regions.region_code', '=', $reCode)
+                                                        ->get();
+                } else if ($reCode != "" && $zoneCode != "") {
+                    $resp = DB::table('club_activities')->select('club_activities.*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                        ->where('regions.region_code', '=', $reCode)
+                                                        ->where('zones.zone_code', '=', $zoneCode)
+                                                        ->get();
+                } else {
+                    $resp = DB::table('club_activities')->select('club_activities.*')
+                                                        ->get();
+                }
+
+                $clubActivityList = array();
+                foreach ($resp as $key => $value) {
+                    $clubActivityList[$key]['activityCode'] = $value->activity_code;
+                    $clubActivityList[$key]['clubCode'] = $value->club_code;
+                    $clubActivityList[$key]['status'] = $value->status;
+                    $clubActivityList[$key]['createTime'] = $value->create_time;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

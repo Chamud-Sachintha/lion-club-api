@@ -76,19 +76,19 @@ class ClubActivityController extends Controller
                     $docInfo = array();
                     foreach ($documentList as $key => $value) {
                          
-                        $docInfo['activityCode'] = $activityCode;
+                        $docInfo['activityCode'] = $insertClubActivity->id;
                         $docInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                         $uniqueId = uniqid();
                         $ext = $value->getClientOriginalExtension();
 
                         if ($ext == "pdf") {
-                            $value->move(public_path('\modo\docs'), $uniqueId . '.' . $ext);
+                            $value->move(public_path('/modo/docs'), $uniqueId . '.' . $ext);
                             $docInfo['document'] = $uniqueId . '.' . $ext;
 
                             $this->ClubActivityDocument->add_log($docInfo);
                         } else {
-                            $value->move(public_path('\modo\images'), $uniqueId . '.' . $ext);
+                            $value->move(public_path('/modo/images'), $uniqueId . '.' . $ext);
                             $docInfo['image'] = $uniqueId . '.' . $ext;
 
                             $this->ClubActivityImage->add_log($docInfo);
@@ -188,7 +188,7 @@ class ClubActivityController extends Controller
 
             try {
                 $cbActivity = $this->ClubActivity->find_by_id($activityCode);
-                $resp = $this->ClubActivityDocument->query_find_docs($cbActivity->activity_code);
+                $resp = $this->ClubActivityDocument->query_find_docs($activityCode);
                 $resp2 = $this->ClubActivityImage->find_images_by_activity_code($activityCode);
 
                 $activityDocList = array();

@@ -86,4 +86,10 @@ class ClubActivity extends Model
 
         return $this->where($map)->count();
     }
+
+    public function get_rejected_activity_count() {
+        $map['status'] = 2;
+
+        return $this->where($map)->count();
+    }
 }

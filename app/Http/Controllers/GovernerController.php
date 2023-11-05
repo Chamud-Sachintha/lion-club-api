@@ -5,19 +5,26 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Models\Activity;
 use App\Models\Club;
+use App\Models\ClubActivity;
+use App\Models\ClubActivtyPointReserve;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GovernerController extends Controller
 {
 
     private $Activity;
     private $AppHelper;
+    private $ClubPoint;
+    private $ClubActivity;
     private $Club;
 
     public function __construct()
     {
         $this->Activity = new Activity();
         $this->AppHelper = new AppHelper();
+        $this->ClubPoint = new ClubActivtyPointReserve();
+        $this->ClubActivity = new ClubActivity();
         $this->Club = new Club();
     }
 
@@ -44,6 +51,67 @@ class GovernerController extends Controller
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
+        }
+    }
+
+    public function getClubRankData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $clubRankInfo = DB::table('clubs')->select('clubs.*', 'zones.zone_code', 'regions.region_code')
+                                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                    ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                    ->get();
+
+                $dataList = array();
+                foreach ($clubRankInfo as $key => $value) {
+
+                    $clubRank = $this->getClubRank($value->club_code);
+                    $activityCount = $this->ClubActivity->get_activity_count_by_club_code($value->club_code);
+                    $totalPoints = $this->ClubPoint->get_points__by_club_code($value->club_code);
+
+                    $dataList[$key]['clubCode'] = $value->club_code;
+                    $dataList[$key]['regionCode'] = $value->region_code;
+                    $dataList[$key]['zoneCode'] = $value->zone_code;
+                    $dataList[$key]['rank'] = $clubRank;
+                    $dataList[$key]['activityCount'] = $activityCount;
+                    $dataList[$key]['totalPoints'] = $totalPoints;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    private function getClubRank($clubCode) {
+
+        try {
+            $resp = $this->ClubPoint->get_ordered_list();
+
+            $clubRank = 1;
+            foreach ($resp as $key => $value) {
+                if ($value['club_code'] == $clubCode) {
+                    break;
+                }
+
+                $clubRank += 1;
+            }
+
+            return $clubRank;
+
+        } catch (\Exception $e) {
+            return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
         }
     }
 }
