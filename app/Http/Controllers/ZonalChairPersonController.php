@@ -136,8 +136,9 @@ class ZonalChairPersonController extends Controller
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
-        $name = (is_null($request->name) || empty($request->name)) ? "" : $request->name;
+        $name = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $zoneUserCode = (is_null($request->zonalChairpersonCode) || empty($request->zonalChairpersonCode)) ? "" : $request->zonalChairpersonCode;
 
         if ($request_token == "") { 
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -160,6 +161,7 @@ class ZonalChairPersonController extends Controller
                 $newChairpersonInfo['zoneCode'] = $zoneCode;
                 $newChairpersonInfo['name'] = $name;
                 $newChairpersonInfo['email'] = $email;
+                $newChairpersonInfo['code'] = $zoneUserCode;
 
                 $updateUser = $this->ZonalChairPerson->update_user_by_code($newChairpersonInfo);
 
@@ -187,6 +189,34 @@ class ZonalChairPersonController extends Controller
 
             try {
                 
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function deleteUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $zoneUserCode = (is_null($request->zonalChairpersonCode) || empty($request->zonalChairpersonCode)) ? "" : $request->zonalChairpersonCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($zoneUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ZonalChairPerson->delete_by_code($zoneUserCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Error Occured.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

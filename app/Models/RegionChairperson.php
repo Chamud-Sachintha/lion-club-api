@@ -60,7 +60,7 @@ class RegionChairperson extends Model
     }
 
     public function update_user_by_code($userInfo) {
-        $map['id'] = $userInfo['userId'];
+        $map['code'] = $userInfo['code'];
         $map1['name'] = $userInfo['name'];
         $map1['email'] = $userInfo['email'];
 
@@ -79,6 +79,12 @@ class RegionChairperson extends Model
         $map['token'] = $token;
 
         return $this->where($map)->first();
+    }
+
+    public function delete_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
     }
 
     public function query_all() {

@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Models\Club;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\Governer;
+use App\Models\Region;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 
@@ -95,8 +96,12 @@ class ClubController extends Controller
 
                 $clubList = array();
                 foreach ($allClubList as $key => $value) {
+
+                    $zone = $this->Zone->find_by_zone_code($value['zone_code']);
+
                     $clubList[$key]['clubCode'] = $value['club_code'];
                     $clubList[$key]['zoneCode'] = $value['zone_code'];
+                    $clubList[$key]['reCode'] = $zone['re_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubList);

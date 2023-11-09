@@ -45,6 +45,12 @@ class Evaluator extends Model
         return $this->where($map)->first();
     }
 
+    public function delete_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function update_pw_by_email($info) {
         $map['email'] = $info['email'];
         $map1['password'] = Hash::make($info['password']);
@@ -65,7 +71,7 @@ class Evaluator extends Model
     }
 
     public function update_evaluvator_by_code($userInfo) {
-        $map['code'] = $userInfo['userCode'];
+        $map['code'] = $userInfo['code'];
         $map1['name'] = $userInfo['name'];
         $map1['email'] = $userInfo['email'];
 

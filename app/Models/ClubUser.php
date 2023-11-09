@@ -77,7 +77,7 @@ class ClubUser extends Model
         $map1['email'] = $userInfo['email'];
         $map1['club_code'] = $userInfo['clubCode'];
 
-        return $this->where($map)->updae($map1);
+        return $this->where($map)->update($map1);
     }
 
     public function delete_by_code($code) {

@@ -213,6 +213,7 @@ class ClubUserController extends Controller
                 $newClubUserInfo['name'] = $fullName;
                 $newClubUserInfo['email'] = $email;
                 $newClubUserInfo['clubCode'] = $clubCode;
+                $newClubUserInfo['code'] = $clubUserCode;
 
                 $updateClubUser = $this->ClubUser->update_club_user_by_code($newClubUserInfo);
 

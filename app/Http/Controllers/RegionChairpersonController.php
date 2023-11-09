@@ -150,9 +150,10 @@ class RegionChairpersonController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
-        $name = (is_null($request->name) || empty($request->name)) ? "" : $request->name;
+        $reCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+        $name = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
+        $reUserCode = (is_null($request->reChairPersonCode) || empty($request->reChairPersonCode)) ? "" : $request->reChairPersonCode;
 
         if ($request_token == "") { 
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -173,6 +174,7 @@ class RegionChairpersonController extends Controller
                 }
 
                 $newChairpersonInfo['reCode'] = $reCode;
+                $newChairpersonInfo['code'] = $reUserCode;
                 $newChairpersonInfo['name'] = $name;
                 $newChairpersonInfo['email'] = $email;
 
@@ -202,6 +204,35 @@ class RegionChairpersonController extends Controller
 
             try {
                 
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function deleteRegionChairpersonByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $reUserCode = (is_null($request->reChairPersonCode) || empty($request->reChairPersonCode)) ? "" : $request->reChairPersonCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($reUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+
+                $resp = $this->RegionChairperson->delete_by_code($reUserCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

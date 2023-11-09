@@ -23,6 +23,12 @@ class PointTemplate extends Model
         return $this->create($map);
     }
 
+    public function delete_by_code($code) {
+        $map['code'] = $code;
+
+        return $this->where($map)->delete();
+    }
+
     public function update_point_template_by_code($info) {
         $map['code'] = $info['templateCode'];
         $map1['value'] = $info['templateValue'];

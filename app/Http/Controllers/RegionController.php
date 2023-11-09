@@ -108,6 +108,7 @@ class RegionController extends Controller
                 $allregionList = array();
                 foreach ($regionList as $key => $value) {
                     $allregionList[$key]['regionCode'] = $value['region_code'];
+                    $allregionList[$key]['contextUserCode'] = $value['context_user_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $allregionList);

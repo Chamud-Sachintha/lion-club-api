@@ -175,4 +175,33 @@ class PointTemplateController extends Controller
             }
         }
     }
+
+    public function deletePointTemplateByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $templateCode = (is_null($request->pointTemplateCode) || empty($request->pointTemplateCode)) ? "" : $request->pointTemplateCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($templateCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Template Code is required.");
+        } else {
+
+            try {
+                
+                $resp = $this->PointTemplate->delete_by_code($templateCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete Successfullt.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
 }

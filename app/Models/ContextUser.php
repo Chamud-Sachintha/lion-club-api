@@ -32,6 +32,12 @@ class ContextUser extends Model
         return $this->create($map);
     }
 
+    public function update_user_by_code($info) {
+        $map['code'] = $info['code'];
+
+        $this->where($map)->update($info);
+    }
+
     public function verify_email($email) {
         $map['email'] = $email;
 

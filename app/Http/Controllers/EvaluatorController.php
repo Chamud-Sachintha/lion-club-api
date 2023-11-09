@@ -202,20 +202,20 @@ class EvaluatorController extends Controller
     public function updateEvaluvatorUserByCode(Request $request) {
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $userCode = (is_null($request->evaluvatorCode) || empty($request->evaluvatorCode)) ? "" : $request->evaluvatorCode;
-        $name = (is_null($request->name) || empty($request->name)) ? "" : $request->name;
+        $userCode = (is_null($request->evaluatorCode) || empty($request->evaluatorCode)) ? "" : $request->evaluatorCode;
+        $name = (is_null($request->fullName) || empty($request->fullName)) ? "" : $request->fullName;
         $email = (is_null($request->email) || empty($request->email)) ? "" : $request->email;
 
         if ($request_token == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+            return $this->AppHelper->responseMessageHandle(0, "Token is requiiored");
         } else if ($flag == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+            return $this->AppHelper->responseMessageHandle(0, "Flag is requiiored");
         } else if ($userCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+            return $this->AppHelper->responseMessageHandle(0, "User Code is requiiored");
         } else if ($name == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+            return $this->AppHelper->responseMessageHandle(0, "Name is requiiored");
         } else if ($email == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Tokenm is requiiored");
+            return $this->AppHelper->responseMessageHandle(0, "Email is requiiored");
         } else {
 
             try {
@@ -312,6 +312,34 @@ class EvaluatorController extends Controller
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function deleteUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $evaluvatorCode = (is_null($request->evaluvatorCode) || empty($request->evaluvatorCode)) ? "" : $request->evaluvatorCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($evaluvatorCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $resp = $this->Evaluator->delete_by_code($evaluvatorCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Error Occured.");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
