@@ -151,3 +151,5 @@ Route::middleware('authToken')->post('find-rank', [ClubController::class, 'getCl
 Route::middleware('authToken')->post('get-gov-dashboard-table', [GovernerController::class, 'getClubRankData']);
 
 Route::middleware('authToken')->post('filter-list-evaluvator', [EvaluatorController::class, 'filterClubActivities']);
+
+Route::middleware('authToken')->post('get-context-user-dashboard-table', [ContextUserController::class, 'getDashboardTableData']);
