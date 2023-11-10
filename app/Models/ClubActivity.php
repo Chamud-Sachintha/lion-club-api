@@ -27,7 +27,7 @@ class ClubActivity extends Model
         $map['create_time'] = $activityInfo['createTime'];
         $map['status'] = 0;
         $map['creator'] = $activityInfo['creator'];
-        $map['ext_value'] - $activityInfo['extValue'];
+        $map['ext_value'] = $activityInfo['extValue'];
 
         return $this->create($map);
     }
