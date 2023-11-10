@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Models\Governer;
 use App\Models\PointTemplate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PointTemplateController extends Controller
 {
@@ -170,6 +171,35 @@ class PointTemplateController extends Controller
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
                 }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getTemplateObjByActivityCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($activityCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
+        } else {
+
+            try {
+                $resp = DB::table('point_templates')->select('point_templates.*')
+                                                    ->join('activities', 'activities.point_template_code', '=', 'point_templates.code')
+                                                    ->where('activities.code', '=', $activityCode)
+                                                    ->get();
+
+                $rangeList = json_decode($resp[0]->value);
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $rangeList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

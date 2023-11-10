@@ -15,6 +15,7 @@ class ClubActivity extends Model
         'type',
         'status',
         'creator', // 1- club user 2 - context user
+        'ext_value',
         'create_time'
     ];
 
@@ -26,6 +27,7 @@ class ClubActivity extends Model
         $map['create_time'] = $activityInfo['createTime'];
         $map['status'] = 0;
         $map['creator'] = $activityInfo['creator'];
+        $map['ext_value'] - $activityInfo['extValue'];
 
         return $this->create($map);
     }

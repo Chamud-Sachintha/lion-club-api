@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Mail\AddUserMail;
+use App\Models\Activity;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\Governer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ClubUserController extends Controller
@@ -17,6 +19,7 @@ class ClubUserController extends Controller
     private $Governer;
     private $ClubActivity;
     private $ClubActivityPointsReserved;
+    private $Activity;
     private $AppHelper;
 
     public function __construct()
@@ -25,6 +28,7 @@ class ClubUserController extends Controller
         $this->Governer = new Governer();
         $this->ClubActivity = new ClubActivity();
         $this->ClubActivityPointsReserved = new ClubActivtyPointReserve();
+        $this->Activity = new Activity();
         $this->AppHelper = new AppHelper();
     }
 
@@ -249,6 +253,44 @@ class ClubUserController extends Controller
                 $dashboardInfo['pointsTotal'] = $ponitsTotal;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardInfo);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubUserDashboardTableData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Club Code is required.");
+        } else {
+
+            try {
+
+                $clubActivityInfo = $this->ClubActivity->find_by_club_code($clubCode);
+
+                $cbList = array();
+                foreach($clubActivityInfo as $key => $value) {
+
+                    $activityInfo = $this->Activity->query_find($value['activity_code']);
+                    $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($value['id'], $value['club_code']);
+
+                    $cbList[$key]['activityName'] = $activityInfo['activity_name'];
+                    $cbList[$key]['createTime'] = $value['create_time'];
+                    $cbList[$key]['extValue'] = $value['ext_value'];
+                    $cbList[$key]['status'] = $value['status'];
+                    $cbList[$key]['points'] = $ponits['points'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $cbList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

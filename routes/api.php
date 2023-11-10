@@ -140,6 +140,7 @@ Route::middleware('authToken')->post('get-gov-dashboard-data', [GovernerControll
 Route::middleware('authToken')->post('get-club-user-dashboard-data', [ClubUserController::class, 'getClubUserDashboardData']);
 Route::middleware('authToken')->post('get-context-user-dashboard-data', [ContextUserController::class, 'getDashboardData']);
 Route::middleware('authToken')->post('get-evaluvator-dashboard-data', [EvaluatorController::class, 'getEvaluvatorDashboardData']);
+Route::middleware('authToken')->post('get-club-user-dashboard-table-data', [ClubUserController::class, 'getClubUserDashboardTableData']);
 
 Route::middleware('authToken')->post('get-club-activity-list-by-context-user-code', [ContextUserController::class, 'getContextUserFeedActivityList']);
 Route::middleware('authToken')->post('get-view-data-list-context-user', [ContextUserController::class, 'getContextUserViewDataList']);
@@ -153,3 +154,5 @@ Route::middleware('authToken')->post('get-gov-dashboard-table', [GovernerControl
 Route::middleware('authToken')->post('filter-list-evaluvator', [EvaluatorController::class, 'filterClubActivities']);
 
 Route::middleware('authToken')->post('get-context-user-dashboard-table', [ContextUserController::class, 'getDashboardTableData']);
+
+Route::middleware('authToken')->post('get-template-obj-by-activity-code', [PointTemplateController::class, 'getTemplateObjByActivityCode']);

@@ -45,6 +45,7 @@ class ClubActivityController extends Controller
         // $memberCount = (is_null($request->memberCount) || empty($request->memberCount)) ? "" : $request->memberCount;
         $clubCode = (is_null($request->clubCode) || empty($request->clubCode)) ? "" : $request->clubCode;
         $creator = (is_null($request->creator) || empty($request->creator)) ? "" : $request->creator;
+        $extValue = (is_null($request->extValue) || empty($request->extValue)) ? "" : $request->extValue;
  
         $documentList = $request->files;
         $imageList = $request->files;
@@ -56,7 +57,9 @@ class ClubActivityController extends Controller
         } else if ($activityCode == "") {
             return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
         } else if ($creator == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Creator is required."); 
+            return $this->AppHelper->responseMessageHandle(0, "Creator is required.");
+        } else if ($extValue == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Exact Value is required.");
         } else {
             try {
                 $clubActivityInfo = array();
@@ -68,6 +71,7 @@ class ClubActivityController extends Controller
                 // $clubActivityInfo['memberCount'] = $memberCount;
                 $clubActivityInfo['createTime'] = $this->AppHelper->get_date_and_time();
                 $clubActivityInfo['creator'] = $creator;
+                $clubActivityInfo['extValue'] = $extValue;
 
                 $insertClubActivity = $this->ClubActivity->add_log($clubActivityInfo);
 
@@ -160,10 +164,14 @@ class ClubActivityController extends Controller
 
                 $clubActivityList = array();
                 foreach ($resp as $key => $value) {
+
+                    $checkUser = $this->checkUser($value['creator']);
+
                     $clubActivityList[$key]['id'] = $value['id'];
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];
                     $clubActivityList[$key]['status'] = $value['status'];
+                    $clubActivityList[$key]['createUser'] = ["designation" => $checkUser['flag'], "name" => $checkUser['name']];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
                 }
 
@@ -244,7 +252,7 @@ class ClubActivityController extends Controller
         } else {
 
             try {
-                $resp = DB::table('activities')->select('activities.*', 'club_activities.id as clubActivityId', 'club_activities.club_code', 'club_activities.create_time', 'club_activities.status')
+                $resp = DB::table('activities')->select('activities.*', 'club_activities.id as clubActivityId', 'club_activities.club_code', 'club_activities.create_time', 'club_activities.status', 'club_activities.type')
                                                 ->join('club_activities', 'club_activities.activity_code', '=', 'activities.code')
                                                 ->where('club_activities.id', $activityCode)
                                                 ->get();
@@ -255,6 +263,7 @@ class ClubActivityController extends Controller
                 $activityInfo['activityCode'] = $resp[0]->code;
                 $activityInfo['clubCode'] = $resp[0]->club_code;
                 $activityInfo['activityName'] = $resp[0]->activity_name;
+                $activityInfo['type'] = $resp[0]->type;
                 $activityInfo['status'] = $resp[0]->status;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityInfo);
@@ -290,6 +299,7 @@ class ClubActivityController extends Controller
                     $clubActivityList[$key]['activityName'] = $activityInfo['activity_name'];
                     $clubActivityList[$key]['status'] = $value['status'];
                     $clubActivityList[$key]['type'] = $value['type'];
+                    $clubActivityList[$key]['extValue'] = $value['ext_value'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
                 }
 
@@ -298,5 +308,21 @@ class ClubActivityController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    private function checkUser($userCode) {
+
+        $role = null;
+
+        $clubUser = $this->ClubUser->find_by_code($userCode);
+        $contextUser = $this->ContextUser->find_by_code($userCode);
+
+        if ($clubUser) {
+            $role = $clubUser;
+        } else {
+            $role = $contextUser;
+        }
+
+        return $role;
     }
 }

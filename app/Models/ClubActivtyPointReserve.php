@@ -31,6 +31,13 @@ class ClubActivtyPointReserve extends Model
         return $this->where($map)->sum('points');
     }
 
+    public function get_points_by_activity_and_club($activityCode, $clubCode) {
+        $map['club_activity_code'] = $activityCode;
+        $map['club_code'] = $clubCode;
+
+        return $this->where($map)->first();
+    }
+
     public function get_ordered_list() {
         return $this->orderBy("points", "desc")->get();
     }
