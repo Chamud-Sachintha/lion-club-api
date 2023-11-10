@@ -58,8 +58,8 @@ class ClubActivityController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Activity Code is required.");
         } else if ($creator == "") {
             return $this->AppHelper->responseMessageHandle(0, "Creator is required.");
-        } else if ($extValue == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Exact Value is required.");
+        // } else if ($extValue == "") {
+        //     return $this->AppHelper->responseMessageHandle(0, "Exact Value is required.");
         } else {
             try {
                 $clubActivityInfo = array();
