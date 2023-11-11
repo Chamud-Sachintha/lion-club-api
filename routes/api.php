@@ -156,3 +156,10 @@ Route::middleware('authToken')->post('filter-list-evaluvator', [EvaluatorControl
 Route::middleware('authToken')->post('get-context-user-dashboard-table', [ContextUserController::class, 'getDashboardTableData']);
 
 Route::middleware('authToken')->post('get-template-obj-by-activity-code', [PointTemplateController::class, 'getTemplateObjByActivityCode']);
+
+Route::middleware('authToken')->post('eveluvator-route-perm', [EvaluatorController::class, 'routePermission']);
+Route::middleware('authToken')->post('gov-route-perm', [GovernerController::class, 'routePermission']);
+Route::middleware('authToken')->post('club-user-route-perm', [ClubUserController::class, 'routePermission']);
+Route::middleware('authToken')->post('region-user-route-perm', [RegionChairpersonController::class, 'routePermission']);
+Route::middleware('authToken')->post('zonal-user-route-perm', [ZonalChairPersonController::class, 'routePermission']);
+Route::middleware('authToken')->post('context-user-route-perm', [ContextUserController::class, 'routePermission']);
