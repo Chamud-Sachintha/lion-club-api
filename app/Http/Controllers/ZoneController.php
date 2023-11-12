@@ -167,7 +167,7 @@ class ZoneController extends Controller
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $zoneCode = (is_null($request->zoneCode) || empty($request->zoneCode)) ? "" : $request->zoneCode;
-        $reCode = (is_null($request->reCode) || empty($request->reCode)) ? "" : $request->reCode;
+        $reCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
