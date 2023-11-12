@@ -7,6 +7,8 @@ use App\Models\Activity;
 use App\Models\Club;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
+use App\Models\ClubUser;
+use App\Models\ContextUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +19,8 @@ class GovernerController extends Controller
     private $AppHelper;
     private $ClubPoint;
     private $ClubActivity;
+    private $ClubUser;
+    private $ContextUser;
     private $Club;
 
     public function __construct()
@@ -25,6 +29,8 @@ class GovernerController extends Controller
         $this->AppHelper = new AppHelper();
         $this->ClubPoint = new ClubActivtyPointReserve();
         $this->ClubActivity = new ClubActivity();
+        $this->ClubUser = new ClubUser();
+        $this->ContextUser = new ContextUser();
         $this->Club = new Club();
     }
 
@@ -92,6 +98,58 @@ class GovernerController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    public function getGovReportTableData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = DB::table('club_activities')->select('club_activities.*', 'activities.activity_name', 'activities.create_time as activity_date')
+                                                    ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                    ->get();
+
+                $reportDataList = array();
+                foreach($resp as $key => $value) {
+
+                    $user = $this->checkUser($value->creator);
+
+                    $reportDataList[$key]['activityCode'] = $value->activity_code;
+                    $reportDataList[$key]['activityName'] = $value->activity_name;
+                    $reportDataList[$key]['activityDate'] = $value->activity_date;
+                    $reportDataList[$key]['submitDate'] = $value->create_time;
+                    $reportDataList[$key]['extValue'] = $value->ext_value;
+                    $reportDataList[$key]['submitBy'] = $user['name'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Opereation Complete", $reportDataList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        } 
+    }
+
+    private function checkUser($userCode) {
+
+        $role = null;
+
+        $clubUser = $this->ClubUser->find_by_code($userCode);
+        $contextUser = $this->ContextUser->find_by_code($userCode);
+
+        if ($clubUser) {
+            $role = $clubUser;
+        } else {
+            $role = $contextUser;
+        }
+
+        return $role;
     }
 
     private function getClubRank($clubCode) {

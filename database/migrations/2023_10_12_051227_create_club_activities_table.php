@@ -23,6 +23,7 @@ class CreateClubActivitiesTable extends Migration
             $table->string('creator');
             $table->string('ext_value');
             $table->integer('date_of_activity');
+            $table->string('comment')->nullable();
             $table->timestamps();
         });
     }

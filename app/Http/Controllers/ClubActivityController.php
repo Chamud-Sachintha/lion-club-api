@@ -9,6 +9,7 @@ use App\Models\ClubActivityDocument;
 use App\Models\ClubActivityImage;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
+use App\Models\ProofDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,6 +21,7 @@ class ClubActivityController extends Controller
     private $ClubActivity;
     private $ClubActivityDocument;
     private $ClubActivityImage;
+    private $ProofDocument;
     private $ContextUser;
 
     public function __construct()
@@ -30,6 +32,7 @@ class ClubActivityController extends Controller
         $this->Activity = new Activity();
         $this->ClubActivityDocument = new ClubActivityDocument();
         $this->ClubActivityImage = new ClubActivityImage();
+        $this->ProofDocument = new ProofDocument();
         $this->ContextUser = new ContextUser();
     }
 
@@ -303,9 +306,47 @@ class ClubActivityController extends Controller
                     $clubActivityList[$key]['type'] = $value['type'];
                     $clubActivityList[$key]['extValue'] = $value['ext_value'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
+                    $clubActivityList[$key]['activityTime'] = $activityInfo['create_time'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getDocInfoByActivityCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $activity = $this->Activity->query_find($activityCode);
+
+                if ($activity) {
+                    $docCodeList = json_decode($activity->doc_code);
+
+                    $docInfoArray = array();
+                    foreach($docCodeList as $key => $value) {
+                        
+                        $document = $this->ProofDocument->find_by_code($value->value);
+
+                        $docInfoArray[$key]['documentCode'] = $document->code;
+                        $docInfoArray[$key]['documentName'] = $document->name;
+                    }
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $docInfoArray);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invalid Activity Code");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

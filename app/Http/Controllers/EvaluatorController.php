@@ -111,6 +111,7 @@ class EvaluatorController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
         $activityStatus = (is_null($request->status) || empty($request->status)) ? "" : $request->status;
+        $comment = (is_null($request->comment) || empty($request->comment)) ? "" : $request->comment;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -126,6 +127,7 @@ class EvaluatorController extends Controller
                 $info = array();
                 $info['clubActivityCode'] = $activityCode;
                 $info['status'] = $activityStatus;
+                $info['comment'] = $comment;
 
                 $updateStatus = $this->ClubActivity->update_status_by_id($info);
 
@@ -261,6 +263,42 @@ class EvaluatorController extends Controller
                 $dashboardData['rejectedCount'] = $rejectedActivites;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getEveluvatorDashboardDataTableData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubActivity->query_all();
+
+                $dataList = array();
+                foreach($resp as $key => $value) {
+
+                    $totalCount = $this->ClubActivity->get_total_count_by_club_code($value['club_code']);
+                    $approvedCount = $this->ClubActivity->get_approved_count_by_club_code($value['club_code']);
+                    $rejectedCount = $this->ClubActivity->get_rejected_count_by_club_code($value['club_code']);
+                    $pendingCount = $this->ClubActivity->get_pending_count_by_club_code($value['club_code']);
+
+                    $dataList[$key]['clubCode'] = $value['club_code'];
+                    $dataList[$key]['totalCount'] = $totalCount;
+                    $dataList[$key]['pendingCount'] = $pendingCount;
+                    $dataList[$key]['approvedCount'] = $approvedCount;
+                    $dataList[$key]['rejectedCount'] = $rejectedCount;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

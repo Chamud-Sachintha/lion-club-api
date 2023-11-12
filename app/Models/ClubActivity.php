@@ -17,6 +17,7 @@ class ClubActivity extends Model
         'creator', // 1- club user 2 - context user
         'ext_value',
         'date_of_activity',
+        'comment',
         'create_time'
     ];
 
@@ -49,6 +50,7 @@ class ClubActivity extends Model
     public function update_status_by_id($info) {
         $map['id'] = $info['clubActivityCode'];
         $map1['status'] = $info['status'];
+        $map1['comment'] = $info['comment'];
 
         return $this->where($map)->update($map1);
     }
@@ -93,6 +95,33 @@ class ClubActivity extends Model
 
     public function get_rejected_activity_count() {
         $map['status'] = 2;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_approved_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+        $map['status'] = 1;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_rejected_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+        $map['status'] = 2;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_pending_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+        $map['status'] = 0;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_total_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
 
         return $this->where($map)->count();
     }

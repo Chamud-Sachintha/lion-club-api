@@ -156,3 +156,8 @@ Route::middleware('authToken')->post('filter-list-evaluvator', [EvaluatorControl
 Route::middleware('authToken')->post('get-context-user-dashboard-table', [ContextUserController::class, 'getDashboardTableData']);
 
 Route::middleware('authToken')->post('get-template-obj-by-activity-code', [PointTemplateController::class, 'getTemplateObjByActivityCode']);
+
+Route::middleware('authToken')->post('gov-reports-data', [GovernerController::class, 'getGovReportTableData']);
+
+Route::middleware('authToken')->post('get-docs-by-activity-code', [ClubActivityController::class, 'getDocInfoByActivityCode']);
+Route::middleware('authToken')->post('get-eveluvator-dashboard-table-data', [EvaluatorController::class, 'getEveluvatorDashboardDataTableData']);
