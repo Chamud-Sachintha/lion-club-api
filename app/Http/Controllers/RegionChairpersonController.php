@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddUserMail;
 use App\Models\ChangePassword;
 use App\Models\Governer;
 use App\Models\Region;
 use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegionChairpersonController extends Controller
 {
@@ -74,6 +76,14 @@ class RegionChairpersonController extends Controller
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                         $this->ChangePasswordLog->add_log($passwordLogInfo);
+
+                        $details = [
+                            'userRole' => 'Region Chair Person',
+                            'userName' => $chairPerson->name,
+                            'tempPass' => 123,
+                        ];
+    
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $chairPerson);
                     } else {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Mail\AddSectionMail;
 use App\Mail\AddUserMail;
+use App\Mail\ContextUserAllocation;
 use App\Models\ContextUser;
 use App\Models\Governer;
 use App\Models\Region;
@@ -72,12 +73,14 @@ class RegionController extends Controller
 
                         $govInfo = $this->Governer->check_permission($request_token, $flag);
 
+                        $details = array();
+                        $contextUser = $this->ContextUser->find_by_code($contextUserCode);
+
                         $details = [
-                            'title' => 'Mail from lion club',
-                            'body' => $regionCode . " Region Created Sucessfully."
+                            'userName' => $contextUser->name,
+                            'region' => $regionCode
                         ];
-    
-                        Mail::to($govInfo->email)->send(new AddSectionMail($details));
+                        Mail::to($contextUser->email)->send(new ContextUserAllocation($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $region);
                     } else {

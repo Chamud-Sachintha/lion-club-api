@@ -78,6 +78,10 @@ class Evaluator extends Model
         return $this->where($map)->update($map1);
     }
 
+    public function get_mails() {
+        return $this->all()->pluck("email");
+    }
+
     public function update_login_token($uid, $tokenInfo) {
         $map['token'] = $tokenInfo['token'];
         $map['login_time'] = $tokenInfo['loginTime'];

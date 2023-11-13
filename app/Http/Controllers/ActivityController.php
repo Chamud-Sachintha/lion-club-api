@@ -18,7 +18,7 @@ class ActivityController extends Controller
     private $MainActivity;
     private $FirstSubCategory;
     private $SecondSubCategory;
-
+    
     public function __construct()
     {
         $this->AppHelper = new AppHelper();
@@ -27,7 +27,7 @@ class ActivityController extends Controller
         $this->MainActivity = new ActivityMainCategory();
         $this->FirstSubCategory = new ActivityFirstSubCategory();
         $this->SecondSubCategory = new ActivitySecondSubCategory();
-    }
+            }
 
     public function addNewActivity(Request $request) {
 
@@ -101,7 +101,7 @@ class ActivityController extends Controller
                     $activityInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                     $newActivity = $this->Activity->add_log($activityInfo);
-
+                    
                     if ($newActivity) {
                         return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $newActivity);
                     } else {

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AddSectionMail extends Mailable
+class ContextUserAllocation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,6 +31,6 @@ class AddSectionMail extends Mailable
     public function build()
     {
         return $this->subject('User Created Successfully.')
-                    ->view('emails.add_section');
+                    ->view('emails.context-user-allocation')->with($this->details);
     }
 }

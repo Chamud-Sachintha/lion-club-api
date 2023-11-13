@@ -74,22 +74,11 @@ class ClubUserController extends Controller
                         $govInfo = $this->Governer->check_permission($request_token, $flag);
 
                         $details = [
-                            'title' => 'Dear Club User l',
-                            'para1' => 'Welcome to the Lion Club in Sri Lanka! We are thrilled to have you join our community.',
-                            'para2' => 'As a new member, we have created an account for you to access our website. Your initial login credentials are as follows:',
-                            'para3' => 'Default Password: [123]',
-                            'para4' => 'Please use these credentials to log in to your account for the first time. For security purposes, we strongly recommend that you change your password after your initial login. Your new password should be something unique and known only to you to safeguard your account.',
-                        ];
-
-                        $details2 = [
-                            'title' => 'Dear Club User',
-                            'para1' => "",
-                            "para2" => "",
-                            "para3" => "",
-                            "para4" => "",
+                            'userRole' => 'Club User',
+                            'userName' => $clubUser->name,
+                            'tempPass' => 123,
                         ];
     
-                        Mail::to($govInfo->email)->send(new AddUserMail($details2));
                         Mail::to($emailAddress)->send(new AddUserMail($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $clubUser);

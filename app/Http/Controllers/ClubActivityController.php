@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddActivity;
 use App\Models\Activity;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
 use App\Models\ClubActivityImage;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
+use App\Models\Evaluator;
 use App\Models\ProofDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ClubActivityController extends Controller
 {
@@ -23,6 +26,7 @@ class ClubActivityController extends Controller
     private $ClubActivityImage;
     private $ProofDocument;
     private $ContextUser;
+    private $Eveluvator;
 
     public function __construct()
     {   
@@ -34,6 +38,7 @@ class ClubActivityController extends Controller
         $this->ClubActivityImage = new ClubActivityImage();
         $this->ProofDocument = new ProofDocument();
         $this->ContextUser = new ContextUser();
+        $this->Eveluvator = new Evaluator();
     }
 
     public function addnewClubActivityRecord(request $request) {
@@ -103,6 +108,20 @@ class ClubActivityController extends Controller
                             $this->ClubActivityImage->add_log($docInfo);
                         }
                     }
+
+                    $activity = $this->Activity->query_find($activityCode);
+                    $creatorInfo = $this->checkUser($creator);
+
+                    $details = [
+                        'activityCode' => $activity->code,
+                        'activityName' => $activity->activity_name,
+                        'submitBy' => $creatorInfo->name,
+                        'value' => $extValue 
+                    ];
+
+                    $eveluvatorMails = $this->Eveluvator->get_mails();
+
+                    Mail::to($eveluvatorMails)->send(new AddActivity($details));
 
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                 }

@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddUserMail;
+use App\Models\ChangePassword;
 use App\Models\Governer;
 use App\Models\ZonalChairPerson;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ZonalChairPersonController extends Controller
 {
     private $ZonalChairPerson;
     private $Governer;
     private $Zone;
+    private $ChangePasswordLog;
     private $AppHelper;
 
     public function __construct()
@@ -20,6 +24,7 @@ class ZonalChairPersonController extends Controller
         $this->ZonalChairPerson = new ZonalChairPerson();
         $this->Governer = new Governer();
         $this->Zone = new Zone();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->AppHelper = new AppHelper();
     }
 
@@ -61,6 +66,24 @@ class ZonalChairPersonController extends Controller
                     $chairPerson = $this->ZonalChairPerson->add_log($chairPersonInfo);
 
                     if ($chairPerson) {
+
+                        $passwordLogInfo = array();
+                        $passwordLogInfo['userEmail'] = $emailAddress;
+                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['secret'] = sha1(time());
+                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->ChangePasswordLog->add_log($passwordLogInfo);
+
+                        $details = [
+                            'userRole' => 'Zone Chair Person',
+                            'userName' => $chairPerson->name,
+                            'tempPass' => 123,
+                        ];
+
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
+
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $chairPerson);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Chair Person Not Created."); 

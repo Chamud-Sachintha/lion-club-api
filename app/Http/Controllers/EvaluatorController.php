@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\EvaluvateActivity;
 use App\Models\Activity;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
+use App\Models\ClubUser;
+use App\Models\ContextUser;
 use App\Models\Evaluator;
 use App\Models\Governer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class EvaluatorController extends Controller
 {
@@ -18,6 +22,8 @@ class EvaluatorController extends Controller
     private $ClubActivity;
     private $Activity;
     private $ClubActivityPointReserve;
+    private $ClubUser;
+    private $ContextUser;
     private $AppHelper;
 
     public function __construct()
@@ -27,6 +33,8 @@ class EvaluatorController extends Controller
         $this->ClubActivity = new ClubActivity();
         $this->Activity = new Activity();
         $this->ClubActivityPointReserve = new ClubActivtyPointReserve();
+        $this->ClubUser = new ClubUser();
+        $this->ContextUser = new ContextUser();
         $this->AppHelper = new AppHelper();
     }
 
@@ -161,6 +169,24 @@ class EvaluatorController extends Controller
                             break;
                         }
                     }
+
+                    $creatorInfo = $this->checkUser($cbActivity->creator);
+
+                    $details = array();
+                    $details['activityCode'] = $activityCode;
+                    $details['activityName'] = $activity->activity_name;
+                    $details['submitBy'] = $creatorInfo->name;
+                    $details['points'] = $pointInfo['points'];
+                    $details['value'] = $cbActivity->ext_value;
+                    $details['comment'] = $comment;
+
+                    if ($activityStatus == 1) {
+                        $details['status'] = "Approved";
+                    } else {
+                        $details['status'] = "Rejected";
+                    }
+
+                    Mail::to($creatorInfo->email)->send(new EvaluvateActivity($details));
 
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                 } else {
@@ -382,6 +408,22 @@ class EvaluatorController extends Controller
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
         }
+    }
+
+    private function checkUser($userCode) {
+
+        $role = null;
+
+        $clubUser = $this->ClubUser->find_by_code($userCode);
+        $contextUser = $this->ContextUser->find_by_code($userCode);
+
+        if ($clubUser) {
+            $role = $clubUser;
+        } else {
+            $role = $contextUser;
+        }
+
+        return $role;
     }
 
     private function checkPermission($token, $flag) {
