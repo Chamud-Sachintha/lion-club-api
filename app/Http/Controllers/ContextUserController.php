@@ -143,7 +143,7 @@ class ContextUserController extends Controller
                 $clubList = DB::table('clubs')->select('clubs.*')
                                     ->join('zones', 'clubs.zone_code', '=', 'zones.zone_code')
                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
-                                    ->where('regions.context_user_code', '=', $contextuserCode->code)
+                                    // ->where('regions.context_user_code', '=', $contextuserCode->code)
                                     ->get();
 
                 $availableClubList = array();
@@ -350,6 +350,7 @@ class ContextUserController extends Controller
                         $activityList[$key]['reCode'] = $zone->re_code;
                         $activityList[$key]['zoneCode'] = $zone->zone_code;
                         $activityList[$key]['createTime'] = $value['create_time'];
+                        $activityList[$key]['dateOfActivity'] = $value['date_of_activity'];
                     }
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);

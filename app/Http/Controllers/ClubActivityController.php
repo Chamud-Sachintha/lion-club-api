@@ -197,6 +197,7 @@ class ClubActivityController extends Controller
                     $clubActivityList[$key]['status'] = $value['status'];
                     $clubActivityList[$key]['createUser'] = ["designation" => $checkUser['flag'], "name" => $checkUser['name']];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
+                    $clubActivityList[$key]['dateOfActivity'] = $value['date_of_activity'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
@@ -325,7 +326,7 @@ class ClubActivityController extends Controller
                     $clubActivityList[$key]['type'] = $value['type'];
                     $clubActivityList[$key]['extValue'] = $value['ext_value'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
-                    $clubActivityList[$key]['activityTime'] = $activityInfo['create_time'];
+                    $clubActivityList[$key]['activityTime'] = $value['date_of_activity'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
