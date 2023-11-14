@@ -39,6 +39,6 @@ class ClubActivtyPointReserve extends Model
     }
 
     public function get_ordered_list() {
-        return $this->orderBy("points", "desc")->get();
+        return $this->orderBy("points", "asc")->get();
     }
 }
