@@ -190,7 +190,7 @@ class ClubActivityController extends Controller
                 foreach ($resp as $key => $value) {
 
                     $checkUser = $this->checkUser($value['creator']);
-
+                    
                     $clubActivityList[$key]['id'] = $value['id'];
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];

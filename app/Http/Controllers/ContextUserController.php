@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Activity;
+use App\Models\ChangePassword;
 use App\Models\Club;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
@@ -22,6 +23,7 @@ class ContextUserController extends Controller
     private $Governer;
     private $ClubActivity;
     private $ClubActivityDocument;
+    private $ChangePasswordLog;
     private $ClubPoints;
     private $Zone;
     private $Activity;
@@ -42,6 +44,7 @@ class ContextUserController extends Controller
         $this->Region = new Region();
         $this->Club = new Club();
         $this->Zone = new Zone();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->AppHelper = new AppHelper();
     }
 
@@ -79,6 +82,17 @@ class ContextUserController extends Controller
                     $contextUser = $this->ContextUser->add_log($contextUserInfo);
 
                     if ($contextUser) {
+
+                        $passwordLogInfo = array();
+                        $passwordLogInfo['userEmail'] = $emailAddress;
+                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['secret'] = sha1(time());
+                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->ChangePasswordLog->add_log($passwordLogInfo);
+
+
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $contextUser);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Chair Person Not Created."); 

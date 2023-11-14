@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Mail\AddUserMail;
 use App\Models\Activity;
+use App\Models\ChangePassword;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
@@ -20,6 +21,7 @@ class ClubUserController extends Controller
     private $ClubActivity;
     private $ClubActivityPointsReserved;
     private $Activity;
+    private $ChangePasswordLog;
     private $AppHelper;
 
     public function __construct()
@@ -29,6 +31,7 @@ class ClubUserController extends Controller
         $this->ClubActivity = new ClubActivity();
         $this->ClubActivityPointsReserved = new ClubActivtyPointReserve();
         $this->Activity = new Activity();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->AppHelper = new AppHelper();
     }
 
@@ -72,6 +75,15 @@ class ClubUserController extends Controller
                     if ($clubUser) {
 
                         $govInfo = $this->Governer->check_permission($request_token, $flag);
+
+                        $passwordLogInfo = array();
+                        $passwordLogInfo['userEmail'] = $emailAddress;
+                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['secret'] = sha1(time());
+                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->ChangePasswordLog->add_log($passwordLogInfo);
 
                         $details = [
                             'userRole' => 'Club User',
@@ -288,6 +300,8 @@ class ClubUserController extends Controller
 
     public function deleteClubUserByCode(Request $request) {
 
+        return $this->AppHelper->responseMessageHandle(0, "Cannot Delete Club User.");
+
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
@@ -301,6 +315,7 @@ class ClubUserController extends Controller
         } else {
 
             try {
+
                 $resp = $this->ClubUser->delete_by_code($clubUserCode);
 
                 if ($resp) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Mail\EvaluvateActivity;
 use App\Models\Activity;
+use App\Models\ChangePassword;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
@@ -24,6 +25,7 @@ class EvaluatorController extends Controller
     private $ClubActivityPointReserve;
     private $ClubUser;
     private $ContextUser;
+    private $ChangePasswordLog;
     private $AppHelper;
 
     public function __construct()
@@ -35,6 +37,7 @@ class EvaluatorController extends Controller
         $this->ClubActivityPointReserve = new ClubActivtyPointReserve();
         $this->ClubUser = new ClubUser();
         $this->ContextUser = new ContextUser();
+        $this->ChangePasswordLog = new ChangePassword();
         $this->AppHelper = new AppHelper();
     }
 
@@ -72,6 +75,17 @@ class EvaluatorController extends Controller
                     $evaluator = $this->Evaluator->add_log($evaluatorInfo);
 
                     if ($evaluator) {
+
+                        $passwordLogInfo = array();
+                        $passwordLogInfo['userEmail'] = $emailAddress;
+                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['secret'] = sha1(time());
+                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->ChangePasswordLog->add_log($passwordLogInfo);
+
+
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $evaluator);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Chair Person Not Created."); 
