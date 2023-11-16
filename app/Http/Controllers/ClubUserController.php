@@ -63,6 +63,13 @@ class ClubUserController extends Controller
                 $userPerm = $this->checkPermission($request_token, $flag);
 
                 if ($userPerm == true) {
+
+                    $validate_user = $this->ClubUser->verify_email($emailAddress);
+
+                    if ($validate_user) {
+                        return $this->AppHelper->responseMessageHandle(0, "User Already Exist");
+                    }
+
                     $clubUserInfo['code'] = $clubUserCode;
                     $clubUserInfo['clubCode'] = $clubCode;
                     $clubUserInfo['name'] = $fullName;

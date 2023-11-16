@@ -45,7 +45,7 @@ class Activity extends Model
     }
 
     public function query_all() {
-        return $this->all();
+        return $this->orderBy("code", "asc")->get();
     }
 
     public function get_activity_count() {
