@@ -158,6 +158,7 @@ class ClubUserController extends Controller
                     $clubUserList[$key]['clubUserCode'] = $value['code'];
                     $clubUserList[$key]['fullName'] = $value['name'];
                     $clubUserList[$key]['email'] = $value['email'];
+                    $clubUserList[$key]['clubCode'] = $value['club_code'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubUserList);

@@ -52,11 +52,11 @@ class RegionController extends Controller
                 $userPerm = $this->checkPermission($request_token, $flag);
 
                 // $chairPerson = $this->RegionChairPerson->find_by_code($chairPersonCode);
-                $checkRegion = $this->Region->find_by_code($regionCode);
+                // $checkRegion = $this->Region->find_by_code($regionCode);
 
-                if (!empty($checkRegion)) {
-                    return $this->AppHelper->responseMessageHandle(0, "Region Already Exist.");
-                }
+                // if (!empty($checkRegion)) {
+                //     return $this->AppHelper->responseMessageHandle(0, "Region Already Exist.");
+                // }
 
                 // if (empty($chairPerson)) {
                 //     return $this->AppHelper->responseMessageHandle(0, "Invalid Chair Person Code.");
