@@ -171,6 +171,7 @@ class ActivityController extends Controller
                     $activityList[$key]['firstCatCode'] = $value['first_cat_code'];
                     $activityList[$key]['secondCatCode'] = $value['second_cat_code'];
                     $activityList[$key]['templateCode'] = $value['point_template_code'];
+                    $activityList[$key]['authUserCode'] = $value['authorized_user'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Opreation Complete", $activityList);

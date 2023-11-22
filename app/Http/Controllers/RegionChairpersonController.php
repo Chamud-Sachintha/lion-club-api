@@ -9,6 +9,7 @@ use App\Models\Governer;
 use App\Models\Region;
 use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class RegionChairpersonController extends Controller
@@ -213,7 +214,24 @@ class RegionChairpersonController extends Controller
         } else {
 
             try {
-                
+
+                $chairPerson = $this->RegionChairperson->query_find_by_token($request_token);
+
+                if ($chairPerson) {
+                    $totalActivities = DB::table('club_activities')->select('*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                        ->where('regions.region_code', '=', $chairPerson->region_code)
+                                                        ->count();
+
+                    $dashboardData = array();
+                    $dashboardData['totalActivities'] = $totalActivities;
+
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invaid Token");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

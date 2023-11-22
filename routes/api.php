@@ -139,6 +139,7 @@ Route::middleware('authToken')->post('delete-tenplate-by-code', [PointTemplateCo
 Route::middleware('authToken')->post('get-gov-dashboard-data', [GovernerController::class, 'getDashboardCounts']);
 Route::middleware('authToken')->post('get-club-user-dashboard-data', [ClubUserController::class, 'getClubUserDashboardData']);
 Route::middleware('authToken')->post('get-context-user-dashboard-data', [ContextUserController::class, 'getDashboardData']);
+Route::middleware('authToken')->post('get-region-chairperson-dashboard-data', [RegionChairpersonController::class, 'getDashboardData']);
 Route::middleware('authToken')->post('get-evaluvator-dashboard-data', [EvaluatorController::class, 'getEvaluvatorDashboardData']);
 Route::middleware('authToken')->post('get-club-user-dashboard-table-data', [ClubUserController::class, 'getClubUserDashboardTableData']);
 

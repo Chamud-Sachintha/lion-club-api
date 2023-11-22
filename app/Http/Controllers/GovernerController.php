@@ -112,8 +112,9 @@ class GovernerController extends Controller
         } else {
 
             try {
-                $resp = DB::table('club_activities')->select('club_activities.*', 'activities.activity_name', 'activities.create_time as activity_date')
+                $resp = DB::table('club_activities')->select('club_activities.*', 'activities.activity_name', 'activities.create_time as activity_date', 'clubs.zone_code')
                                                     ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                    ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
                                                     ->get();
 
                 $reportDataList = array();
@@ -127,6 +128,8 @@ class GovernerController extends Controller
                     $reportDataList[$key]['submitDate'] = $value->create_time;
                     $reportDataList[$key]['extValue'] = $value->ext_value;
                     $reportDataList[$key]['submitBy'] = $user['name'];
+                    $reportDataList[$key]['zoneCode'] = $value->zone_code;
+                    $reportDataList[$key]['clubCode'] = $value->club_code;
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Opereation Complete", $reportDataList);
