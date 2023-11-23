@@ -125,4 +125,10 @@ class ClubActivity extends Model
 
         return $this->where($map)->count();
     }
+
+    public function get_approved_list() {
+        $map['status'] = 1;
+
+        return $this->where($map)->get();
+    }
 }

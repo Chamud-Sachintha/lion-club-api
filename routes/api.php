@@ -162,3 +162,5 @@ Route::middleware('authToken')->post('gov-reports-data', [GovernerController::cl
 
 Route::middleware('authToken')->post('get-docs-by-activity-code', [ClubActivityController::class, 'getDocInfoByActivityCode']);
 Route::middleware('authToken')->post('get-eveluvator-dashboard-table-data', [EvaluatorController::class, 'getEveluvatorDashboardDataTableData']);
+Route::middleware('authToken')->post('get-rc-user-check-info-page-data', [RegionChairpersonController::class, 'getRCUserCheckInfoPageTableData']);
+Route::middleware('authToken')->post('get-zc-user-check-info-page-data', [ZonalChairPersonController::class, 'getZCUserCheckInfoPageTableData']);

@@ -12,7 +12,8 @@ class Club extends Model
     protected $fillable = [
         'club_code',
         'zone_code',
-        'create_time'
+        'create_time',
+        'total_points'
     ];
 
     public function add_log($info) {
@@ -48,5 +49,16 @@ class Club extends Model
         $map['club_code'] = $clubCode;
 
         return $this->where($map)->delete();
+    }
+
+    public function update_club_points($clubInfo) {
+        $map['club_code'] = $clubInfo['clubCode'];
+        $map1['total_points'] = $clubInfo['updatedPoints'];
+
+        $this->where($map)->update($map1);
+    }
+
+    public function get_club_list_by_points_order() {
+        return $this->orderBy("total_points", "desc")->get();
     }
 }

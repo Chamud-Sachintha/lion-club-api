@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\AppHelper;
 use App\Mail\AddUserMail;
 use App\Models\ChangePassword;
+use App\Models\Club;
+use App\Models\ClubActivity;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\Governer;
 use App\Models\ZonalChairPerson;
 use App\Models\Zone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class ZonalChairPersonController extends Controller
@@ -17,6 +21,9 @@ class ZonalChairPersonController extends Controller
     private $Governer;
     private $Zone;
     private $ChangePasswordLog;
+    private $Club;
+    private $ClubActivity;
+    private $PointsReserved;
     private $AppHelper;
 
     public function __construct()
@@ -25,6 +32,9 @@ class ZonalChairPersonController extends Controller
         $this->Governer = new Governer();
         $this->Zone = new Zone();
         $this->ChangePasswordLog = new ChangePassword();
+        $this->Club = new Club();
+        $this->ClubActivity = new ClubActivity();
+        $this->PointsReserved = new ClubActivtyPointReserve();
         $this->AppHelper = new AppHelper();
     }
 
@@ -243,6 +253,76 @@ class ZonalChairPersonController extends Controller
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
+        }
+    }
+
+    public function getZCUserCheckInfoPageTableData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+
+                $zcPerson = $this->ZonalChairPerson->query_find_by_token($request_token);
+
+                $totalClubList = DB::table('clubs')->select('clubs.club_code', 'clubs.zone_code')
+                                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                    ->where('zones.zone_code', '=', $zcPerson->zone_code)
+                                                    ->get();
+                
+                $checkInfoPageData = array();
+                foreach ($totalClubList as $key => $value) {
+                    $clubRank = $this->getClubRank($value->club_code);
+                    $totalActivityReported = $this->ClubActivity->find_by_club_code($value->club_code);
+                    $totalActivitiesApproved = $this->ClubActivity->get_approved_count_by_club_code($value->club_code);
+                    $rejectedActivityCount = $this->ClubActivity->get_rejected_count_by_club_code($value->club_code);
+                    $pendingActivityCount = $this->ClubActivity->get_pending_count_by_club_code($value->club_code);
+                    $pointsClamed = $this->PointsReserved->get_points__by_club_code($value->club_code);
+
+                    $checkInfoPageData[$key]['clubRank'] = $clubRank;
+                    // $checkInfoPageData[$key]['zoneCode'] = $value->zone_code;
+                    $checkInfoPageData[$key]['clubCode'] = $value->club_code;
+                    $checkInfoPageData[$key]['totalActivitiesReported'] = count($totalActivityReported);
+                    $checkInfoPageData[$key]['totalActivitiesApproved'] = $totalActivitiesApproved;
+                    $checkInfoPageData[$key]['totalActivitiesRejected'] = $rejectedActivityCount;
+                    $checkInfoPageData[$key]['pendingActivityCount'] = $pendingActivityCount;
+                    $checkInfoPageData[$key]['pointsClamed'] = $pointsClamed;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $checkInfoPageData);
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    private function getClubRank($clubCode) {
+
+        try {
+            // $resp = $this->ClubPoint->get_ordered_list();
+
+            $resp = $this->Club->get_club_list_by_points_order();
+
+            $clubRank = 1;
+            foreach ($resp as $key => $value) {
+                if ($value['club_code'] == $clubCode) {
+                    break;
+                }
+
+                $clubRank += 1;
+            }
+
+            return $clubRank;
+
+        } catch (\Exception $e) {
+            return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
         }
     }
 

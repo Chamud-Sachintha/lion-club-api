@@ -48,10 +48,29 @@ class GovernerController extends Controller
             try {
                 $activityCount = $this->Activity->get_activity_count();
                 $clubCount = $this->Club->get_club_count();
+                $totalExtValueQuery = DB::table('club_activities')->select('club_activities.ext_value as extValue', 'activities.point_template_code as templateCode')
+                                                        ->join('activities', 'activities.code', '=', 'club_activities.activity_code')
+                                                        ->get();
+
+                $totalApprovedFunds = 0;
+                $totalPeopleServed = 0;
+                foreach($totalExtValueQuery as $key => $value) {
+                    $templateNamePrefix = explode("-" ,$value->templateCode);
+
+                    if (trim($templateNamePrefix[1]) == "C") {
+                        $totalApprovedFunds += $value->extValue;
+                    } else if (trim($templateNamePrefix[1]) == "P") {
+                        $totalPeopleServed += $value->extValue;
+                    } else {
+                        
+                    }
+                }
 
                 $dashboardCount = array();
                 $dashboardCount['activityCount'] = $activityCount;
                 $dashboardCount['clubCount'] = $clubCount;
+                $dashboardCount['totalFunds'] = $totalApprovedFunds;
+                $dashboardCount['totalPeopleServed'] = $totalPeopleServed;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardCount);
             } catch (\Exception $e) {
@@ -158,7 +177,9 @@ class GovernerController extends Controller
     private function getClubRank($clubCode) {
 
         try {
-            $resp = $this->ClubPoint->get_ordered_list();
+            // $resp = $this->ClubPoint->get_ordered_list();
+
+            $resp = $this->Club->get_club_list_by_points_order();
 
             $clubRank = 1;
             foreach ($resp as $key => $value) {

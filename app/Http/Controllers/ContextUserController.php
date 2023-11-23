@@ -509,7 +509,7 @@ class ContextUserController extends Controller
     private function getClubRank($clubCode) {
 
         try {
-            $resp = $this->ClubPoints->get_ordered_list();
+            $resp = $this->Club->get_club_list_by_points_order();
 
             $clubRank = 1;
             foreach ($resp as $key => $value) {

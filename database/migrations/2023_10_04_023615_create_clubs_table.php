@@ -18,6 +18,7 @@ class CreateClubsTable extends Migration
             $table->string('club_code');
             $table->string('zone_code');
             $table->integer('create_time');
+            $table->integer('total_points')->default(0);
             
             $table->timestamps();
         });

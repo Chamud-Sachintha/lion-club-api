@@ -290,7 +290,14 @@ class ClubUserController extends Controller
                 foreach($clubActivityInfo as $key => $value) {
 
                     $activityInfo = $this->Activity->query_find($value['activity_code']);
-                    $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($value['id'], $value['club_code']);
+
+                    if ($value['status'] == 1) {
+                        $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($value['id'], $value['club_code']);
+                    } else if ($value['status'] == 2) {
+                        $ponits['points'] = "N/A";
+                    } else {
+                        $ponits['points'] = "Pending";
+                    }
 
                     $cbList[$key]['activityName'] = $activityInfo['activity_name'];
                     $cbList[$key]['createTime'] = $value['create_time'];

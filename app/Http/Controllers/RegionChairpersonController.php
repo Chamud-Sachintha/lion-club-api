@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Mail\AddUserMail;
+use App\Models\Activity;
 use App\Models\ChangePassword;
+use App\Models\Club;
+use App\Models\ClubActivity;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\Governer;
 use App\Models\Region;
 use App\Models\RegionChairperson;
@@ -19,6 +23,9 @@ class RegionChairpersonController extends Controller
     private $Region;
     private $Governer;
     private $ChangePasswordLog;
+    private $Club;
+    private $ClubActivity;
+    private $PointsReserved;
     private $AppHelper;
 
     public function __construct()
@@ -27,6 +34,9 @@ class RegionChairpersonController extends Controller
         $this->Governer = new Governer();
         $this->Region = new Region();
         $this->ChangePasswordLog = new ChangePassword();
+        $this->Club = new Club();
+        $this->ClubActivity = new ClubActivity();
+        $this->PointsReserved = new ClubActivtyPointReserve();
         $this->AppHelper = new AppHelper();
     }
 
@@ -218,15 +228,17 @@ class RegionChairpersonController extends Controller
                 $chairPerson = $this->RegionChairperson->query_find_by_token($request_token);
 
                 if ($chairPerson) {
-                    $totalActivities = DB::table('club_activities')->select('*')
-                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
-                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
-                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
-                                                        ->where('regions.region_code', '=', $chairPerson->region_code)
-                                                        ->count();
+                
+                    $totalActivities = $this->getActivityResultDataSet($chairPerson->region_code, 99);
+                    $totalRejectedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 2);
+                    $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 1);
+                    $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->region_code, 0);
 
                     $dashboardData = array();
                     $dashboardData['totalActivities'] = $totalActivities;
+                    $dashboardData['rejectedActivities'] = $totalRejectedActivities;
+                    $dashboardData['approvedActivities'] = $totalApprovedActivities;
+                    $dashboardData['pendingActivities'] = $totalPendingActivities;
 
                     return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
                 } else {
@@ -264,6 +276,106 @@ class RegionChairpersonController extends Controller
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
+        }
+    }
+
+    public function getRCUserCheckInfoPageTableData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+
+                $rePerson = $this->RegionChairperson->query_find_by_token($request_token);
+
+                $totalClubList = DB::table('clubs')->select('clubs.club_code', 'clubs.zone_code')
+                                                    ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                    ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                    ->where('regions.region_code', '=', $rePerson->region_code)
+                                                    ->get();
+                
+                $checkInfoPageData = array();
+                foreach ($totalClubList as $key => $value) {
+                    $clubRank = $this->getClubRank($value->club_code);
+                    $totalActivityReported = $this->ClubActivity->find_by_club_code($value->club_code);
+                    $totalActivitiesApproved = $this->ClubActivity->get_approved_count_by_club_code($value->club_code);
+                    $rejectedActivityCount = $this->ClubActivity->get_rejected_count_by_club_code($value->club_code);
+                    $pendingActivityCount = $this->ClubActivity->get_pending_count_by_club_code($value->club_code);
+                    $pointsClamed = $this->PointsReserved->get_points__by_club_code($value->club_code);
+
+                    $checkInfoPageData[$key]['clubRank'] = $clubRank;
+                    $checkInfoPageData[$key]['zoneCode'] = $value->zone_code;
+                    $checkInfoPageData[$key]['clubCode'] = $value->club_code;
+                    $checkInfoPageData[$key]['totalActivitiesReported'] = count($totalActivityReported);
+                    $checkInfoPageData[$key]['totalActivitiesApproved'] = $totalActivitiesApproved;
+                    $checkInfoPageData[$key]['totalActivitiesRejected'] = $rejectedActivityCount;
+                    $checkInfoPageData[$key]['pendingActivityCount'] = $pendingActivityCount;
+                    $checkInfoPageData[$key]['pointsClamed'] = $pointsClamed;
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $checkInfoPageData);
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    private function getActivityResultDataSet($reCode, $status) {
+
+        $activityResultSet = null;
+
+        try {
+
+            if ($status == 99) {
+                $activityResultSet = DB::table('club_activities')->select('*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                        ->where('regions.region_code', '=', $reCode)
+                                                        ->count();
+            } else {
+                $activityResultSet = DB::table('club_activities')->select('*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                        ->where('regions.region_code', '=', $reCode)
+                                                        ->where('club_activities.status', '=', $status)
+                                                        ->count();
+            }
+
+            return $activityResultSet;
+        } catch (\Exception $e) {
+            return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+        }
+    }
+
+    private function getClubRank($clubCode) {
+
+        try {
+            // $resp = $this->ClubPoint->get_ordered_list();
+
+            $resp = $this->Club->get_club_list_by_points_order();
+
+            $clubRank = 1;
+            foreach ($resp as $key => $value) {
+                if ($value['club_code'] == $clubCode) {
+                    break;
+                }
+
+                $clubRank += 1;
+            }
+
+            return $clubRank;
+
+        } catch (\Exception $e) {
+            return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
         }
     }
 

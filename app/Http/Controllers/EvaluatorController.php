@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Mail\EvaluvateActivity;
 use App\Models\Activity;
 use App\Models\ChangePassword;
+use App\Models\Club;
 use App\Models\ClubActivity;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
@@ -26,6 +27,7 @@ class EvaluatorController extends Controller
     private $ClubUser;
     private $ContextUser;
     private $ChangePasswordLog;
+    private $Club;
     private $AppHelper;
 
     public function __construct()
@@ -38,6 +40,7 @@ class EvaluatorController extends Controller
         $this->ClubUser = new ClubUser();
         $this->ContextUser = new ContextUser();
         $this->ChangePasswordLog = new ChangePassword();
+        $this->Club = new Club();
         $this->AppHelper = new AppHelper();
     }
 
@@ -151,6 +154,12 @@ class EvaluatorController extends Controller
                 $info['status'] = $activityStatus;
                 $info['comment'] = $comment;
 
+                $cbActivity = $this->ClubActivity->find_by_id($activityCode);
+
+                // if ($cbActivity->status != "0") {
+                //     return $this->AppHelper->responseMessageHandle(0, "Already Updated.");
+                // }
+
                 $updateStatus = $this->ClubActivity->update_status_by_id($info);
 
                 if ($updateStatus ) {
@@ -159,7 +168,7 @@ class EvaluatorController extends Controller
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     }
 
-                    $cbActivity = $this->ClubActivity->find_by_id($activityCode);
+                    
                     $activity = $this->Activity->query_find($cbActivity->activity_code);
 
                     $templateValueList = DB::table('club_activities')->select('point_templates.value as valueList')
@@ -174,12 +183,26 @@ class EvaluatorController extends Controller
                     foreach ($decodeValueList as $key => $value) {
                          
                         if ($value->name == $cbActivity->type) {
+
+                            $club = $this->Club->find_by_club_code($cbActivity->club_code);
+
                             $pointInfo['clubActivityCode'] = $activityCode;
                             $pointInfo['clubCode'] = $cbActivity->club_code;
                             $pointInfo['points'] = $value->value;
                             $pointInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                             $this->ClubActivityPointReserve->add_log($pointInfo);
+
+                            // add points of activity to current value of points of the club
+                            // print_r($club);
+                            $updatedPoints = $club->total_points + $value->value;
+
+                            $clubPointsInfo = array();
+                            $clubPointsInfo['clubCode'] = $cbActivity->club_code;
+                            $clubPointsInfo['updatedPoints'] = $updatedPoints;
+
+                            $resp1 = $this->Club->update_club_points($clubPointsInfo);
+
                             break;
                         }
                     }

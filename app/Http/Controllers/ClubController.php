@@ -217,7 +217,7 @@ class ClubController extends Controller
         } else {
 
             try {
-                $resp = $this->ClubPoint->get_ordered_list();
+                $resp = $this->Club->get_club_list_by_points_order();
 
                 $clubRank = 1;
                 foreach ($resp as $key => $value) {
