@@ -87,7 +87,7 @@ class ContextUserController extends Controller
                         $passwordLogInfo['userEmail'] = $emailAddress;
                         $passwordLogInfo['password'] = 123;
                         $passwordLogInfo['secret'] = sha1(time());
-                        $passwordLogInfo['flag'] = "RC";
+                        $passwordLogInfo['flag'] = "CNTU";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
 
                         $this->ChangePasswordLog->add_log($passwordLogInfo);
