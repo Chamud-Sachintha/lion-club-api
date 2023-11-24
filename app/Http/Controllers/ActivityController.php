@@ -188,7 +188,8 @@ class ActivityController extends Controller
         $mainCategoryCode = (is_null($request->mainCategoryCode) || empty($request->mainCategoryCode)) ? "" : $request->mainCategoryCode;
         $firstCategoryCode = (is_null($request->firstCategoryCode) || empty($request->firstCategoryCode)) ? "" : $request->firstCategoryCode;
         $secondCategoryCode = (is_null($request->secondCategoryCode) || empty($request->secondCategoryCode)) ? "" : $request->secondCategoryCode;
-    
+        $authCode = (is_null($request->authCode) || empty($request->authCode)) ? "" : $request->authCode;
+
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
@@ -206,6 +207,16 @@ class ActivityController extends Controller
                 $catInfo['firstCategoryCode'] = $firstCategoryCode;
                 $catInfo['secondCategoryCode'] = $secondCategoryCode;
                 $catInfo['mainCategoryCode'] = $mainCategoryCode;
+
+                if ($authCode == 1) {
+                    $catInfo['authUsers'] = 1;
+                } else if ($authCode == 2) {
+                    $catInfo['authUsers'] = 2;
+                } else if ($authCode == 99) {
+                    $catInfo['authUsers'] = [2,3];
+                } else {
+                    $catInfo['authUsers'] = [1,3];
+                }
 
                 $resp = $this->Activity->find_by_codes($catInfo);
 

@@ -40,8 +40,9 @@ class Activity extends Model
         $map['first_cat_code'] = $info['firstCategoryCode'];
         $map['main_cat_code'] = $info['mainCategoryCode'];
         $map['second_cat_code'] = $info['secondCategoryCode'];
+        $map3['authorized_user'] = $info['authUsers'];
 
-        return $this->where($map)->get();
+        return $this->whereIn("authorized_user", $info['authUsers'])->where($map)->get();
     }
 
     public function query_all() {
