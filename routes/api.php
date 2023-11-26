@@ -105,6 +105,7 @@ Route::middleware('authToken')->post('get-context-user-info-by-code', [ContextUs
 Route::middleware('authToken')->post('update-context-user-by-code', [ContextUserController::class, 'updateContextUserByCode']);
 Route::middleware('authToken')->post('get-evaluvator-info-by-code', [EvaluatorController::class, 'getEvaluvatorInfoByCode']);
 Route::middleware('authToken')->post('update-evaluvator-by-code', [EvaluatorController::class, 'updateEvaluvatorUserByCode']);
+Route::middleware('authToken')->post('update-activity-by-activity-code', [ActivityController::class, 'updateActivityByActivityCode']);
 
 Route::middleware('authToken')->post('get-club-user-info-by-code', [ClubUserController::class, 'getClubUserInfoByCode']);
 Route::middleware('authToken')->post('update-club-user-by-code', [ClubUserController::class, 'updateClubUserByCode']);

@@ -242,6 +242,8 @@ class ActivityController extends Controller
         $mainCatCode = (is_null($request->mainCatCode) || empty($request->mainCatCode)) ? "" : $request->mainCatCode;
         $firstCatCode = (is_null($request->firstCatCode) || empty($request->firstCatCode)) ? "" : $request->firstCatCode;
         $secondCatCode = (is_null($request->secondCatCode) || empty($request->secondCatCode)) ? "" : $request->secondCatCode;
+        $authUserCode = (is_null($request->authUserCode) || empty($request->authUserCode)) ? "" : $request->authUserCode;
+        $templateCode = (is_null($request->templateCode) || empty($request->templateCode)) ? "" : $request->templateCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
@@ -280,6 +282,24 @@ class ActivityController extends Controller
                     return $this->AppHelper->responseMessageHandle(0, "Invalid Second Cateory Code");
                 }
 
+                $activityInfo = array();
+                $activityInfo['activityCode'] = $activityCode;
+                $activityInfo['mainCategoryCode'] = $mainCatCode;
+                $activityInfo['firstCategoryCode'] = $firstCatCode;
+                $activityInfo['secondCategoryCode'] = $secondCatCode;
+                $activityInfo['activityName'] = $activityName;
+                $activityInfo['authUser'] = $authUserCode;
+                $activityInfo['templateCode'] = $templateCode;
+                // $activityInfo['docCode'] = $documentCode;
+                // $activityInfo['createTime'] = $this->AppHelper->get_date_and_time();
+
+                $resp = $this->Activity->update_by_code($activityInfo);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Ocured.");
+                }
                 
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());

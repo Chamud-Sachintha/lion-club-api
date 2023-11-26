@@ -45,6 +45,20 @@ class Activity extends Model
         return $this->whereIn("authorized_user", $info['authUsers'])->where($map)->get();
     }
 
+    public function update_by_code($activityInfo) {
+        $map['code'] = $activityInfo['activityCode'];
+        $map1['main_cat_code'] = $activityInfo['mainCategoryCode'];
+        $map1['first_cat_code'] = $activityInfo['firstCategoryCode'];
+        $map1['second_cat_code'] = $activityInfo['secondCategoryCode'];
+        $map1['activity_name'] = $activityInfo['activityName'];
+        $map1['authorized_user'] = $activityInfo['authUser'];
+        $map1['point_template_code'] = $activityInfo['templateCode'];
+        // $map1['doc_code'] = json_encode($activityInfo['docCode']);
+        // $map1['create_time'] = $activityInfo['createTime'];
+
+        return $this->where($map)->update($map1);
+    }
+
     public function query_all() {
         return $this->orderBy("code", "asc")->get();
     }
