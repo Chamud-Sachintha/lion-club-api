@@ -213,9 +213,9 @@ class ActivityController extends Controller
                 } else if ($authCode == 2) {
                     $catInfo['authUsers'] = 2;
                 } else if ($authCode == 99) {
-                    $catInfo['authUsers'] = [2,3];
-                } else {
                     $catInfo['authUsers'] = [1,3];
+                } else {
+                    $catInfo['authUsers'] = [2,3];
                 }
 
                 $resp = $this->Activity->find_by_codes($catInfo);
