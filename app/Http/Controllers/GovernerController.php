@@ -94,6 +94,7 @@ class GovernerController extends Controller
                 $clubRankInfo = DB::table('clubs')->select('clubs.*', 'zones.zone_code', 'regions.region_code')
                                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                    ->distinct('clubs.club_code')
                                                     ->get();
 
                 $dataList = array();
