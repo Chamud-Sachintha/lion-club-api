@@ -157,10 +157,6 @@ class EvaluatorController extends Controller
 
             try {
 
-                if ($activityStatus != "1") {
-                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
-                }
-
                 $info = array();
                 $info['clubActivityCode'] = $activityCode;
                 $info['status'] = $activityStatus;
@@ -175,6 +171,10 @@ class EvaluatorController extends Controller
                 $updateStatus = $this->ClubActivity->update_status_by_id($info);
 
                 if ($updateStatus ) {
+
+                    if ($activityStatus != "1") {
+                        return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                    }
                     
                     $activity = $this->Activity->query_find($cbActivity->activity_code);
 
