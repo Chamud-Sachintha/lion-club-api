@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
 use App\Models\Governer;
+use App\Models\RegionChairperson;
 use App\Models\ZonalChairPerson;
 use App\Models\Zone;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ class ZoneController extends Controller
     private $Governer;
     private $Zone;
     private $ZonalChairPerson;
+    private $RegionUser;
     private $AppHelper;
 
     public function __construct()
@@ -20,6 +22,7 @@ class ZoneController extends Controller
         $this->Governer = new Governer();
         $this->Zone = new Zone();
         $this->ZonalChairPerson = new ZonalChairPerson();
+        $this->RegionUser = new RegionChairperson();
         $this->AppHelper = new AppHelper();
     }
 
@@ -110,18 +113,18 @@ class ZoneController extends Controller
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
-        $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
+        // $regionCode = (is_null($request->regionCode) || empty($request->regionCode)) ? "" : $request->regionCode;
 
         if ($request_token == "") {
             return $this->AppHelper->responseMessageHandle(0, "Token is required.");
         } else if ($flag == "") {
             return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
-        } else if ($regionCode == "") {
-            return $this->AppHelper->responseMessageHandle(0, "Region Code is required.");
         } else {
 
             try {
-                $allZoneList = $this->Zone->find_by_re_code($regionCode);
+
+                $user = $this->RegionUser->query_find_by_token($request_token);
+                $allZoneList = $this->Zone->find_by_re_code($user->region_code);
 
                 $zoneList = array();
                 foreach ($allZoneList as $key => $value) {

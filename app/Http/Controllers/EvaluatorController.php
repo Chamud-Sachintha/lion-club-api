@@ -68,6 +68,12 @@ class EvaluatorController extends Controller
                 $evaluatorInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
+                $validateUser = $this->Evaluator->verify_email($emailAddress);
+
+                if (!empty($validateUser)) {
+                    return $this->AppHelper->responseMessageHandle(0, "User Already Exist.");
+                }
+
                 if ($userPerm == true) {
                     $evaluatorInfo['code'] = $evaluatorCode;
                     $evaluatorInfo['name'] = $fullName;
@@ -136,6 +142,7 @@ class EvaluatorController extends Controller
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
         $activityCode = (is_null($request->activityCode) || empty($request->activityCode)) ? "" : $request->activityCode;
         $activityStatus = (is_null($request->status) || empty($request->status)) ? "" : $request->status;
+        $conditionType = (is_null($request->conditionType) || empty($request->conditionType)) ? "" : $request->conditionType;
         $comment = (is_null($request->comment) || empty($request->comment)) ? "" : $request->comment;
 
         if ($request_token == "") {
@@ -149,6 +156,11 @@ class EvaluatorController extends Controller
         } else {
 
             try {
+
+                if ($activityStatus != "1") {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                }
+
                 $info = array();
                 $info['clubActivityCode'] = $activityCode;
                 $info['status'] = $activityStatus;
@@ -163,11 +175,6 @@ class EvaluatorController extends Controller
                 $updateStatus = $this->ClubActivity->update_status_by_id($info);
 
                 if ($updateStatus ) {
-
-                    if ($activityStatus != "1") {
-                        return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
-                    }
-
                     
                     $activity = $this->Activity->query_find($cbActivity->activity_code);
 
@@ -182,7 +189,7 @@ class EvaluatorController extends Controller
                     $pointInfo = array();
                     foreach ($decodeValueList as $key => $value) {
                          
-                        if ($value->name == $cbActivity->type) {
+                        if ($value->name == $conditionType) {
 
                             $club = $this->Club->find_by_club_code($cbActivity->club_code);
 

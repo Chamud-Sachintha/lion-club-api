@@ -221,7 +221,25 @@ class ZonalChairPersonController extends Controller
         } else {
 
             try {
+                $chairPerson = $this->ZonalChairPerson->query_find_by_token($request_token);
+
+                if ($chairPerson) {
                 
+                    // $totalActivities = $this->getActivityResultDataSet($chairPerson->region_code, 99);
+                    // $totalRejectedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 2);
+                    // $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 1);
+                    // $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->region_code, 0);
+
+                    // $dashboardData = array();
+                    // $dashboardData['totalActivities'] = $totalActivities;
+                    // $dashboardData['rejectedActivities'] = $totalRejectedActivities;
+                    // $dashboardData['approvedActivities'] = $totalApprovedActivities;
+                    // $dashboardData['pendingActivities'] = $totalPendingActivities;
+
+                    // return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Invaid Token");
+                }
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }

@@ -72,6 +72,12 @@ class ContextUserController extends Controller
                 $contextUserInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
+                $validateUser = $this->ContextUser->verify_email($emailAddress);
+
+                if (!empty($validateUser)) {
+                    return $this->AppHelper->responseMessageHandle(0, "User Already Exist.");
+                }
+
                 if ($userPerm == true) {
                     $contextUserInfo['code'] = $contextUserCode;
                     $contextUserInfo['name'] = $fullName;

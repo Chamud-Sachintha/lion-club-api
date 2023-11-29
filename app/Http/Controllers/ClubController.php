@@ -7,6 +7,7 @@ use App\Models\Club;
 use App\Models\ClubActivtyPointReserve;
 use App\Models\Governer;
 use App\Models\Region;
+use App\Models\ZonalChairPerson;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ class ClubController extends Controller
     private $Club;
     private $Zone;
     private $ClubPoint;
+    private $ZoneUser;
     private $AppHelper;
 
     public function __construct()
@@ -24,6 +26,7 @@ class ClubController extends Controller
         $this->Club = new Club();
         $this->Zone = new Zone();
         $this->ClubPoint = new ClubActivtyPointReserve();
+        $this->ZoneUser = new ZonalChairPerson();
         $this->AppHelper = new AppHelper();
     }
 
@@ -234,6 +237,34 @@ class ClubController extends Controller
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $rankInfo);
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function getClubListByZoneCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required");
+        } else {
+
+            $zoneUser = $this->ZoneUser->query_find_by_token($request_token);
+            
+            try {   
+                $clubList = $this->Club->getClubListByZoneCode($zoneUser->zone_code);
+
+                $dataList = array();
+                foreach ($clubList as $key => $value) {
+                    $dataList[$key]['clubCode'] = $value['club_code'];
+                }
+
+                return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0 ,$e->getMessage());
             }
         }
     }

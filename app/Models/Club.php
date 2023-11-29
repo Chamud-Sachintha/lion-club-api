@@ -51,6 +51,12 @@ class Club extends Model
         return $this->where($map)->delete();
     }
 
+    public function getClubListByZoneCode($zoneCode) {
+        $map['zone_code'] = $zoneCode;
+
+        return $this->where($map)->get();
+    }
+
     public function update_club_points($clubInfo) {
         $map['club_code'] = $clubInfo['clubCode'];
         $map1['total_points'] = $clubInfo['updatedPoints'];

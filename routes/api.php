@@ -165,3 +165,5 @@ Route::middleware('authToken')->post('get-docs-by-activity-code', [ClubActivityC
 Route::middleware('authToken')->post('get-eveluvator-dashboard-table-data', [EvaluatorController::class, 'getEveluvatorDashboardDataTableData']);
 Route::middleware('authToken')->post('get-rc-user-check-info-page-data', [RegionChairpersonController::class, 'getRCUserCheckInfoPageTableData']);
 Route::middleware('authToken')->post('get-zc-user-check-info-page-data', [ZonalChairPersonController::class, 'getZCUserCheckInfoPageTableData']);
+Route::middleware('authToken')->post('get-clubs-by-zone', [ClubController::class, 'getClubListByZoneCode']);
+Route::middleware('authToken')->post('get-zonal-chairperson-dashboard-data', [ZonalChairPersonController::class, 'getDashboardData']);
