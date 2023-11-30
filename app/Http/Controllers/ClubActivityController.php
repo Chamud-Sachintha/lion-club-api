@@ -55,7 +55,8 @@ class ClubActivityController extends Controller
         $creator = (is_null($request->creator) || empty($request->creator)) ? "" : $request->creator;
         $extValue = (is_null($request->extValue) || empty($request->extValue)) ? "" : $request->extValue;
         $dateOfActivity = (is_null($request->dateOfActivity) || empty($request->dateOfActivity)) ? "" : $request->dateOfActivity;
- 
+        $aditionalInfo  = (is_null($request->aditionalInfo) || empty($request->aditionalInfo)) ? "" : $request->aditionalInfo;
+
         $documentList = $request->files;
         $imageList = $request->files;
 
@@ -82,6 +83,7 @@ class ClubActivityController extends Controller
                 $clubActivityInfo['creator'] = $creator;
                 $clubActivityInfo['extValue'] = $extValue;
                 $clubActivityInfo['dateOfActivity'] = strtotime($dateOfActivity);
+                $clubActivityInfo['aditionalInfo'] = $aditionalInfo;
 
                 $insertClubActivity = $this->ClubActivity->add_log($clubActivityInfo);
 

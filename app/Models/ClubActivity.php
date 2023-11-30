@@ -18,7 +18,8 @@ class ClubActivity extends Model
         'ext_value',
         'date_of_activity',
         'comment',
-        'create_time'
+        'create_time',
+        'aditional_info'
     ];
 
     public function add_log($activityInfo) {
@@ -31,6 +32,7 @@ class ClubActivity extends Model
         $map['creator'] = $activityInfo['creator'];
         $map['ext_value'] = $activityInfo['extValue'];
         $map['date_of_activity'] = $activityInfo['dateOfActivity'];
+        $map['aditional_info'] = $activityInfo['aditionalInfo'];
 
         return $this->create($map);
     }

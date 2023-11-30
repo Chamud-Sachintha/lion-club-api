@@ -164,6 +164,7 @@ class ContextUserController extends Controller
                                     ->join('zones', 'clubs.zone_code', '=', 'zones.zone_code')
                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                     // ->where('regions.context_user_code', '=', $contextuserCode->code)
+                                    ->distinct()
                                     ->get();
 
                 $availableClubList = array();
@@ -431,6 +432,7 @@ class ContextUserController extends Controller
                                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                                     ->where('regions.context_user_code', '=', $contextUser->code)
+                                                    ->distinct()
                                                     ->get();
 
                 $dataList = array();
@@ -472,6 +474,7 @@ class ContextUserController extends Controller
                                             ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                             ->join('club_activities', 'club_activities.club_code', '=', 'clubs.club_code')
                                             ->where('regions.context_user_code', '=', $contectUser->code)
+                                            ->distinct('zones.zone_code')
                                             ->get();
 
                 $dataList = array();
