@@ -8,9 +8,11 @@ use App\Models\Activity;
 use App\Models\ClubActivity;
 use App\Models\ClubActivityDocument;
 use App\Models\ClubActivityImage;
+use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
 use App\Models\Evaluator;
+use App\Models\PointTemplate;
 use App\Models\ProofDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +27,8 @@ class ClubActivityController extends Controller
     private $ClubActivityDocument;
     private $ClubActivityImage;
     private $ProofDocument;
+    private $ClubActivityPointsReserved;
+    private $PointTemplate;
     private $ContextUser;
     private $Eveluvator;
 
@@ -38,6 +42,8 @@ class ClubActivityController extends Controller
         $this->ClubActivityImage = new ClubActivityImage();
         $this->ProofDocument = new ProofDocument();
         $this->ContextUser = new ContextUser();
+        $this->PointTemplate = new PointTemplate();
+        $this->ClubActivityPointsReserved = new ClubActivtyPointReserve();
         $this->Eveluvator = new Evaluator();
     }
 
@@ -320,6 +326,24 @@ class ClubActivityController extends Controller
                 $clubActivityList = array();
                 foreach ($resp as $key => $value) {
                     $activityInfo = $this->Activity->query_find($value["activity_code"]);
+                    $valueObj = $this->PointTemplate->find_by_code($activityInfo->point_template_code);
+
+                    $f = json_decode($valueObj->value);
+
+                    $rangeValue = null;
+                    foreach ($f as $k => $v) {
+                        if ($v->name == $value['type']) {
+                            $rangeValue = $v->value;
+                        }
+                    }
+
+                    if ($value['status'] == 1) {
+                        $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($value['id'], $value['club_code']);
+                    } else if ($value['status'] == 2) {
+                        $ponits['points'] = "N/A";
+                    } else {
+                        $ponits['points'] = "Pending";
+                    }
 
                     $clubActivityList[$key]['activityCode'] = $value['activity_code'];
                     $clubActivityList[$key]['clubCode'] = $value['club_code'];
@@ -329,6 +353,8 @@ class ClubActivityController extends Controller
                     $clubActivityList[$key]['extValue'] = $value['ext_value'];
                     $clubActivityList[$key]['createTime'] = $value['create_time'];
                     $clubActivityList[$key]['activityTime'] = $value['date_of_activity'];
+                    $clubActivityList[$key]['requestedRangeValue'] = $rangeValue;
+                    $clubActivityList[$key]['approvedPoints'] = $ponits['points'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);

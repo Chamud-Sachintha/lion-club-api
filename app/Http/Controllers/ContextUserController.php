@@ -12,6 +12,7 @@ use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
 use App\Models\Governer;
+use App\Models\PointTemplate;
 use App\Models\Region;
 use App\Models\Zone;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class ContextUserController extends Controller
     private $Zone;
     private $Activity;
     private $ClubUser;
+    private $PointTemplate;
     private $Club;
     private $Region;
     private $AppHelper;
@@ -45,6 +47,7 @@ class ContextUserController extends Controller
         $this->Club = new Club();
         $this->Zone = new Zone();
         $this->ChangePasswordLog = new ChangePassword();
+        $this->PointTemplate = new PointTemplate();
         $this->AppHelper = new AppHelper();
     }
 
@@ -357,24 +360,44 @@ class ContextUserController extends Controller
                 $contextUser = $this->ContextUser->query_find_by_token($request_token);
 
                 if ($contextUser) {
-                    $clubActivityList = $this->ClubActivity->get_list_by_creator($contextUser->code);
+                    $resp = $this->ClubActivity->get_list_by_creator($contextUser->code);
 
-                    $activityList = array();
-                    foreach ($clubActivityList as $key => $value) {
+                    $clubActivityList = array();
+                    foreach ($resp as $key => $value) {
+                        $activityInfo = $this->Activity->query_find($value["activity_code"]);
+                        $valueObj = $this->PointTemplate->find_by_code($activityInfo->point_template_code);
 
-                        $clubInfo = $this->Club->find_by_club_code($value['club_code']);
-                        $zone = $this->Zone->find_by_zone_code($clubInfo->zone_code);
+                        $f = json_decode($valueObj->value);
 
-                        $activityList[$key]['activityCode'] = $value['activity_code'];
-                        $activityList[$key]['clubCode'] = $value['club_code'];
-                        $activityList[$key]['status'] = $value['status'];
-                        $activityList[$key]['reCode'] = $zone->re_code;
-                        $activityList[$key]['zoneCode'] = $zone->zone_code;
-                        $activityList[$key]['createTime'] = $value['create_time'];
-                        $activityList[$key]['dateOfActivity'] = $value['date_of_activity'];
+                        $rangeValue = null;
+                        foreach ($f as $k => $v) {
+                            if ($v->name == $value['type']) {
+                                $rangeValue = $v->value;
+                            }
+                        }
+
+                        if ($value['status'] == 1) {
+                            $pointResp = $this->ClubPoints->get_points_by_activity_and_club($value['id'], $value['club_code']);
+                            $ponits = $pointResp->points;
+                        } else if ($value['status'] == 2) {
+                            $ponits = "N/A";
+                        } else {
+                            $ponits = "Pending";
+                        }
+
+                        $clubActivityList[$key]['activityCode'] = $value['activity_code'];
+                        $clubActivityList[$key]['clubCode'] = $value['club_code'];
+                        $clubActivityList[$key]['activityName'] = $activityInfo['activity_name'];
+                        $clubActivityList[$key]['status'] = $value['status'];
+                        $clubActivityList[$key]['type'] = $value['type'];
+                        $clubActivityList[$key]['extValue'] = $value['ext_value'];
+                        $clubActivityList[$key]['createTime'] = $value['create_time'];
+                        $clubActivityList[$key]['activityTime'] = $value['date_of_activity'];
+                        $clubActivityList[$key]['requestedRangeValue'] = $rangeValue;
+                        $clubActivityList[$key]['approvedPoints'] = $ponits;
                     }
 
-                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityList);
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubActivityList);
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invalid User");
                 }

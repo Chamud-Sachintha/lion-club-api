@@ -172,7 +172,7 @@ class EvaluatorController extends Controller
 
                 if ($updateStatus ) {
 
-                    if ($activityStatus != "1") {
+                    if ($activityStatus != "1" && $activityStatus != "4") {
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     }
                     
