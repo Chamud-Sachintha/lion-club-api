@@ -76,7 +76,7 @@ class ClubActivity extends Model
     }
 
     public function query_all() {
-        return $this->all();
+        return $this->orderBy('create_time', 'desc')->get();
     }
 
     public function get_activity_count() {

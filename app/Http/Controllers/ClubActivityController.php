@@ -285,7 +285,7 @@ class ClubActivityController extends Controller
         } else {
 
             try {
-                $resp = DB::table('activities')->select('activities.*', 'club_activities.id as clubActivityId', 'club_activities.club_code', 'club_activities.create_time', 'club_activities.status', 'club_activities.type')
+                $resp = DB::table('activities')->select('activities.*', 'club_activities.id as clubActivityId', 'club_activities.club_code', 'club_activities.create_time', 'club_activities.status', 'club_activities.type', 'club_activities.aditional_info')
                                                 ->join('club_activities', 'club_activities.activity_code', '=', 'activities.code')
                                                 ->where('club_activities.id', $activityCode)
                                                 ->get();
@@ -298,6 +298,7 @@ class ClubActivityController extends Controller
                 $activityInfo['activityName'] = $resp[0]->activity_name;
                 $activityInfo['type'] = $resp[0]->type;
                 $activityInfo['status'] = $resp[0]->status;
+                $activityInfo['aditionInfo'] = $resp[0]->aditional_info;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $activityInfo);
             } catch (\Exception $e) {
