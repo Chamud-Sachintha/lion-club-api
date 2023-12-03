@@ -256,10 +256,30 @@ class ClubUserController extends Controller
             try {
                 $activityCount = $this->ClubActivity->get_activity_count_by_club_code($clubCode);
                 $ponitsTotal = $this->ClubActivityPointsReserved->get_points__by_club_code($clubCode);
+                $totalExtValueQuery = DB::table('club_activities')->select('club_activities.ext_value as extValue', 'activities.point_template_code as templateCode')
+                                                        ->join('activities', 'activities.code', '=', 'club_activities.activity_code')
+                                                        ->where('club_activities.club_code', '=', $clubCode)
+                                                        ->get();
+
+                $totalApprovedFunds = 0;
+                $totalPeopleServed = 0;
+                foreach($totalExtValueQuery as $key => $value) {
+                    $templateNamePrefix = explode("-" ,$value->templateCode);
+
+                    if (trim($templateNamePrefix[1]) == "C") {
+                        $totalApprovedFunds += $value->extValue;
+                    } else if (trim($templateNamePrefix[1]) == "P") {
+                        $totalPeopleServed += $value->extValue;
+                    } else {
+                        
+                    }
+                }
 
                 $dashboardInfo = array();
                 $dashboardInfo['activityCount'] = $activityCount;
                 $dashboardInfo['pointsTotal'] = $ponitsTotal;
+                $dashboardInfo['totalFunds'] = $totalApprovedFunds;
+                $dashboardInfo['totalPeopleServed'] = $totalPeopleServed;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardInfo);
             } catch (\Exception $e) {

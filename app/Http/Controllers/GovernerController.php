@@ -103,13 +103,20 @@ class GovernerController extends Controller
                     $clubRank = $this->getClubRank($value->club_code);
                     $activityCount = $this->ClubActivity->get_activity_count_by_club_code($value->club_code);
                     $totalPoints = $this->ClubPoint->get_points__by_club_code($value->club_code);
-
+                    $activityCountEvaluvated = DB::table('club_activities')->select('*')
+                                                                            ->where('club_activities.club_code' ,'=', $value->club_code)
+                                                                            ->where(function($query) {
+                                                                                $query->where('club_activities.status', 'like', '%' . 2 . '%')
+                                                                                ->orWhere('club_activities.status', 'like', '%' . 3 . '%');
+                                                                            })
+                                                                            ->count();
                     $dataList[$key]['clubCode'] = $value->club_code;
                     $dataList[$key]['regionCode'] = $value->region_code;
                     $dataList[$key]['zoneCode'] = $value->zone_code;
                     $dataList[$key]['rank'] = $clubRank;
                     $dataList[$key]['activityCount'] = $activityCount;
                     $dataList[$key]['totalPoints'] = $totalPoints;
+                    $dataList[$key]['activitiesToBeEvaluvated'] = $activityCountEvaluvated;
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dataList);

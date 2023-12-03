@@ -95,6 +95,18 @@ class ClubActivity extends Model
         return $this->where($map)->count();
     }
 
+    public function get_hold_acivity_count() {
+        $map['status'] = 3;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_approved_aith_corrections_acivity_count() {
+        $map['status'] = 4;
+
+        return $this->where($map)->count();
+    }
+
     public function get_rejected_activity_count() {
         $map['status'] = 2;
 
@@ -104,6 +116,13 @@ class ClubActivity extends Model
     public function get_approved_count_by_club_code($clubCode) {
         $map['club_code'] = $clubCode;
         $map['status'] = 1;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_approved_with_corrections_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+        $map['status'] = 4;
 
         return $this->where($map)->count();
     }
@@ -118,6 +137,13 @@ class ClubActivity extends Model
     public function get_pending_count_by_club_code($clubCode) {
         $map['club_code'] = $clubCode;
         $map['status'] = 0;
+
+        return $this->where($map)->count();
+    }
+
+    public function get_hold_count_by_club_code($clubCode) {
+        $map['club_code'] = $clubCode;
+        $map['status'] = 3;
 
         return $this->where($map)->count();
     }

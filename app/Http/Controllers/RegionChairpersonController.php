@@ -231,8 +231,8 @@ class RegionChairpersonController extends Controller
                 
                     $totalActivities = $this->getActivityResultDataSet($chairPerson->region_code, 99);
                     $totalRejectedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 2);
-                    $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 1);
-                    $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->region_code, 0);
+                    $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 1) + $this->getActivityResultDataSet($chairPerson->region_code, 4);
+                    $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->region_code, 0) + $this->getActivityResultDataSet($chairPerson->region_code, 3);
 
                     $dashboardData = array();
                     $dashboardData['totalActivities'] = $totalActivities;
@@ -298,6 +298,7 @@ class RegionChairpersonController extends Controller
                                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                                     ->where('regions.region_code', '=', $rePerson->region_code)
+                                                    ->distinct('clubs.club_code')
                                                     ->get();
                 
                 $checkInfoPageData = array();
@@ -307,15 +308,17 @@ class RegionChairpersonController extends Controller
                     $totalActivitiesApproved = $this->ClubActivity->get_approved_count_by_club_code($value->club_code);
                     $rejectedActivityCount = $this->ClubActivity->get_rejected_count_by_club_code($value->club_code);
                     $pendingActivityCount = $this->ClubActivity->get_pending_count_by_club_code($value->club_code);
+                    $holdCount = $this->ClubActivity->get_hold_count_by_club_code($value->club_code);
+                    $approvedWithCorrections = $this->ClubActivity->get_approved_with_corrections_count_by_club_code($value->club_code);
                     $pointsClamed = $this->PointsReserved->get_points__by_club_code($value->club_code);
 
                     $checkInfoPageData[$key]['clubRank'] = $clubRank;
                     $checkInfoPageData[$key]['zoneCode'] = $value->zone_code;
                     $checkInfoPageData[$key]['clubCode'] = $value->club_code;
                     $checkInfoPageData[$key]['totalActivitiesReported'] = count($totalActivityReported);
-                    $checkInfoPageData[$key]['totalActivitiesApproved'] = $totalActivitiesApproved;
+                    $checkInfoPageData[$key]['totalActivitiesApproved'] = $totalActivitiesApproved + $approvedWithCorrections;
                     $checkInfoPageData[$key]['totalActivitiesRejected'] = $rejectedActivityCount;
-                    $checkInfoPageData[$key]['pendingActivityCount'] = $pendingActivityCount;
+                    $checkInfoPageData[$key]['pendingActivityCount'] = $pendingActivityCount + $holdCount;
                     $checkInfoPageData[$key]['pointsClamed'] = $pointsClamed;
                 }
 
@@ -339,6 +342,7 @@ class RegionChairpersonController extends Controller
                                                         ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                         ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                                         ->where('regions.region_code', '=', $reCode)
+                                                        ->distinct('club_activities.id')
                                                         ->count();
             } else {
                 $activityResultSet = DB::table('club_activities')->select('*')
@@ -347,6 +351,7 @@ class RegionChairpersonController extends Controller
                                                         ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                                         ->where('regions.region_code', '=', $reCode)
                                                         ->where('club_activities.status', '=', $status)
+                                                        ->distinct('club_activities.id')
                                                         ->count();
             }
 

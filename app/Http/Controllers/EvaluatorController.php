@@ -325,11 +325,13 @@ class EvaluatorController extends Controller
                 $approvedCount = $this->ClubActivity->get_approved_acivity_count();
                 $pendingCount = $this->ClubActivity->get_pending_acivity_count();
                 $rejectedActivites = $this->ClubActivity->get_rejected_activity_count();
+                $holdCount = $this->ClubActivity->get_hold_acivity_count();
+                $approvedWithCorrections = $this->ClubActivity->get_approved_aith_corrections_acivity_count();
 
                 $dashboardData = array();
                 $dashboardData['totalActivities'] = $totalActivites;
-                $dashboardData['approvedCount'] = $approvedCount;
-                $dashboardData['pendingCount'] = $pendingCount;
+                $dashboardData['approvedCount'] = $approvedCount + $approvedWithCorrections;
+                $dashboardData['pendingCount'] = $pendingCount + $holdCount;
                 $dashboardData['rejectedCount'] = $rejectedActivites;
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
@@ -360,11 +362,13 @@ class EvaluatorController extends Controller
                     $approvedCount = $this->ClubActivity->get_approved_count_by_club_code($value['club_code']);
                     $rejectedCount = $this->ClubActivity->get_rejected_count_by_club_code($value['club_code']);
                     $pendingCount = $this->ClubActivity->get_pending_count_by_club_code($value['club_code']);
+                    $holdCount = $this->ClubActivity->get_hold_count_by_club_code($value['club_code']);
+                    $aprovedWithCorrections = $this->ClubActivity->get_approved_with_corrections_count_by_club_code($value['club_code']);
 
                     $dataList[$key]['clubCode'] = $value['club_code'];
                     $dataList[$key]['totalCount'] = $totalCount;
-                    $dataList[$key]['pendingCount'] = $pendingCount;
-                    $dataList[$key]['approvedCount'] = $approvedCount;
+                    $dataList[$key]['pendingCount'] = $pendingCount + $holdCount;
+                    $dataList[$key]['approvedCount'] = $approvedCount + $aprovedWithCorrections;
                     $dataList[$key]['rejectedCount'] = $rejectedCount;
                 }
 

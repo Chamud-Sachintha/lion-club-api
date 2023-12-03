@@ -225,18 +225,18 @@ class ZonalChairPersonController extends Controller
 
                 if ($chairPerson) {
                 
-                    // $totalActivities = $this->getActivityResultDataSet($chairPerson->region_code, 99);
-                    // $totalRejectedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 2);
-                    // $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->region_code, 1);
-                    // $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->region_code, 0);
+                    $totalActivities = $this->getActivityResultDataSet($chairPerson->zone_code, 99);
+                    $totalRejectedActivities = $this->getActivityResultDataSet($chairPerson->zone_code, 2);
+                    $totalApprovedActivities = $this->getActivityResultDataSet($chairPerson->zone_code, 1) + $this->getActivityResultDataSet($chairPerson->zone_code, 4);
+                    $totalPendingActivities = $this->getActivityResultDataSet($chairPerson->zone_code, 0) + $this->getActivityResultDataSet($chairPerson->zone_code, 3);
 
-                    // $dashboardData = array();
-                    // $dashboardData['totalActivities'] = $totalActivities;
-                    // $dashboardData['rejectedActivities'] = $totalRejectedActivities;
-                    // $dashboardData['approvedActivities'] = $totalApprovedActivities;
-                    // $dashboardData['pendingActivities'] = $totalPendingActivities;
+                    $dashboardData = array();
+                    $dashboardData['totalActivities'] = $totalActivities;
+                    $dashboardData['rejectedActivities'] = $totalRejectedActivities;
+                    $dashboardData['approvedActivities'] = $totalApprovedActivities;
+                    $dashboardData['pendingActivities'] = $totalPendingActivities;
 
-                    // return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
+                    return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $dashboardData);
                 } else {
                     return $this->AppHelper->responseMessageHandle(0, "Invaid Token");
                 }
@@ -318,6 +318,35 @@ class ZonalChairPersonController extends Controller
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
             }
+        }
+    }
+
+    private function getActivityResultDataSet($zoneCode, $status) {
+
+        $activityResultSet = null;
+
+        try {
+
+            if ($status == 99) {
+                $activityResultSet = DB::table('club_activities')->select('*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->where('zones.zone_code', '=', $zoneCode)
+                                                        ->distinct('club_activities.id')
+                                                        ->count();
+            } else {
+                $activityResultSet = DB::table('club_activities')->select('*')
+                                                        ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                        ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
+                                                        ->where('zones.zone_code', '=', $zoneCode)
+                                                        ->where('club_activities.status', '=', $status)
+                                                        ->distinct('club_activities.id')
+                                                        ->count();
+            }
+
+            return $activityResultSet;
+        } catch (\Exception $e) {
+            return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
         }
     }
 
