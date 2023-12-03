@@ -338,7 +338,7 @@ class ClubActivityController extends Controller
                         }
                     }
 
-                    if ($value['status'] == 1) {
+                    if ($value['status'] == 1 || $value['status'] == 4) {
                         $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($value['id'], $value['club_code']);
                     } else if ($value['status'] == 2) {
                         $ponits['points'] = "N/A";

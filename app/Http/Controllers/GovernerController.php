@@ -106,7 +106,7 @@ class GovernerController extends Controller
                     $activityCountEvaluvated = DB::table('club_activities')->select('*')
                                                                             ->where('club_activities.club_code' ,'=', $value->club_code)
                                                                             ->where(function($query) {
-                                                                                $query->where('club_activities.status', 'like', '%' . 2 . '%')
+                                                                                $query->where('club_activities.status', 'like', '%' . 0 . '%')
                                                                                 ->orWhere('club_activities.status', 'like', '%' . 3 . '%');
                                                                             })
                                                                             ->count();
