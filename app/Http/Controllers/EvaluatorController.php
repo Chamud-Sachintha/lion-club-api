@@ -164,9 +164,9 @@ class EvaluatorController extends Controller
 
                 $cbActivity = $this->ClubActivity->find_by_id($activityCode);
 
-                // if ($cbActivity->status != "0") {
-                //     return $this->AppHelper->responseMessageHandle(0, "Already Updated.");
-                // }
+                if ($cbActivity->status == "1" || $cbActivity->status == "4") {
+                    return $this->AppHelper->responseMessageHandle(0, "Already Approved.");
+                }
 
                 $updateStatus = $this->ClubActivity->update_status_by_id($info);
 
