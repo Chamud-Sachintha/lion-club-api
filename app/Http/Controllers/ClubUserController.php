@@ -98,7 +98,7 @@ class ClubUserController extends Controller
                         $details = [
                             'userRole' => 'Club User',
                             'userName' => $clubUser->name,
-                            'tempPass' => 123,
+                            'tempPass' => $pass,
                         ];
     
                         Mail::to($emailAddress)->send(new AddUserMail($details));
