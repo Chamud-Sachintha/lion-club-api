@@ -14,6 +14,7 @@ use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ZonalChairPersonController extends Controller
 {
@@ -65,11 +66,13 @@ class ZonalChairPersonController extends Controller
                 $chairPersonInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
+                $pass = Str::random(8);
+
                 if ($userPerm == true) {
                     $chairPersonInfo['code'] = $zonalChairpersonCode;
                     $chairPersonInfo['name'] = $fullName;
                     $chairPersonInfo['email'] = $emailAddress;
-                    $chairPersonInfo['password'] = 123;
+                    $chairPersonInfo['password'] = $pass;
                     $chairPersonInfo['zoneCode'] = $zoneCode;
                     $chairPersonInfo['createTime'] = $this->AppHelper->day_time();
 
@@ -79,7 +82,7 @@ class ZonalChairPersonController extends Controller
 
                         $passwordLogInfo = array();
                         $passwordLogInfo['userEmail'] = $emailAddress;
-                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['password'] = $pass;
                         $passwordLogInfo['secret'] = sha1(time());
                         $passwordLogInfo['flag'] = "ZC";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();

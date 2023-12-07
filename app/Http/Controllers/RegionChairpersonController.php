@@ -15,6 +15,7 @@ use App\Models\RegionChairperson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class RegionChairpersonController extends Controller
 {
@@ -67,11 +68,13 @@ class RegionChairpersonController extends Controller
                 $chairPersonInfo = array();
                 $userPerm = $this->checkPermission($request_token, $flag);
 
+                $pass = Str::random(8);
+
                 if ($userPerm == true) {
                     $chairPersonInfo['code'] = $regonChairpersonCode;
                     $chairPersonInfo['name'] = $fullName;
                     $chairPersonInfo['email'] = $emailAddress;
-                    $chairPersonInfo['password'] = 123;
+                    $chairPersonInfo['password'] = $pass;
                     $chairPersonInfo['regionCode'] = $regionCode;
                     $chairPersonInfo['createTime'] = $this->AppHelper->day_time();
 
@@ -81,7 +84,7 @@ class RegionChairpersonController extends Controller
                         
                         $passwordLogInfo = array();
                         $passwordLogInfo['userEmail'] = $emailAddress;
-                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['password'] = $pass;
                         $passwordLogInfo['secret'] = sha1(time());
                         $passwordLogInfo['flag'] = "RC";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();

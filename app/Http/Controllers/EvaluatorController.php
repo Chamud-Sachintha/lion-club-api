@@ -16,6 +16,7 @@ use App\Models\Governer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class EvaluatorController extends Controller
 {
@@ -74,11 +75,13 @@ class EvaluatorController extends Controller
                     return $this->AppHelper->responseMessageHandle(0, "User Already Exist.");
                 }
 
+                $pass = Str::random(8);
+
                 if ($userPerm == true) {
                     $evaluatorInfo['code'] = $evaluatorCode;
                     $evaluatorInfo['name'] = $fullName;
                     $evaluatorInfo['email'] = $emailAddress;
-                    $evaluatorInfo['password'] = 123;
+                    $evaluatorInfo['password'] = $pass;
                     $evaluatorInfo['createTime'] = $this->AppHelper->day_time();
 
                     $evaluator = $this->Evaluator->add_log($evaluatorInfo);
@@ -87,7 +90,7 @@ class EvaluatorController extends Controller
 
                         $passwordLogInfo = array();
                         $passwordLogInfo['userEmail'] = $emailAddress;
-                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['password'] = $pass;
                         $passwordLogInfo['secret'] = sha1(time());
                         $passwordLogInfo['flag'] = "E";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();

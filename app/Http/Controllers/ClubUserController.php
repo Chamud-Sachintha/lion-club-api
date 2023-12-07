@@ -13,6 +13,7 @@ use App\Models\Governer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ClubUserController extends Controller
 {
@@ -70,11 +71,13 @@ class ClubUserController extends Controller
                         return $this->AppHelper->responseMessageHandle(0, "User Already Exist");
                     }
 
+                    $pass = Str::random(8);
+
                     $clubUserInfo['code'] = $clubUserCode;
                     $clubUserInfo['clubCode'] = $clubCode;
                     $clubUserInfo['name'] = $fullName;
                     $clubUserInfo['email'] = $emailAddress;
-                    $clubUserInfo['password'] = 123;
+                    $clubUserInfo['password'] =  $pass;
                     $clubUserInfo['createTime'] = $this->AppHelper->day_time();
 
                     $clubUser = $this->ClubUser->add_log($clubUserInfo);
@@ -85,7 +88,7 @@ class ClubUserController extends Controller
 
                         $passwordLogInfo = array();
                         $passwordLogInfo['userEmail'] = $emailAddress;
-                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['password'] = $pass;
                         $passwordLogInfo['secret'] = sha1(time());
                         $passwordLogInfo['flag'] = "CU";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();

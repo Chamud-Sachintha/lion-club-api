@@ -17,6 +17,7 @@ use App\Models\Region;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ContextUserController extends Controller
 {
@@ -81,11 +82,13 @@ class ContextUserController extends Controller
                     return $this->AppHelper->responseMessageHandle(0, "User Already Exist.");
                 }
 
+                $pass = Str::random(8);
+
                 if ($userPerm == true) {
                     $contextUserInfo['code'] = $contextUserCode;
                     $contextUserInfo['name'] = $fullName;
                     $contextUserInfo['email'] = $emailAddress;
-                    $contextUserInfo['password'] = 123;
+                    $contextUserInfo['password'] =  $pass;
                     $contextUserInfo['createTime'] = $this->AppHelper->day_time();
 
                     $contextUser = $this->ContextUser->add_log($contextUserInfo);
@@ -94,7 +97,7 @@ class ContextUserController extends Controller
 
                         $passwordLogInfo = array();
                         $passwordLogInfo['userEmail'] = $emailAddress;
-                        $passwordLogInfo['password'] = 123;
+                        $passwordLogInfo['password'] = $pass;
                         $passwordLogInfo['secret'] = sha1(time());
                         $passwordLogInfo['flag'] = "CNTU";
                         $passwordLogInfo['createTime'] = $this->AppHelper->get_date_and_time();
