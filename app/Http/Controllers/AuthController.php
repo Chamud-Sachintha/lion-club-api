@@ -154,17 +154,18 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->RegionChairPerson->verify_email($authInfo['userName']);
 
-        $resetPwInfo = array();
-        $resetPwInfo['email'] = $authInfo['userName'];
-
-        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
-
-        if ($checkIsReset) {
-            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
-        }
-
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
+
+                $resetPwInfo = array();
+                $resetPwInfo['email'] = $authInfo['userName'];
+
+                $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+                if ($checkIsReset) {
+                    return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+                }
+
                 $loginInfo['id'] = $verify_user['id'];
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
@@ -194,17 +195,18 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->ZonalChairPerson->verify_email($authInfo['userName']);
 
-        $resetPwInfo = array();
-        $resetPwInfo['email'] = $authInfo['userName'];
-
-        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
-
-        if ($checkIsReset) {
-            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
-        }
-
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
+
+                $resetPwInfo = array();
+                $resetPwInfo['email'] = $authInfo['userName'];
+
+                $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+                if ($checkIsReset) {
+                    return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+                }
+
                 $loginInfo['id'] = $verify_user['id'];
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
@@ -234,17 +236,18 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->ContextUser->verify_email($authInfo['userName']);
 
-        $resetPwInfo = array();
-        $resetPwInfo['email'] = $authInfo['userName'];
-
-        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
-
-        if ($checkIsReset) {
-            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
-        }
-
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
+
+                $resetPwInfo = array();
+                $resetPwInfo['email'] = $authInfo['userName'];
+
+                $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+                if ($checkIsReset) {
+                    return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+                }
+
                 $loginInfo['id'] = $verify_user['id'];
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
@@ -273,17 +276,18 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->ClubUser->verify_email($authInfo['userName']);
 
-        $resetPwInfo = array();
-        $resetPwInfo['email'] = $authInfo['userName'];
-
-        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
-
-        if ($checkIsReset) {
-            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
-        }
-
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
+
+                $resetPwInfo = array();
+                $resetPwInfo['email'] = $authInfo['userName'];
+
+                $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+                if ($checkIsReset) {
+                    return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+                }
+
                 $loginInfo['id'] = $verify_user['id'];
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
@@ -312,17 +316,18 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->Evaluator->verify_email($authInfo['userName']);
 
-        $resetPwInfo = array();
-        $resetPwInfo['email'] = $authInfo['userName'];
-
-        $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
-
-        if ($checkIsReset) {
-            return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
-        }
-
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
+
+                $resetPwInfo = array();
+                $resetPwInfo['email'] = $authInfo['userName'];
+
+                $checkIsReset = $this->ChangePasswordLog->query_find($resetPwInfo);
+
+                if ($checkIsReset) {
+                    return $this->AppHelper->responseEntityHandle(2, "Operation Complete", $checkIsReset);
+                }
+
                 $loginInfo['id'] = $verify_user['id'];
                 $loginInfo['code'] = $verify_user['code'];
                 $loginInfo['fullName'] = $verify_user['name'];
