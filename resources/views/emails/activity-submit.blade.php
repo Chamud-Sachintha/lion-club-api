@@ -73,11 +73,18 @@
             <p><strong>Activity Name:</strong>{{ $details['activityName'] }}</p>
             <p><strong>Submitter Name:</strong> {{ $details['submitBy'] }}</p>
             <p><strong>Value:</strong> {{ $details['value'] }}</p>
+            <p><strong>Date of Activity:</strong>{{ $details['dateOfActivity'] }}</p>
         </div>
 
-        <p>Please review the activity at your earliest convenience. Your prompt attention to the evaluation process is highly appreciated.</p>
+        <p>
+            Kindly note that you will be notified upon review of your activity and notified to you. 
+        </p>
 
-        <p class="footer"><strong>Best Regards,<br>Lion Club Administration Team</strong></p>
+        <p>
+            If you have any questions, please don't hesitate to contact Lion Pani Fonseka. You can reach him through mobile and WhatsApp at 0772930153 or via email at fonsekapani@gmail.com.
+        </p>
+
+        <p class="footer"><strong>Best Regards,<br>District Club Evaluation Committee</strong></p>
     </div>
 </body>
 

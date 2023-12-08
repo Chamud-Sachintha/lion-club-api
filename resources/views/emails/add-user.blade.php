@@ -90,7 +90,7 @@
 
         <p>Thank you for being part of the Lion Club community. We look forward to your active participation and hope you find the dashboard a valuable resource.</p>
 
-        <p class="footer"><strong>Best Regards,<br>Lion Club Administration Team</strong></p>
+        <p class="footer"><strong>Best Regards,<br>District Club Evaluation Committee</strong></p>
     </div>
 </body>
 

@@ -124,7 +124,8 @@ class ClubActivityController extends Controller
                         'activityCode' => $activity->code,
                         'activityName' => $activity->activity_name,
                         'submitBy' => $creatorInfo->name,
-                        'value' => $extValue 
+                        'value' => $extValue,
+                        'dateOfActivity' => $dateOfActivity
                     ];
 
                     $eveluvatorMails = $this->Eveluvator->get_mails();

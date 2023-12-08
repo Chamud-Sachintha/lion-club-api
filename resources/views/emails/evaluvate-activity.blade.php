@@ -84,7 +84,7 @@
 
         <p>If you have any questions or concerns regarding the evaluation, please feel free to reach out to us. Your dedication to Lion Club activities is highly appreciated.</p>
 
-        <p class="footer"><strong>Best Regards,<br>Lion Club Administration Team</strong></p>
+        <p class="footer"><strong>Best Regards,<br>District Club Evaluation Committee</strong></p>
     </div>
 </body>
 
