@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddUserMail;
 use App\Models\Activity;
 use App\Models\ChangePassword;
 use App\Models\Club;
@@ -17,6 +18,7 @@ use App\Models\Region;
 use App\Models\Zone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class ContextUserController extends Controller
@@ -104,6 +106,13 @@ class ContextUserController extends Controller
 
                         $this->ChangePasswordLog->add_log($passwordLogInfo);
 
+                        $details = [
+                            'userRole' => 'Context User',
+                            'userName' => $contextUser->name,
+                            'tempPass' => $pass,
+                        ];
+    
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $contextUser);
                     } else {

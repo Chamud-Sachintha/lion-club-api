@@ -94,7 +94,7 @@ class RegionChairpersonController extends Controller
                         $details = [
                             'userRole' => 'Region Chair Person',
                             'userName' => $chairPerson->name,
-                            'tempPass' => 123,
+                            'tempPass' => $pass,
                         ];
     
                         Mail::to($emailAddress)->send(new AddUserMail($details));

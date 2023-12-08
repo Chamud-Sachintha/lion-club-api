@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AppHelper;
+use App\Mail\AddUserMail;
 use App\Mail\EvaluvateActivity;
 use App\Models\Activity;
 use App\Models\ChangePassword;
@@ -97,6 +98,13 @@ class EvaluatorController extends Controller
 
                         $this->ChangePasswordLog->add_log($passwordLogInfo);
 
+                        $details = [
+                            'userRole' => 'Evaluvator',
+                            'userName' => $evaluator->name,
+                            'tempPass' => $pass,
+                        ];
+    
+                        Mail::to($emailAddress)->send(new AddUserMail($details));
 
                         return $this->AppHelper->responseEntityHandle(1, "Chair Person Created.", $evaluator);
                     } else {

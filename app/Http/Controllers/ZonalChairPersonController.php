@@ -92,7 +92,7 @@ class ZonalChairPersonController extends Controller
                         $details = [
                             'userRole' => 'Zone Chair Person',
                             'userName' => $chairPerson->name,
-                            'tempPass' => 123,
+                            'tempPass' => $pass,
                         ];
 
                         Mail::to($emailAddress)->send(new AddUserMail($details));
