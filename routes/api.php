@@ -10,6 +10,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
 use App\Http\Controllers\EvaluatorController;
+use App\Http\Controllers\ForgotPasswordLogController;
 use App\Http\Controllers\GovernerController;
 use App\Http\Controllers\PointTemplateController;
 use App\Http\Controllers\ProofDocumentController;
@@ -167,3 +168,6 @@ Route::middleware('authToken')->post('get-rc-user-check-info-page-data', [Region
 Route::middleware('authToken')->post('get-zc-user-check-info-page-data', [ZonalChairPersonController::class, 'getZCUserCheckInfoPageTableData']);
 Route::middleware('authToken')->post('get-clubs-by-zone', [ClubController::class, 'getClubListByZoneCode']);
 Route::middleware('authToken')->post('get-zonal-chairperson-dashboard-data', [ZonalChairPersonController::class, 'getDashboardData']);
+
+Route::post('forgot-pw-log', [ForgotPasswordLogController::class, 'addForgotPwLog']);
+Route::post('reset-pw', [ForgotPasswordLogController::class, 'updatePassword']);
