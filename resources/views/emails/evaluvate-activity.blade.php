@@ -72,9 +72,10 @@
             <p><strong>Activity Code:</strong> {{ $details['activityCode'] }}</p>
             <p><strong>Activity Name:</strong> {{ $details['activityName'] }}</p>
             <p><strong>Submitter Name:</strong> {{ $details['submitBy'] }}</p>
-            <p><strong>Points Earned:</strong>{{ $details['points'] }}</p>
+            <p><strong>Marks Earned:</strong>{{ $details['points_erned'] }}</p>
+            <p><strong>Points Claimed:</strong>{{ $details['points'] }}</p>
             <p><strong>Value:</strong>{{ $details['value'] }}</p>
-            <p><strong>Status:</strong>{{ $details['status'] }}</p>
+            <p><strong>Evaluation Status:</strong>{{ $details['status'] }}</p>
         </div>
 
         <div class="comment">

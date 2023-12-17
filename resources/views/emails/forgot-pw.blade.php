@@ -1,28 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Lion Club - Activity Evaluation Completed</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #000000;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .activity-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .support {
+            margin-top: 20px;
+            color: #888;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
 </head>
+
 <body>
-    <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-        <div style="margin:50px auto;width:70%;padding:20px 0">
-          <div style="border-bottom:1px solid #eee">
-            <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Your Brand</a>
-          </div>
-          <p style="font-size:1.1em">Hi,</p>
-          <p>Thank you for choosing Your Brand. Use the following OTP to complete your Sign Up procedures. OTP is valid for 5 minutes</p>
-          <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">{{ $details['code'] }}</h2>
-          <p style="font-size:0.9em;">Regards,<br />Your Brand</p>
-          <hr style="border:none;border-top:1px solid #eee" />
-          <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-            <p>Your Brand Inc</p>
-            <p>1600 Amphitheatre Parkway</p>
-            <p>California</p>
-          </div>
+    <div class="container">
+        <h1>Account Password Reset Request</h1>
+        <p>Dear Lion,</p>
+
+        <p>We hope this email finds you well. It appears that a password reset request has been initiated for your Lion Club account. If you did not make this request, please disregard this email, and your account will remain secure.</p>
+
+        <div class="activity-details">
+            <p>If you did request a password reset, please use the following temporary password to log in to your account:</p>
+            <p><strong>Password reset Code:</strong> {{ $details['code'] }}</p>
+
+    	<p>Once logged in, we highly recommend changing your password immediately to ensure the security of your account.</p>
         </div>
-      </div>
+
+        <div class="comment">
+            <p>If you have any questions, please don't hesitate to contact Lion Pani Fonseka. You can reach him through mobile and WhatsApp at 0772930153 or via email at fonsekapani@gmail.com.</p>
+
+            <p>Thank you for your prompt attention to this matter. We value your security and privacy within the Lion Club community.</p>
+        </div>
+        <p class="footer"><strong>Best Regards,<br>District Club Evaluation Committee</strong></p>
+    </div>
 </body>
 </html>

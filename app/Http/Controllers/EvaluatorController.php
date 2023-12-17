@@ -225,12 +225,23 @@ class EvaluatorController extends Controller
                         }
                     }
 
+                    $points_earned = 0;
+
+                    foreach ($decodeValueList as $key => $value) {
+                        if ($value->name == $cbActivity->type) {
+                            $points_earned = $value->value;
+    
+                            break;
+                        }
+                    }
+
                     $creatorInfo = $this->checkUser($cbActivity->creator);
 
                     $details = array();
                     $details['activityCode'] = $activityCode;
                     $details['activityName'] = $activity->activity_name;
                     $details['submitBy'] = $creatorInfo->name;
+                    $details['points_erned'] = $points_earned;
                     $details['points'] = $pointInfo['points'];
                     $details['value'] = $cbActivity->ext_value;
                     $details['comment'] = $comment;

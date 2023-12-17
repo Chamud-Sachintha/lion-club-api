@@ -120,17 +120,37 @@ class ClubActivityController extends Controller
                     $activity = $this->Activity->query_find($activityCode);
                     $creatorInfo = $this->checkUser($creator);
 
+                    $templateValueList = DB::table('club_activities')->select('point_templates.value as valueList')
+                                                                    ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                                    ->join('point_templates', 'activities.point_template_code', '=', 'point_templates.code')
+                                                                    ->where('point_templates.code', '=', $activity->point_template_code)
+                                                                    ->get();
+
+                    $decodeValueList = json_decode($templateValueList[0]->valueList);
+
+                    $points_earned = 0;
+
+                    foreach ($decodeValueList as $key => $value) {
+                        if ($value->name == $insertClubActivity->type) {
+                            $points_earned = $value->value;
+    
+                            break;
+                        }
+                    }
+
                     $details = [
                         'activityCode' => $activity->code,
                         'activityName' => $activity->activity_name,
                         'submitBy' => $creatorInfo->name,
                         'value' => $extValue,
+                        'ponits' => $points_earned,
                         'dateOfActivity' => $dateOfActivity
                     ];
 
                     $eveluvatorMails = $this->Eveluvator->get_mails();
 
                     Mail::to($eveluvatorMails)->send(new AddActivity($details));
+                    Mail::to($creatorInfo->email)->send(new AddActivity($details));
 
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                 }

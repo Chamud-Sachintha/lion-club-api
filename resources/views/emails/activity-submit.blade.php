@@ -73,6 +73,7 @@
             <p><strong>Activity Name:</strong>{{ $details['activityName'] }}</p>
             <p><strong>Submitter Name:</strong> {{ $details['submitBy'] }}</p>
             <p><strong>Value:</strong> {{ $details['value'] }}</p>
+            <p><strong>Marks Clamed: </strong> {{ $details['points'] }}</p>
             <p><strong>Date of Activity:</strong>{{ $details['dateOfActivity'] }}</p>
         </div>
 
