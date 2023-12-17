@@ -143,7 +143,7 @@ class ClubActivityController extends Controller
                         'activityName' => $activity->activity_name,
                         'submitBy' => $creatorInfo->name,
                         'value' => $extValue,
-                        'ponits' => $points_earned,
+                        'points' => $points_earned,
                         'dateOfActivity' => $dateOfActivity
                     ];
 
