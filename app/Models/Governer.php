@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
 class Governer extends Model
 {
@@ -31,6 +32,13 @@ class Governer extends Model
         $map['email'] = $userName;
 
         return $this->where($map)->first();
+    }
+
+    public function update_pw_by_email($info) {
+        $map['email'] = $info['email'];
+        $map1['password'] = Hash::make($info['password']);
+
+        return $this->where($map)->update($map1);
     }
 
     public function check_permission($token, $flag) {

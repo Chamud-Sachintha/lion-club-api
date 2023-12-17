@@ -15,6 +15,10 @@ class CreateForgotPasswordLogsTable extends Migration
     {
         Schema::create('forgot_password_logs', function (Blueprint $table) {
             $table->id();
+            $table->string('email');
+            $table->string('role');
+            $table->string('code');
+            $table->integer('create_time');
             $table->timestamps();
         });
     }

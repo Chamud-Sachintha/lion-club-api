@@ -60,29 +60,38 @@ class ForgotPasswordLogController extends Controller
                 $checkRecord = $this->ForgotPw->find_by_email($email);
 
                 $forgotLogDetails = array();
+                $code = Str::random(5);
 
                 $forgotLogDetails['email'] = $email;
                 $forgotLogDetails['role'] = $flag;
-                $forgotLogDetails['code'] = Str::random(5);
+                $forgotLogDetails['code'] = $code;
                 $forgotLogDetails['createTime'] = $this->AppHelper->get_date_and_time();
  
+                $resp = null;
+
                 if ($checkRecord) {
                     $yesterday = $this->AppHelper->day_time() - 86400;
 
                     if ($checkRecord['create_time'] < $yesterday) {
                         $this->ForgotPw->delete_by_email($email);
 
-                        $this->createForgotPwLog($forgotLogDetails);
+                        $resp = $this->createForgotPwLog($forgotLogDetails, $code);
                     }
                 } else {
-                    $this->createForgotPwLog($forgotLogDetails);
+                    $resp = $this->createForgotPwLog($forgotLogDetails, $code);
                 }
 
                 $details = [
-                    'code' => Str::random(5),
+                    'code' => $code,
                 ];
 
                 Mail::to($email)->send(new ForgotPasswordMail($details));
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Error Occured.");
+                }
 
             } catch (\Exception $e) {
                 return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
@@ -114,15 +123,17 @@ class ForgotPasswordLogController extends Controller
                 $res = null;
 
                 if ($verifyEmail) {
-                    if ($verifyEmail['flag'] == "RC") {
+                    if ($verifyEmail['role'] == "G") {
+                        $res = $this->Governer->update_pw_by_email($passwordInfo);
+                    } else if ($verifyEmail['role'] == "RC") {
                         $res = $this->RegionChairPerson->update_pw_by_email($passwordInfo);
-                    } else if ($verifyEmail['flag'] == "ZC") {
+                    } else if ($verifyEmail['role'] == "ZC") {
                         $res = $this->ZonalChairPerson->update_pw_by_email($passwordInfo);
-                    } else if ($verifyEmail['flag'] == "E") {
+                    } else if ($verifyEmail['role'] == "E") {
                         $res = $this->Evaluvator->update_pw_by_email($passwordInfo);
-                    } else if ($verifyEmail['flag'] == "CU") {
+                    } else if ($verifyEmail['role'] == "CU") {
                         $res = $this->ClubUser->update_pw_by_email($passwordInfo);
-                    } else if ($verifyEmail['flag'] == "CNTU") {
+                    } else if ($verifyEmail['role'] == "CNTU") {
                         $res = $this->ContextUser->update_pw_by_email($passwordInfo);
                     } else {
                         return $this->AppHelper->responseMessageHandle(0, "Invalid Flag");
@@ -143,13 +154,13 @@ class ForgotPasswordLogController extends Controller
         }
     }
 
-    private function createForgotPwLog($info) {
+    private function createForgotPwLog($info, $code) {
         $forgotLogDetails['email'] = $info['email'];
         $forgotLogDetails['role'] = $info['role'];
-        $forgotLogDetails['code'] = Str::random(5);
+        $forgotLogDetails['code'] = $code;
         $forgotLogDetails['createTime'] = $this->AppHelper->get_date_and_time();
 
-        $this->ForgotPw->add_log($forgotLogDetails);
+        return $this->ForgotPw->add_log($forgotLogDetails);
     }
 
     private function validateEmail($email, $role) {
