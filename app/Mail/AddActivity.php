@@ -30,7 +30,7 @@ class AddActivity extends Mailable
      */
     public function build()
     {
-        return $this->subject('User Created Successfully.')
+        return $this->subject('New Activity Creation Notification.')
                     ->view('emails.activity-submit')->with($this->details);
     }
 }
