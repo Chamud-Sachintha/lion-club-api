@@ -82,8 +82,17 @@ class ClubUser extends Model
 
     public function delete_by_code($code) {
         $map['code'] = $code;
+        $map1['status'] = 0;
 
-        return $this->where($map)->delete();
+        // return $this->where($map)->delete();
+        return $this->where($map)->update($map1);
+    }
+
+    public function activate_user($code) {
+        $map['code'] = $code;
+        $map1['status'] = 1;
+
+        return $this->where($map)->update($map1);
     }
 
     public function find_by_code($userCode) {

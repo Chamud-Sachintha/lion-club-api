@@ -276,6 +276,10 @@ class AuthController extends Controller
         $loginInfo = array();
         $verify_user = $this->ClubUser->verify_email($authInfo['userName']);
 
+        if ($verify_user['status'] != 1) {
+            return $this->AppHelper->responseMessageHandle(0, "This User is Deactivated");
+        }
+
         if (!empty($verify_user)) {
             if (Hash::check($authInfo['password'], $verify_user['password'])) {
 

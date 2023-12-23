@@ -79,6 +79,7 @@ Route::middleware('authToken')->post('get-activity-list', [ActivityController::c
 Route::middleware('authToken')->post('get-activity-info', [ActivityController::class, 'getActivityInfoByCode']);
 Route::middleware('authToken')->post('get-club-user-info', [ClubUserController::class, 'getClubUserInfoByUserCode']);
 Route::middleware('authToken')->post('get-club-user-list', [ClubUserController::class, 'getClubUserList']);
+Route::middleware('authToken')->post('activate-club-user', [ClubUserController::class, 'enableClubUserByCode']);
 
 Route::middleware('authToken')->post('submit-club-activity', [ClubActivityController::class, 'addnewClubActivityRecord']);
 Route::middleware('authToken')->post('get-template-obj-by-code', [PointTemplateController::class, 'getPointTemplateObjectByCode']);

@@ -162,6 +162,7 @@ class ClubUserController extends Controller
                     $clubUserList[$key]['fullName'] = $value['name'];
                     $clubUserList[$key]['email'] = $value['email'];
                     $clubUserList[$key]['clubCode'] = $value['club_code'];
+                    $clubUserList[$key]['status'] = $value['status'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $clubUserList);
@@ -338,7 +339,7 @@ class ClubUserController extends Controller
 
     public function deleteClubUserByCode(Request $request) {
 
-        return $this->AppHelper->responseMessageHandle(0, "Cannot Delete Club User.");
+        // return $this->AppHelper->responseMessageHandle(0, "Cannot Delete Club User.");
 
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
@@ -355,6 +356,34 @@ class ClubUserController extends Controller
             try {
 
                 $resp = $this->ClubUser->delete_by_code($clubUserCode);
+
+                if ($resp) {
+                    return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
+                } else {
+                    return $this->AppHelper->responseMessageHandle(0, "Operation Failed.");
+                }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function enableClubUserByCode(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+        $clubUserCode = (is_null($request->clubUserCode) || empty($request->clubUserCode)) ? "" : $request->clubUserCode;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {   
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else if ($clubUserCode == "") {
+            return $this->AppHelper->responseMessageHandle(0, "User Code is required.");
+        } else {
+
+            try {
+                $resp = $this->ClubUser->activate_user($clubUserCode);
 
                 if ($resp) {
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
