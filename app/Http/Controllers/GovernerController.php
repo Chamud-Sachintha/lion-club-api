@@ -166,6 +166,63 @@ class GovernerController extends Controller
         } 
     }
 
+    public function getClubReportData(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is required.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is required.");
+        } else {
+
+            try {
+                
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
+    public function exportActivityReportDataSheet(Request $request) {
+
+        $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
+        $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
+
+        if ($request_token == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Token is erquired.");
+        } else if ($flag == "") {
+            return $this->AppHelper->responseMessageHandle(0, "Flag is erquired.");
+        } else {
+
+            try {
+                $csvFileName = 'export.csv';
+                $filePath = public_path('exports/excel/' . $csvFileName);
+
+                $file = fopen($filePath, 'w');
+
+                $resp = DB::table('club_activities')->select('club_activities.*', 'activities.activity_name', 'activities.create_time as activity_date', 'clubs.zone_code')
+                                                    ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
+                                                    ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
+                                                    ->get();
+
+                $headers = ['Name', 'Email'];
+                fputcsv($file, $headers);
+                
+                foreach ($resp as $row) {
+                    $arrays[] =  (array) $row;
+                    fputcsv($file, $arrays[0]);
+                }
+
+                fclose($file);
+
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
+        }
+    }
+
     private function checkUser($userCode) {
 
         $role = null;
