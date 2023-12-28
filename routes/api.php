@@ -175,3 +175,4 @@ Route::post('forgot-pw-log', [ForgotPasswordLogController::class, 'addForgotPwLo
 Route::post('reset-pw', [ForgotPasswordLogController::class, 'updatePassword']);
 
 Route::middleware('authToken')->post('export-activity-report', [GovernerController::class, 'exportActivityReportDataSheet']);
+Route::middleware('authToken')->post('export-club-report', [GovernerController::class, 'exportClubReportDataSheet']);
