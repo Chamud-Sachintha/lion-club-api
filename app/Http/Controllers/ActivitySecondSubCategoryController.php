@@ -122,6 +122,7 @@ class ActivitySecondSubCategoryController extends Controller
                 $secondCategoryList = array();
                 foreach ($resp as $key => $value) {
                     $secondCategoryList[$key]['secondSubCategoryCode'] = $value['code'];
+                    $secondCategoryList[$key]['categoryName'] = $value['category_name'];
                 }
 
                 return $this->Apphelper->responseEntityHandle(1, "Operation Complete", $secondCategoryList);

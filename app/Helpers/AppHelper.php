@@ -38,6 +38,15 @@ class AppHelper {
     public function get_date_and_time() {
         return strtotime("now");
     }
+
+    public function format_date($timestamp) {
+        return date( "d-m-Y H:i:s" , $timestamp );
+    }
+
+    function moveElement(&$array, $a, $b) {
+        $out = array_splice($array, $a, 1);
+        array_splice($array, $b, 0, $out);
+    }
 }
 
 ?>

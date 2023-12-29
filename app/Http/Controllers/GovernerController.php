@@ -221,7 +221,7 @@ class GovernerController extends Controller
     }
 
     public function exportActivityReportDataSheet(Request $request) {
-        print("ssad");
+
         $request_token = (is_null($request->token) || empty($request->token)) ? "" : $request->token;
         $flag = (is_null($request->flag) || empty($request->flag)) ? "" : $request->flag;
 
@@ -252,26 +252,31 @@ class GovernerController extends Controller
                             ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                             ->get();
                 
+                $index = 0;
                 foreach ($resp as $row) {
                     $arrays[] =  (array) $row;
-                    $valueObj = $this->PointTemplate->find_by_code($arrays[0]['point_template_code']);
+                    $valueObj = $this->PointTemplate->find_by_code($arrays[$index]['point_template_code']);
 
                     $f = json_decode($valueObj->value);
 
                     $rangeValue = null;
                     foreach ($f as $k => $v) {
-                        if ($v->name == $arrays[0]['type']) {
+                        if ($v->name == $arrays[$index]['type']) {
                             $rangeValue = $v->value;
                         }
                     }
 
-                    $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($arrays[0]["clubActivityCode"], $arrays[0]['club_code']);
+                    $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($arrays[$index]["clubActivityCode"], $arrays[0]['club_code']);
 
-                    $arrays[0]["points_claimed"] = $rangeValue;
-                    $arrays[0]["points_approved"] = $ponits['points'];
+                    $arrays[$index]['create_time'] = $this->AppHelper->format_date($arrays[$index]['create_time']);
+                    $arrays[$index]['submited_date'] = $this->AppHelper->format_date($arrays[$index]['submited_date']);
+                    $arrays[$index]["points_claimed"] = $rangeValue;
+                    $arrays[$index]["points_approved"] = $ponits['points'];
 
-                    $filtered = Arr::except($arrays[0], ['clubActivityCode']);
+                    $filtered = Arr::except($arrays[$index], ['clubActivityCode']);
                     fputcsv($file, $filtered);
+
+                    $index += 1;
                 }
 
                 fclose($file);
@@ -308,28 +313,36 @@ class GovernerController extends Controller
                 
                 fputcsv($file, $headers);
 
-                $clubRankInfo = DB::table('clubs')->select('clubs.*', 'zones.zone_code', 'regions.region_code')
+                $clubRankInfo = DB::table('clubs')->select('clubs.club_code', 'regions.region_code', 'zones.zone_code', 'regions.region_code', 'region_chairpeople.name')
                                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
+                                                    ->join('region_chairpeople', 'region_chairpeople.region_code', '=', 'regions.region_code')
                                                     ->distinct('clubs.club_code')
                                                     ->get();
 
                 $dataList = array();
-                foreach ($clubRankInfo as $key => $value) {
+                $index = 0;
+                foreach ($clubRankInfo as $row) {
 
-                    $clubRank = $this->getClubRank($value->club_code);
-                    $activityCount = $this->ClubActivity->get_activity_count_by_club_code($value->club_code);
-                    $totalPoints = $this->ClubPoint->get_points__by_club_code($value->club_code);
+                    $arrays[] =  (array) $row;
+
+                    $clubRank = $this->getClubRank($arrays[$index]['club_code']);
+                    $activityCount = $this->ClubActivity->get_activity_count_by_club_code($arrays[$index]['club_code']);
+                    $totalPoints = $this->ClubPoint->get_points__by_club_code($arrays[$index]['club_code']);
                     $activityCountEvaluvated = DB::table('club_activities')->select('*')
-                                                                            ->where('club_activities.club_code' ,'=', $value->club_code)
+                                                                            ->where('club_activities.club_code' ,'=', $arrays[$index]['club_code'])
                                                                             ->where(function($query) {
                                                                                 $query->where('club_activities.status', 'like', '%' . 0 . '%')
                                                                                 ->orWhere('club_activities.status', 'like', '%' . 3 . '%');
                                                                             })
                                                                             ->count();
-                    
-                    $arrays[] =  (array) $clubRankInfo[$key];
-                    fputcsv($file, $arrays[0]);
+                        
+                    $arrays[$index]['rank'] = $clubRank;
+
+                    $this->AppHelper->moveElement($arrays[$index], count($arrays[$index]) - 1, 0);
+
+                    fputcsv($file, $arrays[$index]);
+                    $index += 1;
                 }
 
                 fclose($file);

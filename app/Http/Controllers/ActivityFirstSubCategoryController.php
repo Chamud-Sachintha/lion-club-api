@@ -121,6 +121,7 @@ class ActivityFirstSubCategoryController extends Controller
                 $firstCategoryList = array();
                 foreach ($resp as $key => $value) {
                     $firstCategoryList[$key]['firstSubCategoryCode'] = $value['code'];
+                    $firstCategoryList[$key]['categoryName'] = $value['category_name'];
                 }
 
                 return $this->AppHelper->responseEntityHandle(1, "Operation Complete", $firstCategoryList);
