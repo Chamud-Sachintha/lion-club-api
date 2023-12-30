@@ -231,7 +231,7 @@ class GovernerController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is erquired.");
         } else {
 
-            // try {
+            try {
                 $csvFileName = 'activity_report.csv';
                 $filePath = public_path('exports/excel/' . $csvFileName);
 
@@ -291,9 +291,9 @@ class GovernerController extends Controller
 
                 return response()->download($filePath, $csvFileName)->deleteFileAfterSend(true);
 
-            // } catch (\Exception $e) {
-            //     return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            // }
+            } catch (\Exception $e) {
+                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            }
         }
     }
 
