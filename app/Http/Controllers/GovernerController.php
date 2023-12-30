@@ -315,24 +315,25 @@ class GovernerController extends Controller
                 $file = fopen($filePath, 'w');
 
                 $headers = [
-                                'Rank', 'Region Code', 'Zone Code', 'Club Code', 'Region Chair Person', 'Zone Chair Person', 'Total Activities',
-                                'No Of Activities to be Evaluated', 'Total Marks Approved'
+                                'Club Code', 'Region Code', 'Zone Code', 'Region Chair Person', 'Zone Chair Person', 'Club User Name', 'Rank', 'Total Activities',
+                                'Total Marks Approved', 'No Of Activities to be Evaluated', 'Club User'
                             ];
                 
                 fputcsv($file, $headers);
 
-                $clubRankInfo = DB::table('clubs')->select('clubs.club_code', 'regions.region_code', 'zones.zone_code', 'regions.region_code', 'region_chairpeople.name', 'zonal_chair_people.name as zoneChairPersonName')
+                $clubRankInfo = DB::table('clubs')->select('clubs.club_code', 'regions.region_code', 'zones.zone_code', 'regions.region_code', 'region_chairpeople.name', 'zonal_chair_people.name as zoneChairPersonName', 'club_users.name as clubUserName')
                                                     ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
                                                     ->join('regions', 'regions.region_code', '=', 'zones.re_code')
                                                     ->join('region_chairpeople', 'region_chairpeople.region_code', '=', 'regions.region_code')
                                                     ->join('zonal_chair_people', 'zonal_chair_people.zone_code', '=', 'zones.zone_code')
+                                                    ->join('club_users', 'clubs.club_code', '=', 'club_users.club_code')
                                                     ->distinct('clubs.club_code')
                                                     ->get();
 
                 $dataList = array();
                 $index = 0;
                 foreach ($clubRankInfo as $row) {
-                    // dd($row);
+                    
                     $arrays[] =  (array) $row;
 
                     $clubRank = $this->getClubRank($arrays[$index]['club_code']);
@@ -351,7 +352,9 @@ class GovernerController extends Controller
                     $arrays[$index]['totalPoints'] = $totalPoints;
                     $arrays[$index]['activitiesToBeEvaluvated'] = $activityCountEvaluvated;
 
-                    $this->AppHelper->moveElement($arrays[$index], count($arrays[$index]) - 1, 0);
+                    // $this->AppHelper->moveElement($arrays[$index], count($arrays[$index]) - 1, 0);
+
+                    // dd($arrays[$index]);
 
                     fputcsv($file, $arrays[$index]);
                     $index += 1;
