@@ -231,7 +231,7 @@ class GovernerController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is erquired.");
         } else {
 
-            try {
+            // try {
                 $csvFileName = 'activity_report.csv';
                 $filePath = public_path('exports/excel/' . $csvFileName);
 
@@ -246,7 +246,7 @@ class GovernerController extends Controller
 
                 $resp = DB::table('club_activities')->select('zones.re_code', 'zones.zone_code', 'activities.main_cat_code', 'activities.first_cat_code', 'activities.second_cat_code', 'activities.code'
                                                                 , 'activities.point_template_code', 'activities.authorized_user', 'activities.create_time', 'club_activities.create_time as submited_date'
-                                                                , 'club_activities.club_code', 'club_activities.creator', 'club_activities.ext_value', 'club_activities.id as clubActivityCode', 'club_activities.type')
+                                                                , 'club_activities.club_code', 'club_activities.creator', 'club_activities.ext_value', 'club_activities.status', 'club_activities.id as clubActivityCode', 'club_activities.type')
                             ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
                             ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
                             ->join('zones', 'zones.zone_code', '=', 'clubs.zone_code')
@@ -266,7 +266,15 @@ class GovernerController extends Controller
                         }
                     }
 
-                    $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($arrays[$index]["clubActivityCode"], $arrays[0]['club_code']);
+                    if ($arrays[$index]['status'] == 1 || $arrays[$index]['status'] == 4) {
+                        $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($arrays[$index]['clubActivityCode'], $arrays[$index]['club_code']);
+                    } else if ($arrays[$index]['status'] == 2) {
+                        $ponits['points'] = "N/A";
+                    } else {
+                        $ponits['points'] = "Pending";
+                    }
+
+                    // $ponits = $this->ClubActivityPointsReserved->get_points_by_activity_and_club($arrays[$index]["clubActivityCode"], $arrays[0]['club_code']);
 
                     $arrays[$index]['create_time'] = $this->AppHelper->format_date($arrays[$index]['create_time']);
                     $arrays[$index]['submited_date'] = $this->AppHelper->format_date($arrays[$index]['submited_date']);
@@ -283,9 +291,9 @@ class GovernerController extends Controller
 
                 return response()->download($filePath, $csvFileName)->deleteFileAfterSend(true);
 
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
+            // } catch (\Exception $e) {
+            //     return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            // }
         }
     }
 
