@@ -281,6 +281,12 @@ class GovernerController extends Controller
                     $arrays[$index]["points_claimed"] = $rangeValue;
                     $arrays[$index]["points_approved"] = $ponits['points'];
 
+                    if ($arrays[$index]['authorized_user'] == 1) {
+                        $arrays[$index]['authorized_user'] = "Club User";
+                    } else {
+                        $arrays[$index]['authorized_user'] = "Context User";
+                    }
+
                     $filtered = Arr::except($arrays[$index], ['clubActivityCode']);
                     fputcsv($file, $filtered);
 
@@ -316,7 +322,7 @@ class GovernerController extends Controller
 
                 $headers = [
                                 'Club Code', 'Region Code', 'Zone Code', 'Region Chair Person', 'Zone Chair Person', 'Club User Name', 'Rank', 'Total Activities',
-                                'Total Marks Approved', 'No Of Activities to be Evaluated', 'Club User'
+                                'Total Marks Approved', 'No Of Activities to be Evaluated'
                             ];
                 
                 fputcsv($file, $headers);
