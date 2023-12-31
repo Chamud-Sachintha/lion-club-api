@@ -245,7 +245,7 @@ class GovernerController extends Controller
                 fputcsv($file, $headers);
 
                 $resp = DB::table('club_activities')->select('zones.re_code', 'zones.zone_code', 'activities.main_cat_code', 'activities.first_cat_code', 'activities.second_cat_code', 'activities.code'
-                                                                , 'activities.point_template_code', 'activities.authorized_user', 'activities.create_time', 'club_activities.create_time as submited_date'
+                                                                , 'activities.point_template_code', 'activities.authorized_user', 'club_activities.date_of_activity as create_time', 'club_activities.create_time as submited_date'
                                                                 , 'club_activities.club_code', 'club_activities.creator', 'club_activities.ext_value', 'club_activities.status', 'club_activities.id as clubActivityCode', 'club_activities.type')
                             ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
                             ->join('clubs', 'clubs.club_code', '=', 'club_activities.club_code')
@@ -287,7 +287,7 @@ class GovernerController extends Controller
                         $arrays[$index]['authorized_user'] = "Context User";
                     }
 
-                    $filtered = Arr::except($arrays[$index], ['clubActivityCode']);
+                    $filtered = Arr::except($arrays[$index], ['clubActivityCode', 'status']);
                     fputcsv($file, $filtered);
 
                     $index += 1;
