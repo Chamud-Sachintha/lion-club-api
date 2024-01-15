@@ -13,6 +13,7 @@ use App\Models\ClubActivtyPointReserve;
 use App\Models\ClubUser;
 use App\Models\ContextUser;
 use App\Models\Evaluator;
+use App\Models\EveluvatorLog;
 use App\Models\Governer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,7 @@ class EvaluatorController extends Controller
     private $ChangePasswordLog;
     private $Club;
     private $AppHelper;
+    private $EveluvationLog;
 
     public function __construct()
     {
@@ -44,6 +46,7 @@ class EvaluatorController extends Controller
         $this->ChangePasswordLog = new ChangePassword();
         $this->Club = new Club();
         $this->AppHelper = new AppHelper();
+        $this->EveluvationLog = new EveluvatorLog();
     }
 
     public function addNewEvaluvator(Request $request) {
@@ -234,6 +237,27 @@ class EvaluatorController extends Controller
                             break;
                         }
                     }
+
+                    /* 
+                        add eveluvation log starts here
+                        2024.01.15
+                    */
+
+                    $eveluvator_info = $this->Evaluator->query_find_by_token($request_token);
+
+                    $eveluvationLog = array();
+                    $eveluvationLog['name'] = $eveluvator_info->name;
+                    $eveluvationLog['activityCode'] = $cbActivity->activity_code;
+                    $eveluvationLog['clubCode'] = $cbActivity->club_code;
+                    $eveluvationLog['comment'] = $comment;
+                    $eveluvationLog['requestedRange'] = $cbActivity->type;
+                    $eveluvationLog['requestedPoints'] = $points_earned;
+                    $eveluvationLog['claimedRange'] = $conditionType;
+                    $eveluvationLog['claimedPoints'] = $pointInfo['points'];
+                    $eveluvationLog['eveluvatedDate'] = $this->AppHelper->get_date_and_time();
+                    $eveluvationLog['createTime'] = $this->AppHelper->get_date_and_time();
+
+                    $add_eveluvate_log = $this->EveluvationLog->add_log($eveluvationLog);
 
                     $creatorInfo = $this->checkUser($cbActivity->creator);
 

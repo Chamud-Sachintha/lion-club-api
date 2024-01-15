@@ -10,6 +10,7 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ClubUserController;
 use App\Http\Controllers\ContextUserController;
 use App\Http\Controllers\EvaluatorController;
+use App\Http\Controllers\EveluvatorLogController;
 use App\Http\Controllers\ForgotPasswordLogController;
 use App\Http\Controllers\GovernerController;
 use App\Http\Controllers\PointTemplateController;
@@ -176,3 +177,5 @@ Route::post('reset-pw', [ForgotPasswordLogController::class, 'updatePassword']);
 
 Route::middleware('authToken')->post('export-activity-report', [GovernerController::class, 'exportActivityReportDataSheet']);
 Route::middleware('authToken')->post('export-club-report', [GovernerController::class, 'exportClubReportDataSheet']);
+
+Route::middleware('authToken')->post('eveluvator-log', [EveluvatorLogController::class, 'getEveluvatorLogList']);
