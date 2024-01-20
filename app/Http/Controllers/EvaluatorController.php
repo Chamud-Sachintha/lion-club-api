@@ -197,6 +197,7 @@ class EvaluatorController extends Controller
                         $eveluvationLog['activityCode'] = $cbActivity->activity_code;
                         $eveluvationLog['clubCode'] = $cbActivity->club_code;
                         $eveluvationLog['comment'] = $comment;
+                        $eveluvationLog['status'] = $activityStatus;
                         $eveluvationLog['requestedRange'] = $cbActivity->type;
                         $eveluvationLog['requestedPoints'] = "N/A";
                         $eveluvationLog['claimedRange'] = $conditionType;
@@ -269,6 +270,7 @@ class EvaluatorController extends Controller
                     $eveluvationLog['activityCode'] = $cbActivity->activity_code;
                     $eveluvationLog['clubCode'] = $cbActivity->club_code;
                     $eveluvationLog['comment'] = $comment;
+                    $eveluvationLog['status'] = $activityStatus;
                     $eveluvationLog['requestedRange'] = $cbActivity->type;
                     $eveluvationLog['requestedPoints'] = $points_earned;
                     $eveluvationLog['claimedRange'] = $conditionType;

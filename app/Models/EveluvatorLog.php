@@ -19,6 +19,7 @@ class EveluvatorLog extends Model
         'claimed_range',
         'claimed_points',
         'eveluvated_date',
+        'status',
         'create_time'
     ];
 
@@ -32,6 +33,7 @@ class EveluvatorLog extends Model
         $map['claimed_range'] = $info['claimedRange'];
         $map['claimed_points'] = $info['claimedPoints'];
         $map['eveluvated_date'] = $info['eveluvatedDate'];
+        $map['status'] = $info['status'];
         $map['create_time'] = $info['createTime'];
 
         return $this->create($map);

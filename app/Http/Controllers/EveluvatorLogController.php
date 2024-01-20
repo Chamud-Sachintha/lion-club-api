@@ -37,6 +37,7 @@ class EveluvatorLogController extends Controller
                     $dataList[$key]['activityCode'] = $value['activity'];
                     $dataList[$key]['clubCode'] = $value['club_code'];
                     $dataList[$key]['comment'] = $value['comment'];
+                    $dataList[$key]['status'] = $value['status'];
                     $dataList[$key]['requestedRange'] = $value['requested_range'];
                     $dataList[$key]['requestedPoints'] = $value['requested_points'];
                     $dataList[$key]['claimedRange'] = $value['claimed_range'];
