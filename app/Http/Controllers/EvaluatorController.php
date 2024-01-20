@@ -187,6 +187,25 @@ class EvaluatorController extends Controller
                 if ($updateStatus ) {
 
                     if ($activityStatus != "1" && $activityStatus != "4") {
+
+                        // create eveluvator log for rejected activities
+
+                        $eveluvator_info = $this->Evaluator->query_find_by_token($request_token);
+
+                        $eveluvationLog = array();
+                        $eveluvationLog['name'] = $eveluvator_info->name;
+                        $eveluvationLog['activityCode'] = $cbActivity->activity_code;
+                        $eveluvationLog['clubCode'] = $cbActivity->club_code;
+                        $eveluvationLog['comment'] = $comment;
+                        $eveluvationLog['requestedRange'] = $cbActivity->type;
+                        $eveluvationLog['requestedPoints'] = "N/A";
+                        $eveluvationLog['claimedRange'] = $conditionType;
+                        $eveluvationLog['claimedPoints'] = "N/A";
+                        $eveluvationLog['eveluvatedDate'] = $this->AppHelper->get_date_and_time();
+                        $eveluvationLog['createTime'] = $this->AppHelper->get_date_and_time();
+
+                        $this->EveluvationLog->add_log($eveluvationLog);
+
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     }
                     
