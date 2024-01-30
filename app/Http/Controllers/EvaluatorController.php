@@ -186,6 +186,8 @@ class EvaluatorController extends Controller
 
                 if ($updateStatus ) {
 
+                    $activity = $this->Activity->query_find($cbActivity->activity_code);
+
                     if ($activityStatus != "1" && $activityStatus != "4") {
 
                         // create eveluvator log for rejected activities
@@ -207,10 +209,29 @@ class EvaluatorController extends Controller
 
                         $this->EveluvationLog->add_log($eveluvationLog);
 
+                        $creatorInfo = $this->checkUser($cbActivity->creator);
+
+                        $details = array();
+                        $details['activityCode'] = $activityCode;
+                        $details['activityName'] = $activity->activity_name;
+                        $details['submitBy'] = $creatorInfo->name;
+                        $details['points_erned'] = "N/A";
+                        $details['points'] = "N/A";
+                        $details['value'] = $cbActivity->ext_value;
+                        $details['comment'] = $comment;
+
+                        if ($activityStatus == 1) {
+                            $details['status'] = "Approved";
+                        } else {
+                            $details['status'] = "Rejected";
+                        }
+
+                        Mail::to($creatorInfo->email)->send(new EvaluvateActivity($details));
+
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     }
                     
-                    $activity = $this->Activity->query_find($cbActivity->activity_code);
+                    // $activity = $this->Activity->query_find($cbActivity->activity_code);
 
                     $templateValueList = DB::table('club_activities')->select('point_templates.value as valueList')
                                                                     ->join('activities', 'club_activities.activity_code', '=', 'activities.code')
