@@ -101,4 +101,10 @@ class ClubUser extends Model
         return $this->where($map)->first();
     }
 
+    public function get_by_cub_code($clubCode) {
+        $map['club_code'] = $clubCode;
+
+        return $this->where($map)->get();
+    }
+
 }

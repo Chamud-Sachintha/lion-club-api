@@ -220,13 +220,22 @@ class EvaluatorController extends Controller
                         $details['value'] = $cbActivity->ext_value;
                         $details['comment'] = $comment;
 
-                        if ($activityStatus == 1) {
-                            $details['status'] = "Approved";
+                        if ($activityStatus == 3) {
+                            $details['status'] = "Hold for Further Evaluvation";
                         } else {
                             $details['status'] = "Rejected";
                         }
 
                         Mail::to($creatorInfo->email)->send(new EvaluvateActivity($details));
+
+                        $club_user_mails = $this->ClubUser->get_by_cub_code($cbActivity->club_code);
+
+                        $mail_list = array();
+                        foreach ($club_user_mails as $key => $value) {
+                            $mail_list[$key] = $value->email;
+                        }
+
+                        Mail::to($mail_list)->send(new EvaluvateActivity($details));
 
                         return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
                     }
@@ -318,6 +327,14 @@ class EvaluatorController extends Controller
                         $details['status'] = "Rejected";
                     }
 
+                    $club_user_mails = $this->ClubUser->get_by_cub_code($cbActivity->club_code);
+
+                    $mail_list = array();
+                    foreach ($club_user_mails as $key => $value) {
+                        $mail_list[$key] = $value->email;
+                    }
+
+                    Mail::to($mail_list)->send(new EvaluvateActivity($details));
                     Mail::to($creatorInfo->email)->send(new EvaluvateActivity($details));
 
                     return $this->AppHelper->responseMessageHandle(1, "Operation Complete");
