@@ -271,9 +271,9 @@ class ClubUserController extends Controller
                     $templateNamePrefix = explode("-" ,$value->templateCode);
 
                     if (trim($templateNamePrefix[1]) == "C") {
-                        $totalApprovedFunds += $value->extValue;
+                        $totalApprovedFunds += (int)$value->extValue;
                     } else if (trim($templateNamePrefix[1]) == "P") {
-                        $totalPeopleServed += $value->extValue;
+                        $totalPeopleServed += (int)$value->extValue;
                     } else {
                         
                     }
