@@ -231,7 +231,7 @@ class GovernerController extends Controller
             return $this->AppHelper->responseMessageHandle(0, "Flag is erquired.");
         } else {
 
-            try {
+            // try {
                 $csvFileName = 'activity_report.csv';
                 $filePath = public_path('exports/excel/' . $csvFileName);
 
@@ -279,6 +279,11 @@ class GovernerController extends Controller
                     $arrays[$index]['create_time'] = $this->AppHelper->format_date($arrays[$index]['create_time']);
                     $arrays[$index]['submited_date'] = $this->AppHelper->format_date($arrays[$index]['submited_date']);
                     $arrays[$index]["points_claimed"] = $rangeValue;
+
+                    if ($ponits == null) {
+                        $ponits['points'] = "N/A";
+                    }
+
                     $arrays[$index]["points_approved"] = $ponits['points'];
 
                     if ($arrays[$index]['authorized_user'] == 1) {
@@ -297,9 +302,9 @@ class GovernerController extends Controller
 
                 return response()->download($filePath, $csvFileName)->deleteFileAfterSend(true);
 
-            } catch (\Exception $e) {
-                return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
-            }
+            // } catch (\Exception $e) {
+            //     return $this->AppHelper->responseMessageHandle(0, $e->getMessage());
+            // }
         }
     }
 
